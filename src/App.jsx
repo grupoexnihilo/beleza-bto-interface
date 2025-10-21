@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
+
 import app from './firebaseConfig.js';
 import loginForm from './loginForm.jsx';
 import EntradaRapidaForm from './EntradaRapidaForm.jsx';
 import AdicionarDespesaForm from './AdicionarDespesaForm.jsx';
 import HistoricoLancamentos from './HistoricoLancamentos.jsx'; // Novo componente!
 
-// NOVO: Dados de exemplo para as unidades. No futuro, virão do banco de dados.
-const unidadesExemplo = [
-  { id: 'unidade_1', nome: 'Barbearia Matriz - Centro' },
-  { id: 'unidade_2', nome: 'Barbearia Filial - Bairro Novo' },
-  { id: 'unidade_3', nome: 'Barbearia Premium - Shopping' },
-];
+
 
 function App() {
   const [user, setUser] = useState(null);
@@ -24,32 +19,40 @@ function App() {
   const [unidades, setUnidades] = useState([]);
   const [unidadeSelecionada, setUnidadeSelecionada] = useState('');
   const auth = getAuth(app);
-  const db = getFirestore(app);
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        try {
-          const q = query(collection(db, "colaboradores"), where("email", "==", currentUser.email));
-          const querySnapshot = await getDocs(q);
-          if (!querySnapshot.empty) {
-            const userData = querySnapshot.docs[0].data();
-            setUserName(userData.nome || currentUser.email);
-            // NOVO: Lógica para carregar as unidades (com dados de exemplo)
-          // Na Etapa 2, vamos substituir isso por uma busca no banco de dados.
-          setUnidades(unidadesExemplo);
-          // Define a primeira unidade da lista como a padrão
-          if (unidadesExemplo.length > 0) {
-            setUnidadeSelecionada(unidadesExemplo[0].id);
-            setUnidade(userData.empresa || '');}
-          } else {
-            setUserName(currentUser.email);
-          }
-        } catch (error) {
-          console.error("Erro ao buscar dados do colaborador:", error);
-          setUserName(currentUser.email);
+        // COLE ESTE NOVO BLOCO 'try...catch' NO LUGAR
+      try {
+        // 1. Chamamos nossa nova API Vercel
+        const response = await fetch(`/api/getOperadorData?email=${currentUser.email}`);
+        
+        if (!response.ok) {
+          throw new Error('Falha ao buscar dados da API do operador');
         }
+        
+        const data = await response.json(); // Pega { nome: "...", unidades: [...] }
+
+        // 2. Populamos os estados com dados REAIS vindos do Neon
+        setUserName(data.nome || currentUser.email);
+        setUnidades(data.unidades); // A API retorna o array de unidades reais
+
+        // 3. Define a primeira unidade da lista como padrão
+        if (data.unidades && data.unidades.length > 0) {
+          setUnidadeSelecionada(data.unidades[0].id);
+        } else {
+          // Caso o operador não tenha unidades
+          setUnidadeSelecionada('');
+        }
+
+      } catch (error) {
+        console.error("Erro ao buscar dados do operador via API:", error);
+        setUserName(currentUser.email); // Fallback em caso de erro
+        setUnidades([]); // Fallback para array vazio
+      }
       } else {
         // Limpa os dados quando o utilizador faz logout
         setUserName('');
