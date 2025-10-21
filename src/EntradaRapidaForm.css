@@ -1,0 +1,115 @@
+/* Contenedor principal do formulário */
+.form-container {
+  background-color: #ffffff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  margin: 20px auto;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.form-container h3 {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.entrada-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Espaçamento entre as secções */
+}
+
+/* Linha de campos do formulário */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+/* Grupo individual (label + input) */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  color: #5d6d7e;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px;
+  border: 1px solid #c0d9e7;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #f8f9fa;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+  outline: none;
+}
+
+/* Linha horizontal para separar */
+hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 10px 0;
+}
+
+.entrada-form h4 {
+  color: #34495e;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 5px;
+  display: inline-block;
+}
+
+/* Botão de submissão */
+.submit-button {
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background-color: #28a745; /* Verde para sucesso/salvar */
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: flex-end; /* Alinha o botão à direita */
+  min-width: 200px;
+}
+
+.submit-button:hover {
+  background-color: #218838;
+}
+
+.submit-button:disabled {
+  background-color: #9E9E9E;
+  cursor: not-allowed;
+}
+
+/* Mensagem de feedback (sucesso ou erro) */
+.message-feedback {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #28a745;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,54 @@
+/* Contenedor principal do formulário de Despesa */
+.form-container-despesa {
+  background-color: #ffffff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  margin: 20px auto;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.form-container-despesa h3 {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.despesa-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Espaçamento entre as secções */
+}
+
+/* Botão de submissão para despesas */
+.submit-button-despesa {
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background-color: #e74c3c; /* Vermelho para despesas/saídas */
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: flex-end;
+  min-width: 200px;
+}
+
+.submit-button-despesa:hover {
+  background-color: #c0392b;
+}
+
+.submit-button-despesa:disabled {
+  background-color: #9E9E9E;
+  cursor: not-allowed;
+}
+
+/* A animação pode ser partilhada, mas incluímo-la aqui para garantir */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

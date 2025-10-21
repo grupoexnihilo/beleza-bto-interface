@@ -1,0 +1,124 @@
+/* Estilo para o corpo da página - Ajustado para a sua visão */
+body {
+  font-family: 'Segoe UI', 'Roboto', sans-serif; /* Fonte moderna e acessível */
+  background-color: #e0f2f7; /* Um azul muito claro, remete a serenidade e céu aberto */
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #333; /* Cor de texto padrão mais suave */
+}
+
+/* Contenidor principal do formulário de login */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #2c3e50; /* Um tom de azul-ardósia escuro */  padding: 40px;
+  border-radius: 12px; /* Bordas mais suaves para acessibilidade */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Sombra mais profunda para elegância */
+  width: 100%;
+  max-width: 420px; /* Um pouco mais largo para melhor leitura */
+  animation: fadeIn 0.8s ease-out; /* Animação suave de entrada */
+}
+
+/* Estilo da logo */
+.login-logo {
+  width: 180px; /* Um pouco maior para destaque */
+  height: auto;
+  margin-bottom: 30px;
+}
+
+/* Formulário em si */
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form h2 {
+  text-align: center;
+  color: #ffffff; /* Mudado para branco */
+  margin-bottom: 28px;
+  font-weight: 600; /* Um pouco mais encorpado */
+}
+
+/* Grupos de input (label + input) */
+.input-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  margin-bottom: 8px;
+  color: #5d6d7e; /* Cinzento-azulado para as labels */
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.input-group input {
+  padding: 12px;
+  border: 1px solid #c0d9e7; /* Borda mais suave e azulada */
+  border-radius: 8px; /* Bordas mais arredondadas */
+  font-size: 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-group input:focus {
+  border-color: #4a90e2; /* Azul mais vibrante no foco */
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2); /* Sombra suave no foco */
+  outline: none; /* Remove o contorno padrão do navegador */
+}
+
+/* Botão de login */
+.login-button {
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background-color: #3498db; /* Um azul médio, acessível e confiável */
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  margin-top: 10px;
+}
+
+.login-button:hover {
+  background-color: #2980b9; /* Um tom mais escuro no hover */
+  transform: translateY(-1px); /* Pequeno efeito de elevação */
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+/* Mensagens de erro */
+.error-message {
+  color: #e74c3c; /* Vermelho padrão para erros */
+  text-align: center;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.forgot-password-link {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 14px;
+  color: #a9cce3; /* Um tom de azul-claro, fácil de ler no fundo escuro */
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+  color: #ffffff; /* Fica branco ao passar o rato por cima */
+}
