@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
 import app from './firebaseConfig.js';
-import loginForm from './loginForm.jsx';
+import LoginForm from './LoginForm.jsx';
 import EntradaRapidaForm from './EntradaRapidaForm.jsx';
 import AdicionarDespesaForm from './AdicionarDespesaForm.jsx';
 import HistoricoLancamentos from './HistoricoLancamentos.jsx'; // Novo componente!
