@@ -158,7 +158,7 @@ function EntradaRapidaForm({ user, unidadeId, onBack }) {
           {isLoading ? 'A Salvar...' : 'Salvar Lançamentos'}
         </button>
         {message && <p className="message-feedback">{message}</p>}
-nbsp;   </form>
+  </form>
     </div>
   );
 }
