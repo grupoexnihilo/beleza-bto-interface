@@ -68,3 +68,4 @@
     }
   }, [auth]); // Dependência apenas de 'auth'
   // --- FIM DO useEffect CORRIGIDO ---
+  export default App;
