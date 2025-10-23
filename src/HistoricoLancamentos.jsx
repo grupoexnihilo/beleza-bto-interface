@@ -9,36 +9,39 @@ function HistoricoLancamentos({ user, unidadeId }) {
   const [error, setError] = useState(null);
 
   // Efeito para buscar os dados do histórico
-  useEffect(() => {
-    console.log("[HISTORICO useEffect - TESTE URL FIXA] Iniciado.");
-    console.log("[HISTORICO useEffect - TESTE URL FIXA] User:", user);
-    console.log("[HISTORICO useEffect - TESTE URL FIXA] UnidadeId:", unidadeId);
+useEffect(() => {
+    console.log("[HISTORICO useEffect] Iniciado.");
+    console.log("[HISTORICO useEffect] Valor de user:", user);
+    console.log("[HISTORICO useEffect] Valor de unidadeId:", unidadeId);
 
-    // Só busca se tivermos um email E uma unidade selecionada
     if (user && user.email && unidadeId) {
-      console.log("[HISTORICO useEffect - TESTE URL FIXA] Condição VERDADEIRA.");
+      console.log("[HISTORICO useEffect] CONDIÇÃO VERDADEIRA. A iniciar fetch.");
       const fetchHistorico = async () => {
         setIsLoading(true);
         setError(null);
         try {
-          console.log(`[HISTORICO fetch - TESTE URL FIXA] Buscando com URL fixa.`);
-
-          // --- ESTA É A LINHA SIMPLIFICADA PARA TESTE ---
-          const response = await fetch('/api/getHistorico?email=teste@teste.com&unidadeId=1');
-          // ---------------------------------------------
+          // --- MUDANÇA NA CONSTRUÇÃO DA URL ---
+          const params = new URLSearchParams({
+            email: user.email,
+            unidadeId: unidadeId,
+          });
+          const url = `/api/getHistorico?${params.toString()}`;
+          console.log(`[HISTORICO fetch] Buscando URL: ${url}`); // Log da URL construída
+          const response = await fetch(url);
+          // --- FIM DA MUDANÇA ---
 
           if (!response.ok) {
             const data = await response.json();
-            console.error("[HISTORICO fetch - TESTE URL FIXA] Erro API:", data);
-            throw new Error(data.message || 'Falha ao buscar histórico (URL fixa).');
+            console.error("[HISTORICO fetch] Erro na resposta da API:", data);
+            throw new Error(data.message || 'Falha ao buscar histórico do servidor.');
           }
 
           const data = await response.json();
-          console.log("[HISTORICO fetch - TESTE URL FIXA] Dados recebidos:", data);
+          console.log("[HISTORICO fetch] Dados recebidos:", data);
           setLancamentos(data);
 
         } catch (err) {
-          console.error("[HISTORICO fetch - TESTE URL FIXA] Erro Catch:", err);
+          console.error("[HISTORICO fetch] Erro no bloco catch:", err);
           setError(err.message);
         } finally {
           setIsLoading(false);
@@ -46,7 +49,7 @@ function HistoricoLancamentos({ user, unidadeId }) {
       };
       fetchHistorico();
     } else {
-      console.log("[HISTORICO useEffect - TESTE URL FIXA] Condição FALSA.");
+      console.log("[HISTORICO useEffect] CONDIÇÃO FALSA. Limpando lançamentos.");
       setLancamentos([]);
     }
   }, [user, unidadeId]);
