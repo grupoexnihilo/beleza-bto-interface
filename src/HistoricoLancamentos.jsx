@@ -9,35 +9,40 @@ function HistoricoLancamentos({ user, unidadeId }) {
   const [error, setError] = useState(null);
 
   // Efeito para buscar os dados do histórico
-useEffect(() => {
-    console.log("[HISTORICO useEffect] Iniciado.");
-    console.log("[HISTORICO useEffect] Valor de user:", user);
-    console.log("[HISTORICO useEffect] Valor de unidadeId:", unidadeId);
+// --- useEffect COM LOGS REFINADOS ---
+  useEffect(() => {
+    // Log 1: Mostra cada vez que o efeito corre e os valores atuais
+    console.log(`[HISTORICO useEffect Cycle] user: ${user ? user.email : 'undefined'}, unidadeId: ${unidadeId}`);
 
-    if (user && user.email && unidadeId) {
-      console.log("[HISTORICO useEffect] CONDIÇÃO VERDADEIRA. A iniciar fetch.");
+    // Só busca se tivermos um email VÁLIDO E uma unidadeId VÁLIDA
+    if (user && typeof user.email === 'string' && user.email.length > 0 && unidadeId && unidadeId !== '') {
+      console.log(`[HISTORICO useEffect] CONDIÇÃO VERDADEIRA. Email: ${user.email}, Unidade: ${unidadeId}. Iniciando fetch.`); // Log 2: Confirma que entrou no IF
+
       const fetchHistorico = async () => {
         setIsLoading(true);
         setError(null);
         try {
-          // --- MUDANÇA NA CONSTRUÇÃO DA URL ---
-          const params = new URLSearchParams({
-            email: user.email,
-            unidadeId: unidadeId,
-          });
+          const params = new URLSearchParams({ email: user.email, unidadeId: unidadeId });
           const url = `/api/getHistorico?${params.toString()}`;
-          console.log(`[HISTORICO fetch] Buscando URL: ${url}`); // Log da URL construída
+          console.log(`[HISTORICO fetch] Buscando URL: ${url}`); // Log 3: URL do Fetch
+
           const response = await fetch(url);
-          // --- FIM DA MUDANÇA ---
+          const responseText = await response.text(); // Lê a resposta como texto PRIMEIRO
+
+          console.log(`[HISTORICO fetch] Status da Resposta: ${response.status}`); // Log 4: Status HTTP
+          console.log(`[HISTORICO fetch] Resposta (Texto): ${responseText.substring(0, 100)}...`); // Log 5: Primeiros 100 chars da resposta
 
           if (!response.ok) {
-            const data = await response.json();
-            console.error("[HISTORICO fetch] Erro na resposta da API:", data);
-            throw new Error(data.message || 'Falha ao buscar histórico do servidor.');
+            // Tenta analisar como JSON se possível, senão usa o texto
+            let errorData = { message: `Erro ${response.status}` };
+            try { errorData = JSON.parse(responseText); } catch (e) { /* Ignora erro de parse */ }
+            console.error("[HISTORICO fetch] Erro na resposta da API:", errorData);
+            throw new Error(errorData.message || `Falha ao buscar histórico (${response.status})`);
           }
 
-          const data = await response.json();
-          console.log("[HISTORICO fetch] Dados recebidos:", data);
+          // Se chegou aqui, a resposta é OK (2xx) e podemos analisar como JSON
+          const data = JSON.parse(responseText);
+          console.log("[HISTORICO fetch] Dados JSON recebidos:", data); // Log 6: Dados JSON
           setLancamentos(data);
 
         } catch (err) {
@@ -49,10 +54,11 @@ useEffect(() => {
       };
       fetchHistorico();
     } else {
-      console.log("[HISTORICO useEffect] CONDIÇÃO FALSA. Limpando lançamentos.");
-      setLancamentos([]);
+      console.log("[HISTORICO useEffect] CONDIÇÃO FALSA. Limpando lançamentos."); // Log 7: Não entrou no IF ou valores inválidos
+      setLancamentos([]); // Limpa se a condição for falsa
     }
   }, [user, unidadeId]);
+  // --- FIM DO useEffect COM LOGS REFINADOS ---
 
   const formatarData = (dataISO) => {
     if (!dataISO) return '-';
