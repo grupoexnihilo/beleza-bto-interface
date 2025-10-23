@@ -44,8 +44,6 @@ function HistoricoLancamentos({ user, unidadeId }) {
 
   const formatarData = (dataISO) => {
     if (!dataISO) return '-';
-    // O Postgres entrega a data em formato ISO. O JS Date() pode ter problemas
-    // com fuso horário. Esta é uma forma segura de formatar para DD/MM/YYYY.
     const [ano, mes, dia] = dataISO.split('T')[0].split('-');
     return `${dia}/${mes}/${ano}`;
   };
@@ -99,10 +97,9 @@ function HistoricoLancamentos({ user, unidadeId }) {
         <tbody>
           {renderContent()}
         </tbody>
-        
-      </table>
+        </table>
     </div>
   );
 }
 
-export default HistoricoLancamentos
+export default HistoricoLancamentos;
