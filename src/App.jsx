@@ -1,5 +1,26 @@
-import React, { useState, useEffect } from 'react';
-// --- useEffect CORRIGIDO (Balanceamento de {} e ()) ---
+// --- VERSÃO COMPLETA E CORRIGIDA DE App.jsx ---
+import React, { useState, useEffect } from 'react'; // <-- IMPORT CORRETO
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import app from './firebaseConfig.js'; // Configuração do Firebase Auth
+import LoginForm from './LoginForm.jsx'; // Corrigido para L maiúsculo
+import EntradaRapidaForm from './EntradaRapidaForm.jsx';
+import AdicionarDespesaForm from './AdicionarDespesaForm.jsx';
+import HistoricoLancamentos from './HistoricoLancamentos.jsx';
+
+function App() {
+  console.log("--- EXECUTANDO A VERSÃO MAIS RECENTE DO App.jsx (Build do Vercel) ---");
+
+  // --- Estados do Componente ---
+  const [user, setUser] = useState(null);
+  const [userName, setUserName] = useState('');
+  const [loading, setLoading] = useState(true); // Começa true para esperar o Auth
+  const [currentView, setCurrentView] = useState('dashboard');
+  const [unidades, setUnidades] = useState([]);
+  const [unidadeSelecionada, setUnidadeSelecionada] = useState('');
+
+  const auth = getAuth(app);
+
+  // --- Efeito para Autenticação e Busca Inicial de Dados ---
   useEffect(() => {
     console.log("[APP useEffect onAuthStateChanged] INICIANDO LISTENER");
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -9,11 +30,10 @@ import React, { useState, useEffect } from 'react';
 
       if (currentUser) {
         // Se há utilizador, busca os dados dele na nossa API
-        setLoading(true); // Mostra loading enquanto busca dados da API
+        // setLoading(true); // Não precisa redefinir loading aqui, já começou true
         try {
           console.log(`[APP onAuthStateChanged] Chamando API getOperadorData para email: ${currentUser.email}`);
 
-          // --- Bloco ÚNICO para buscar dados do operador ---
           const response = await fetch(`/api/getOperadorData?email=${currentUser.email}`);
           console.log(`[APP onAuthStateChanged] Status da API getOperadorData: ${response.status}`);
 
@@ -41,11 +61,10 @@ import React, { useState, useEffect } from 'react';
             setUnidadeSelecionada('');
             console.log("[APP onAuthStateChanged] Nenhuma unidade encontrada. Unidade Selecionada definida para ''");
           }
-          // --- Fim do Bloco ÚNICO ---
 
         } catch (error) {
            console.error("[APP onAuthStateChanged] Erro no bloco try/catch ao buscar dados:", error);
-           setUserName(currentUser.email);
+           setUserName(currentUser.email); // Fallback
            setUnidades([]);
            setUnidadeSelecionada('');
         } finally {
@@ -53,20 +72,112 @@ import React, { useState, useEffect } from 'react';
         }
       } else {
         // Se não há utilizador (logout ou inicialização)
-        console.log("[APP onAuthStateChanged] User é NULL (Logout?). Limpando estados."); // Esta linha estava cortada
+        console.log("[APP onAuthStateChanged] User é NULL (Logout?). Limpando estados.");
         setUser(null);
         setUserName('');
         setUnidades([]);
         setUnidadeSelecionada('');
-        setLoading(false);
-      } // <<<----- CHAVE DE FECHO DO 'else' ADICIONADA
-    }); // <<<----- PARÊNTESE E PONTO-E-VÍRGULA DE FECHO DO 'onAuthStateChanged' ADICIONADOS
+        setLoading(false); // Garante que o loading para se começar deslogado
+      }
+    }); // FIM DO CALLBACK onAuthStateChanged
 
-    // Função de limpeza do listener ao desmontar o componente
+    // Função de limpeza
     return () => {
         console.log("[APP useEffect onAuthStateChanged] DESMONTANDO LISTENER");
         unsubscribe();
     }
-  }, [auth]); // Dependência apenas de 'auth'
-  // --- FIM DO useEffect CORRIGIDO ---
-  export default App;
+  }, [auth]); // Dependência: auth
+  // --- FIM DO useEffect ---
+
+  // --- Funções Handler ---
+  const handleLogout = async () => {
+    console.log("[APP handleLogout] Iniciando logout...");
+    try {
+      await signOut(auth);
+      console.log("[APP handleLogout] Logout concluído.");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
+  };
+
+  const handleUnidadeChange = (e) => {
+    const novaUnidadeId = e.target.value;
+    console.log("[APP handleUnidadeChange] Nova unidade selecionada:", novaUnidadeId);
+    setUnidadeSelecionada(novaUnidadeId);
+  };
+
+  // --- Lógica de Renderização ---
+  if (loading) { // Mostra loading enquanto o estado inicial do Auth está a ser verificado
+    return <div className="loading-container">A carregar autenticação...</div>;
+  }
+
+  if (!user) { // Se não está loading E não há user, mostra Login
+    return (
+       <div className="app-container">
+          <LoginForm />
+       </div>
+    );
+  }
+
+  // Se chegou aqui, está logado. Renderiza a vista principal.
+  const renderLoggedInView = () => {
+    console.log(`[APP renderLoggedInView] Renderizando visão '${currentView}'. Passando user: ${user ? user.email : null}, unidadeSelecionada: ${unidadeSelecionada}`);
+    switch (currentView) {
+      case 'receitas':
+        return <EntradaRapidaForm user={user} unidadeId={unidadeSelecionada} onBack={() => setCurrentView('dashboard')} />;
+      case 'despesas':
+        return <AdicionarDespesaForm user={user} unidadeId={unidadeSelecionada} onBack={() => setCurrentView('dashboard')} />;
+      default: // 'dashboard'
+        return (
+          <div className="dashboard-container">
+            <h2>Painel de Ações V2 - TESTE</h2> {/* Mantemos o H2 de teste */}
+
+            {/* Seletor de Unidades (Lógica corrigida) */}
+            {unidades.length > 0 && (
+              <div className="unidade-selector">
+                <label htmlFor="unidade-select">Unidade de Trabalho:</label>
+                <select id="unidade-select" value={unidadeSelecionada} onChange={handleUnidadeChange}>
+                  {unidades.map(unidade => (
+                    <option key={unidade.id} value={unidade.id}>
+                      {unidade.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {!loading && unidades.length === 0 && ( // Mensagem se não houver unidades
+                 <p>Nenhuma unidade associada a este utilizador.</p>
+            )}
+
+            {/* Botões de Ação */}
+            <div className="action-buttons">
+              <button onClick={() => setCurrentView('receitas')} className="action-button" disabled={!unidadeSelecionada}>
+                Adicionar Receita
+              </button>
+              <button onClick={() => setCurrentView('despesas')} className="action-button" disabled={!unidadeSelecionada}>
+                Adicionar Despesa
+              </button>
+            </div>
+
+            {/* Histórico */}
+            <HistoricoLancamentos user={user} unidadeId={unidadeSelecionada} />
+          </div>
+        );
+    }
+  };
+
+  // --- Return Principal (Quando Logado) ---
+  return (
+    <div className="app-container">
+      <header className="app-header">
+        <span>Bem-vindo, {userName || (user ? user.email : '')}!</span>
+        <button onClick={handleLogout} className="logout-button">Sair</button>
+      </header>
+      <main>
+        {renderLoggedInView()}
+      </main>
+    </div>
+  );
+} // --- FIM DA FUNÇÃO App ---
+
+export default App; // <<<----- LINHA ESSENCIAL NO FINAL
