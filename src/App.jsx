@@ -22,12 +22,25 @@ function App() {
 
 
   useEffect(() => {
+    // ---- ADICIONE ESTE LOG ----
+    console.log("[APP useEffect onAuthStateChanged] INICIANDO LISTENER");
+    // -------------------------
     console.log("--- EXECUTANDO A VERSÃO MAIS RECENTE DO App.jsx (Build do Vercel) ---");
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
+      // ---- ADICIONE ESTE LOG ----
+      console.log("[APP onAuthStateChanged] Callback executado. currentUser:", currentUser ? currentUser.email : null);
+      // -------------------------
+      setUser(currentUser); // Atualiza o estado
+
+      // ---- ADICIONE ESTE LOG APÓS setUser ----
+      console.log("[APP onAuthStateChanged] Estado 'user' DEFINIDO para:", currentUser ? currentUser.email : null);
+      // ------------------------------------
       if (currentUser) {
         // COLE ESTE NOVO BLOCO 'try...catch' NO LUGAR
-      try {
+      try {// ---- ADICIONE LOGS AQUI DENTRO TAMBÉM ----
+          console.log("[APP onAuthStateChanged] Chamando API getOperadorData...");
+          const response = await fetch(...);
+          // ...
         // 1. Chamamos nossa nova API Vercel
         const response = await fetch(`/api/getOperadorData?email=${currentUser.email}`);
         
@@ -36,7 +49,7 @@ function App() {
         }
         
         const data = await response.json(); // Pega { nome: "...", unidades: [...] }
-
+        console.log("[APP onAuthStateChanged] Resposta da API:", data);
         // 2. Populamos os estados com dados REAIS vindos do Neon
         setUserName(data.nome || currentUser.email);
         setUnidades(data.unidades); // A API retorna o array de unidades reais
@@ -44,6 +57,7 @@ function App() {
         // 3. Define a primeira unidade da lista como padrão
         if (data.unidades && data.unidades.length > 0) {
           setUnidadeSelecionada(data.unidades[0].id);
+          console.log("[APP onAuthStateChanged] Unidade Selecionada:", data.unidades[0].id);
         } else {
           // Caso o operador não tenha unidades
           setUnidadeSelecionada('');
@@ -83,6 +97,7 @@ function App() {
   }
 
   const renderLoggedInView = () => {
+    console.log(`[APP renderLoggedInView] Renderizando visão '${currentView}'. Valor de 'user' a ser passado:`, user ? user.email : null, "Valor de unidadeSelecionada:", unidadeSelecionada);
     console.log('--- Verificando a visão ---');
   console.log('O React está a tentar mostrar a visão:', currentView);
     switch (currentView) {
