@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 // --- useEffect CORRIGIDO (Balanceamento de {} e ()) ---
   useEffect(() => {
     console.log("[APP useEffect onAuthStateChanged] INICIANDO LISTENER");
