@@ -1,4 +1,6 @@
-// Este é o ficheiro CORRIGIDO: /api/addLancamentos.js
+// --- V.FINAL - Garantindo Código Completo (Receitas) ---
+import pkg from 'pg';
+// ... resto do código ...
 import pkg from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 const { Pool } = pkg;
