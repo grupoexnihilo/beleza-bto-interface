@@ -1,69 +1,108 @@
-import React from 'react';
+// Este é o NOVO ficheiro: /src/HistoricoLancamentos.jsx
+import React, { useState, useEffect } from 'react';
 import './HistoricoLancamentos.css';
 
-// --- DADOS DE EXEMPLO (VIRÃO DO NEON NO FUTURO) ---
-// Usaremos estes dados para construir a interface visualmente.
-const lancamentosExemplo = [
-  { id: 1, data: '05/10/2025', descricao: 'Venda de produto A', receita: 1200.50, despesa: 0 },
-  { id: 2, data: '05/10/2025', descricao: 'Pagamento de aluguel', receita: 0, despesa: 800.00 },
-  { id: 3, data: '04/10/2025', descricao: 'Serviço de consultoria', receita: 2500.00, despesa: 0 },
-  { id: 4, data: '04/10/2025', descricao: 'Compra de material de escritório', receita: 0, despesa: 150.75 },
-  { id: 5, data: '03/10/2025', descricao: 'Venda de produto B', receita: 450.00, despesa: 0 },
-];
+// Recebemos 'user' (do Auth) e 'unidadeId' (do dropdown) do App.jsx
+function HistoricoLancamentos({ user, unidadeId }) {
+  const [lancamentos, setLancamentos] = useState([]); // Começa vazio
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-function HistoricoLancamentos() {
-  // No futuro, receberemos os lançamentos via props: function HistoricoLancamentos({ lancamentos })
-  const lancamentos = lancamentosExemplo; // Por agora, usamos os dados de exemplo
+  // Efeito para buscar os dados do histórico
+  useEffect(() => {
+    // Só busca se tivermos um email E uma unidade selecionada
+    if (user && user.email && unidadeId) {
+      const fetchHistorico = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+          // Chama a nossa nova API de histórico
+          const response = await fetch(`/api/getHistorico?email=${user.email}&unidadeId=${unidadeId}`);
+          
+          if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.message || 'Falha ao buscar histórico do servidor.');
+          }
+          
+          const data = await response.json();
+          setLancamentos(data); // Preenche o histórico com dados do Neon
 
-  const totalReceitas = lancamentos.reduce((acc, item) => acc + item.receita, 0);
-  const totalDespesas = lancamentos.reduce((acc, item) => acc + item.despesa, 0);
-  const saldoTotal = totalReceitas - totalDespesas;
+        } catch (err) {
+          console.error("Erro ao buscar histórico:", err);
+          setError(err.message);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchHistorico();
+    } else {
+      // Se não houver unidade ou user, limpa a lista
+      setLancamentos([]);
+    }
+  }, [user, unidadeId]); // Roda sempre que o user ou a unidadeId mudar
+
+  const formatarData = (dataISO) => {
+    if (!dataISO) return '-';
+    // O Postgres entrega a data em formato ISO. O JS Date() pode ter problemas
+    // com fuso horário. Esta é uma forma segura de formatar para DD/MM/YYYY.
+    const [ano, mes, dia] = dataISO.split('T')[0].split('-');
+    return `${dia}/${mes}/${ano}`;
+  };
 
   const formatarValor = (valor) => {
-    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    return parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  };
+
+  // Renderização condicional
+  const renderContent = () => {
+    if (!unidadeId) {
+      return <tr><td colSpan="4">Por favor, selecione uma unidade.</td></tr>;
+    }
+    if (isLoading) {
+      return <tr><td colSpan="4">A carregar histórico...</td></tr>;
+    }
+    if (error) {
+      return <tr><td colSpan="4" className="valor-despesa">{error}</td></tr>;
+    }
+    if (lancamentos.length === 0) {
+      return <tr><td colSpan="4">Nenhum lançamento encontrado para si nesta unidade.</td></tr>;
+    }
+
+    // Mapeia os dados REAIS vindos do Neon
+    return lancamentos.map(item => (
+      <tr key={item.id_de_lancamento}>
+        <td>{formatarData(item.data_pagamento)}</td>
+        <td>{item.descricao || item.categoria}</td>
+        <td className="valor-receita">
+          {item.tipo_de_operacao === 'Receita' ? formatarValor(item.valor_r) : '-'}
+        </td>
+        <td className="valor-despesa">
+          {item.tipo_de_operacao === 'Despesa' ? formatarValor(item.valor_r) : '-'}
+        </td>
+      </tr>
+    ));
   };
 
   return (
     <div className="historico-wrapper">
-      <h2>Histórico de Lançamentos</h2>
+      <h2>Histórico de Lançamentos Recentes</h2>
       <table className="tabela-lancamentos">
         <thead>
           <tr>
-            <th>Data</th>
+            <th>Data Pag.</th>
             <th>Descrição</th>
             <th>Receita</th>
             <th>Despesa</th>
           </tr>
         </thead>
         <tbody>
-          {lancamentos.map(item => (
-            <tr key={item.id}>
-              <td>{item.data}</td>
-              <td>{item.descricao}</td>
-              <td className="valor-receita">{item.receita > 0 ? formatarValor(item.receita) : '-'}</td>
-              <td className="valor-despesa">{item.despesa > 0 ? formatarValor(item.despesa) : '-'}</td>
-            </tr>
-          ))}
+          {renderContent()}
         </tbody>
-        <tfoot>
-          <tr>
-            <td colSpan="2"><strong>Total Receitas:</strong></td>
-            <td className="valor-receita">{formatarValor(totalReceitas)}</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colSpan="2"><strong>Total Despesas:</strong></td>
-            <td></td>
-            <td className="valor-despesa">{formatarValor(totalDespesas)}</td>
-          </tr>
-          <tr>
-            <td colSpan="2"><strong>Saldo Total:</strong></td>
-            <td colSpan="2" className="total-geral">{formatarValor(saldoTotal)}</td>
-          </tr>
-        </tfoot>
+        
       </table>
     </div>
   );
 }
 
-export default HistoricoLancamentos;
+export default HistoricoLancamentos
