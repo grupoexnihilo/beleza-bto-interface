@@ -13,7 +13,7 @@
         try {
           console.log(`[HISTORICO fetch] Buscando para email=${user.email}, unidadeId=${unidadeId}`); // Log 5: Parâmetros do Fetch
           const response = await fetch(`/api/getHistorico?email=${user.email}&unidadeId=${unidadeId}`);
-          
+
           if (!response.ok) {
             const data = await response.json();
             console.error("[HISTORICO fetch] Erro na resposta da API:", data);
