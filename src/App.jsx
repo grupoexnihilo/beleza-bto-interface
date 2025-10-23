@@ -130,7 +130,7 @@ function App() {
       default: // 'dashboard'
         return (
           <div className="dashboard-container">
-            <h2>Painel de Ações V2 - TESTE</h2> {/* Mantemos o H2 de teste */}
+            <h2>Painel de Ações</h2> {/* Mantemos o H2 de teste */}
 
             {/* Seletor de Unidades (Lógica corrigida) */}
             {unidades.length > 0 && (

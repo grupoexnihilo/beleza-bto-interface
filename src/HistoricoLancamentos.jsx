@@ -8,41 +8,54 @@ function HistoricoLancamentos({ user, unidadeId }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Efeito para buscar os dados do histórico
-// --- useEffect COM LOGS REFINADOS ---
+  // --- useEffect COM FILTRO DE MÊS ATUAL ---
   useEffect(() => {
-    // Log 1: Mostra cada vez que o efeito corre e os valores atuais
     console.log(`[HISTORICO useEffect Cycle] user: ${user ? user.email : 'undefined'}, unidadeId: ${unidadeId}`);
 
-    // Só busca se tivermos um email VÁLIDO E uma unidadeId VÁLIDA
     if (user && typeof user.email === 'string' && user.email.length > 0 && unidadeId && unidadeId !== '') {
-      console.log(`[HISTORICO useEffect] CONDIÇÃO VERDADEIRA. Email: ${user.email}, Unidade: ${unidadeId}. Iniciando fetch.`); // Log 2: Confirma que entrou no IF
+      console.log(`[HISTORICO useEffect] CONDIÇÃO VERDADEIRA. Email: ${user.email}, Unidade: ${unidadeId}. Iniciando fetch.`);
 
       const fetchHistorico = async () => {
         setIsLoading(true);
         setError(null);
         try {
-          const params = new URLSearchParams({ email: user.email, unidadeId: unidadeId });
+          // --- CÁLCULO DAS DATAS DO MÊS ATUAL ---
+          const agora = new Date();
+          const primeiroDia = new Date(agora.getFullYear(), agora.getMonth(), 1);
+          const ultimoDia = new Date(agora.getFullYear(), agora.getMonth() + 1, 0); // O dia 0 do mês seguinte é o último do anterior
+
+          // Formata as datas para YYYY-MM-DD
+          const dataInicio = primeiroDia.toISOString().split('T')[0];
+          const dataFim = ultimoDia.toISOString().split('T')[0];
+          console.log(`[HISTORICO fetch] Buscando período: ${dataInicio} a ${dataFim}`);
+          // --- FIM DO CÁLCULO ---
+
+          // --- CONSTRUÇÃO DA URL COM DATAS ---
+          const params = new URLSearchParams({
+            email: user.email,
+            unidadeId: unidadeId,
+            dataInicio: dataInicio, // Envia a data de início
+            dataFim: dataFim,       // Envia a data de fim
+          });
           const url = `/api/getHistorico?${params.toString()}`;
-          console.log(`[HISTORICO fetch] Buscando URL: ${url}`); // Log 3: URL do Fetch
+          console.log(`[HISTORICO fetch] Buscando URL: ${url}`);
+          // --- FIM DA CONSTRUÇÃO ---
 
           const response = await fetch(url);
-          const responseText = await response.text(); // Lê a resposta como texto PRIMEIRO
+          const responseText = await response.text();
 
-          console.log(`[HISTORICO fetch] Status da Resposta: ${response.status}`); // Log 4: Status HTTP
-          console.log(`[HISTORICO fetch] Resposta (Texto): ${responseText.substring(0, 100)}...`); // Log 5: Primeiros 100 chars da resposta
+          console.log(`[HISTORICO fetch] Status da Resposta: ${response.status}`);
+          console.log(`[HISTORICO fetch] Resposta (Texto): ${responseText.substring(0, 100)}...`);
 
           if (!response.ok) {
-            // Tenta analisar como JSON se possível, senão usa o texto
             let errorData = { message: `Erro ${response.status}` };
-            try { errorData = JSON.parse(responseText); } catch (e) { /* Ignora erro de parse */ }
+            try { errorData = JSON.parse(responseText); } catch (e) { /* Ignora */ }
             console.error("[HISTORICO fetch] Erro na resposta da API:", errorData);
             throw new Error(errorData.message || `Falha ao buscar histórico (${response.status})`);
           }
 
-          // Se chegou aqui, a resposta é OK (2xx) e podemos analisar como JSON
           const data = JSON.parse(responseText);
-          console.log("[HISTORICO fetch] Dados JSON recebidos:", data); // Log 6: Dados JSON
+          console.log("[HISTORICO fetch] Dados JSON recebidos:", data);
           setLancamentos(data);
 
         } catch (err) {
@@ -54,11 +67,11 @@ function HistoricoLancamentos({ user, unidadeId }) {
       };
       fetchHistorico();
     } else {
-      console.log("[HISTORICO useEffect] CONDIÇÃO FALSA. Limpando lançamentos."); // Log 7: Não entrou no IF ou valores inválidos
-      setLancamentos([]); // Limpa se a condição for falsa
+      console.log("[HISTORICO useEffect] CONDIÇÃO FALSA. Limpando lançamentos.");
+      setLancamentos([]);
     }
   }, [user, unidadeId]);
-  // --- FIM DO useEffect COM LOGS REFINADOS ---
+  // --- FIM DO useEffect COM FILTRO DE MÊS ATUAL ---
 
   const formatarData = (dataISO) => {
     if (!dataISO) return '-';
