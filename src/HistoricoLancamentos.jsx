@@ -1,56 +1,45 @@
-// --- VERSÃO DE TESTE COM URL FIXA ---
+// --- VERSÃO REFINADA COM TOTAIS E EXPANSÃO ---
 import React, { useState, useEffect } from 'react';
-import './HistoricoLancamentos.css';
+import './HistoricoLancamentos.css'; // Precisaremos de ajustar o CSS depois
 
-// Recebemos 'user' (do Auth) e 'unidadeId' (do dropdown) do App.jsx
 function HistoricoLancamentos({ user, unidadeId }) {
   const [lancamentos, setLancamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // --- useEffect COM FILTRO DE MÊS ATUAL ---
+  // --- NOVOS ESTADOS PARA VISIBILIDADE ---
+  const [mostrarReceitas, setMostrarReceitas] = useState(false);
+  const [mostrarDespesas, setMostrarDespesas] = useState(false);
+  const [mostrarCompleto, setMostrarCompleto] = useState(false); // Controla a lista completa
+  // --- FIM NOVOS ESTADOS ---
+
   useEffect(() => {
-    console.log(`[HISTORICO useEffect Cycle] user: ${user ? user.email : 'undefined'}, unidadeId: ${unidadeId}`);
+    // Resetar visibilidade sempre que a unidade mudar
+    setMostrarReceitas(false);
+    setMostrarDespesas(false);
+    setMostrarCompleto(false);
 
-    if (user && typeof user.email === 'string' && user.email.length > 0 && unidadeId && unidadeId !== '') {
-      console.log(`[HISTORICO useEffect] CONDIÇÃO VERDADEIRA. Email: ${user.email}, Unidade: ${unidadeId}. Iniciando fetch.`);
-
+    if (user && user.email && unidadeId) {
       const fetchHistorico = async () => {
         setIsLoading(true);
         setError(null);
         try {
-          // --- CÁLCULO DAS DATAS DO MÊS ATUAL ---
           const agora = new Date();
           const primeiroDia = new Date(agora.getFullYear(), agora.getMonth(), 1);
-          const ultimoDia = new Date(agora.getFullYear(), agora.getMonth() + 1, 0); // O dia 0 do mês seguinte é o último do anterior
-
-          // Formata as datas para YYYY-MM-DD
+          const ultimoDia = new Date(agora.getFullYear(), agora.getMonth() + 1, 0);
           const dataInicio = primeiroDia.toISOString().split('T')[0];
           const dataFim = ultimoDia.toISOString().split('T')[0];
-          console.log(`[HISTORICO fetch] Buscando período: ${dataInicio} a ${dataFim}`);
-          // --- FIM DO CÁLCULO ---
 
-          // --- CONSTRUÇÃO DA URL COM DATAS ---
-          const params = new URLSearchParams({
-            email: user.email,
-            unidadeId: unidadeId,
-            dataInicio: dataInicio, // Envia a data de início
-            dataFim: dataFim,       // Envia a data de fim
-          });
+          const params = new URLSearchParams({ email: user.email, unidadeId, dataInicio, dataFim });
           const url = `/api/getHistorico?${params.toString()}`;
           console.log(`[HISTORICO fetch] Buscando URL: ${url}`);
-          // --- FIM DA CONSTRUÇÃO ---
 
           const response = await fetch(url);
           const responseText = await response.text();
 
-          console.log(`[HISTORICO fetch] Status da Resposta: ${response.status}`);
-          console.log(`[HISTORICO fetch] Resposta (Texto): ${responseText.substring(0, 100)}...`);
-
           if (!response.ok) {
             let errorData = { message: `Erro ${response.status}` };
             try { errorData = JSON.parse(responseText); } catch (e) { /* Ignora */ }
-            console.error("[HISTORICO fetch] Erro na resposta da API:", errorData);
             throw new Error(errorData.message || `Falha ao buscar histórico (${response.status})`);
           }
 
@@ -61,17 +50,26 @@ function HistoricoLancamentos({ user, unidadeId }) {
         } catch (err) {
           console.error("[HISTORICO fetch] Erro no bloco catch:", err);
           setError(err.message);
+          setLancamentos([]); // Garante que a lista fica vazia em caso de erro
         } finally {
           setIsLoading(false);
         }
       };
       fetchHistorico();
     } else {
-      console.log("[HISTORICO useEffect] CONDIÇÃO FALSA. Limpando lançamentos.");
       setLancamentos([]);
     }
   }, [user, unidadeId]);
-  // --- FIM DO useEffect COM FILTRO DE MÊS ATUAL ---
+
+  // --- CÁLCULO DOS TOTAIS ---
+  const totalReceitas = lancamentos
+    .filter(item => item.tipo_de_operacao === 'Receita')
+    .reduce((acc, item) => acc + parseFloat(item.valor_r || 0), 0);
+
+  const totalDespesas = lancamentos
+    .filter(item => item.tipo_de_operacao === 'Despesa')
+    .reduce((acc, item) => acc + parseFloat(item.valor_r || 0), 0);
+  // --- FIM CÁLCULO TOTAIS ---
 
   const formatarData = (dataISO) => {
     if (!dataISO) return '-';
@@ -80,52 +78,113 @@ function HistoricoLancamentos({ user, unidadeId }) {
   };
 
   const formatarValor = (valor) => {
-    return parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
-  const renderContent = () => {
+  // --- FUNÇÃO PARA RENDERIZAR UMA LINHA DA TABELA ---
+  const renderLinha = (item) => (
+    <tr key={item.id_de_lancamento}>
+      <td>{formatarData(item.data_pagamento)}</td>
+      <td>{item.descricao || item.categoria}</td>
+      <td className={`valor-${item.tipo_de_operacao.toLowerCase()}`}>
+        {formatarValor(parseFloat(item.valor_r || 0))}
+      </td>
+       {/* Adicionaremos o botão Editar aqui depois */}
+      {/* <td><button>Editar</button></td> */}
+    </tr>
+  );
+  // --- FIM FUNÇÃO LINHA ---
+
+  // --- LÓGICA DE RENDERIZAÇÃO PRINCIPAL ---
+  // --- LÓGICA DE RENDERIZAÇÃO PRINCIPAL (CORRIGIDA) ---
+  const renderHistorico = () => {
+    // Condições de guarda iniciais
     if (!unidadeId) {
-      return <tr><td colSpan="4">Por favor, selecione uma unidade.</td></tr>;
+      return <p className="historico-mensagem">Por favor, selecione uma unidade.</p>;
     }
     if (isLoading) {
-      return <tr><td colSpan="4">A carregar histórico...</td></tr>;
+      return <p className="historico-mensagem">A carregar histórico...</p>;
     }
     if (error) {
-      return <tr><td colSpan="4" className="valor-despesa">{error}</td></tr>;
+      return <p className="historico-mensagem erro">{error}</p>;
     }
     if (lancamentos.length === 0) {
-      return <tr><td colSpan="4">Nenhum lançamento encontrado para si nesta unidade (Teste URL Fixa).</td></tr>;
+      return <p className="historico-mensagem">Nenhum lançamento encontrado para este mês nesta unidade.</p>;
     }
-    return lancamentos.map(item => (
-      <tr key={item.id_de_lancamento}>
-        <td>{formatarData(item.data_pagamento)}</td>
-        <td>{item.descricao || item.categoria}</td>
-        <td className="valor-receita">
-          {item.tipo_de_operacao === 'Receita' ? formatarValor(item.valor_r) : '-'}
-        </td>
-        <td className="valor-despesa">
-          {item.tipo_de_operacao === 'Despesa' ? formatarValor(item.valor_r) : '-'}
-        </td>
-      </tr>
-    ));
-  };
+
+    // Filtra as listas DEPOIS de garantir que 'lancamentos' tem dados
+    const receitasDoMes = lancamentos.filter(item => item.tipo_de_operacao === 'Receita');
+    const despesasDoMes = lancamentos.filter(item => item.tipo_de_operacao === 'Despesa');
+
+    return (
+      // Usamos Fragment <> para agrupar múltiplos elementos
+      <>
+        {/* === Secção Receitas === */}
+        <div className="resumo-seccao" onClick={() => setMostrarReceitas(!mostrarReceitas)} role="button" tabIndex={0} /* Acessibilidade */ >
+          <h3>{mostrarReceitas ? '▼' : '►'} Total Receitas do Mês:</h3>
+          <span className="valor-receita">{formatarValor(totalReceitas)}</span>
+        </div>
+        {/* Tabela de Receitas (Condicional) */}
+        {mostrarReceitas && receitasDoMes.length > 0 && (
+          <div className="detalhe-tabela-wrapper"> {/* Wrapper para estilo/animação */}
+            <table className="tabela-lancamentos detalhe">
+              <thead>
+                <tr>
+                  <th>Data Pag.</th>
+                  <th>Descrição</th>
+                  <th style={{ textAlign: 'right' }}>Valor</th>
+                  {/* Futuro Cabeçalho Editar */}
+                  {/* <th>Ação</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {receitasDoMes.map(renderLinhaDetalhe)}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {mostrarReceitas && receitasDoMes.length === 0 && (
+            <p className="historico-mensagem detalhe">Nenhuma receita encontrada.</p>
+        )}
+
+
+        {/* === Secção Despesas === */}
+        <div className="resumo-seccao" onClick={() => setMostrarDespesas(!mostrarDespesas)} role="button" tabIndex={0}>
+          <h3>{mostrarDespesas ? '▼' : '►'} Total Despesas do Mês:</h3>
+          <span className="valor-despesa">{formatarValor(totalDespesas)}</span>
+        </div>
+        {/* Tabela de Despesas (Condicional) */}
+        {mostrarDespesas && despesasDoMes.length > 0 && (
+          <div className="detalhe-tabela-wrapper">
+            <table className="tabela-lancamentos detalhe">
+              <thead>
+                <tr>
+                  <th>Data Pag.</th>
+                  <th>Descrição</th>
+                  <th style={{ textAlign: 'right' }}>Valor</th>
+                  {/* <th>Ação</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {despesasDoMes.map(renderLinhaDetalhe)}
+              </tbody>
+            </table>
+          </div>
+        )}
+         {mostrarDespesas && despesasDoMes.length === 0 && (
+            <p className="historico-mensagem detalhe">Nenhuma despesa encontrada.</p>
+        )}
+
+        {/* Removido o botão/tabela "Histórico Completo" por agora para simplificar */}
+
+      </> // Fim do Fragment
+    );
+  }; // --- FIM DA FUNÇÃO renderHistorico ---
 
   return (
     <div className="historico-wrapper">
-      <h2>Histórico de Lançamentos Recentes</h2>
-      <table className="tabela-lancamentos">
-        <thead>
-          <tr>
-            <th>Data Pag.</th>
-            <th>Descrição</th>
-            <th>Receita</th>
-            <th>Despesa</th>
-          </tr>
-        </thead>
-        <tbody>
-          {renderContent()}
-        </tbody>
-      </table>
+      <h2>Resumo do Mês Atual</h2>
+      {renderHistorico()}
     </div>
   );
 }
