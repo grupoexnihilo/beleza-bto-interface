@@ -1,23 +1,20 @@
-// --- VERSÃO FINAL COM FILTROS DE DATA E JSX CORRIGIDO ---
+// --- VERSÃO FINAL COMPLETA (Filtros + Data Corrigida) ---
 import React, { useState, useEffect } from 'react';
 import './HistoricoLancamentos.css';
 
-// Função auxiliar fora do componente para formatar data para YYYY-MM-DD
+// Função auxiliar fora do componente para formatar data para YYYY-MM-DD (para inputs)
 const formatarDataParaInput = (data) => {
-  if (!data || !(data instanceof Date)) return ''; // Adiciona verificação
+  if (!data || !(data instanceof Date)) return '';
   return data.toISOString().split('T')[0];
 };
 
-// Função auxiliar fora do componente para formatar data para DD/MM/YYYY
-// SUBSTITUA A FUNÇÃO formatarData PELA SEGUINTE:
-
+// ***** INÍCIO DA FUNÇÃO formatarData CORRIGIDA *****
 const formatarData = (dataInput) => {
   // Retorna '-' se a entrada for inválida ou vazia
   if (!dataInput || typeof dataInput !== 'string') return '-';
 
   try {
     // Tenta criar um objeto Date a partir da string recebida (ISO ou YYYY-MM-DD)
-    // O construtor Date() tenta lidar com fusos horários (o 'Z' indica UTC)
     const dataObj = new Date(dataInput);
 
     // Verifica se a data criada é válida
@@ -27,9 +24,8 @@ const formatarData = (dataInput) => {
     }
 
     // Extrai dia, mês e ano usando métodos que respeitam o fuso horário LOCAL do navegador
-    // Preenche com zero à esquerda se necessário (ex: '01', '02', ..., '10', '11')
     const dia = String(dataObj.getDate()).padStart(2, '0');
-    const mes = String(dataObj.getMonth() + 1).padStart(2, '0'); // Mês é base 0 (Janeiro=0)
+    const mes = String(dataObj.getMonth() + 1).padStart(2, '0'); // Mês é base 0
     const ano = dataObj.getFullYear();
 
     // Retorna no formato DD/MM/YYYY
@@ -37,9 +33,10 @@ const formatarData = (dataInput) => {
 
   } catch (e) {
     console.error("Erro inesperado ao formatar data:", dataInput, e);
-    return '-'; // Fallback em caso de erro
+    return '-'; // Fallback
   }
 };
+// ***** FIM DA FUNÇÃO formatarData CORRIGIDA *****
 
 // Função auxiliar fora do componente para formatar valor monetário
 const formatarValor = (valor) => {
@@ -128,7 +125,7 @@ function HistoricoLancamentos({ user, unidadeId }) {
   // --- Função para Renderizar Linha de Detalhe ---
   const renderLinha = (item) => ( // Nome correto da função
     <tr key={item.id_de_lancamento}>
-      <td>{formatarData(item.data_pagamento)}</td>
+      <td>{formatarData(item.data_pagamento)}</td> {/* Usa a função corrigida */}
       <td>{item.descricao || item.categoria}</td>
       <td className={`valor-${item.tipo_de_operacao?.toLowerCase()}`}>
         {formatarValor(item.valor_r)}
@@ -140,7 +137,6 @@ function HistoricoLancamentos({ user, unidadeId }) {
   // --- Lógica de Renderização Principal ---
   const renderHistorico = () => {
     if (!unidadeId) { return <p className="historico-mensagem">Por favor, selecione uma unidade.</p>; }
-    // Removemos o loading daqui para não piscar a cada filtro
     if (error) { return <p className="historico-mensagem erro">{error}</p>; }
 
     const receitasDoPeriodo = lancamentos.filter(item => item.tipo_de_operacao === 'Receita');
@@ -150,16 +146,15 @@ function HistoricoLancamentos({ user, unidadeId }) {
       <>
         {/* === Secção Receitas === */}
         <div className="resumo-seccao" onClick={() => setMostrarReceitas(!mostrarReceitas)} role="button" tabIndex={0}>
-          <h3>{mostrarReceitas ? '▼' : '►'} Total Receitas ({formatarData(dataInicioFiltro)} a {formatarData(dataFimFiltro)}):</h3>
+          <h3>{mostrarReceitas ? '▼' : '►'} Total Receitas ({formatarData(dataInicioFiltro)} a {formatarData(dataFimFiltro)}):</h3> {/* Usa a função corrigida */}
           <span className="valor-receita">{formatarValor(totalReceitas)}</span>
         </div>
-        {/* Tabela de Receitas (Condicional com JSX correto) */}
         {mostrarReceitas && (
             receitasDoPeriodo.length > 0 ? (
                 <div className="detalhe-tabela-wrapper">
                     <table className="tabela-lancamentos detalhe">
                     <thead><tr><th>Data Pag.</th><th>Descrição</th><th style={{ textAlign: 'right' }}>Valor</th>{/*<th>Ação</th>*/}</tr></thead>
-                    <tbody>{receitasDoPeriodo.map(renderLinha)}</tbody> {/* Usando renderLinha */}
+                    <tbody>{receitasDoPeriodo.map(renderLinha)}</tbody>
                     </table>
                 </div>
             ) : (
@@ -169,16 +164,15 @@ function HistoricoLancamentos({ user, unidadeId }) {
 
         {/* === Secção Despesas === */}
         <div className="resumo-seccao" onClick={() => setMostrarDespesas(!mostrarDespesas)} role="button" tabIndex={0}>
-          <h3>{mostrarDespesas ? '▼' : '►'} Total Despesas ({formatarData(dataInicioFiltro)} a {formatarData(dataFimFiltro)}):</h3>
+          <h3>{mostrarDespesas ? '▼' : '►'} Total Despesas ({formatarData(dataInicioFiltro)} a {formatarData(dataFimFiltro)}):</h3> {/* Usa a função corrigida */}
           <span className="valor-despesa">{formatarValor(totalDespesas)}</span>
         </div>
-        {/* Tabela de Despesas (Condicional com JSX correto) */}
         {mostrarDespesas && (
             despesasDoPeriodo.length > 0 ? (
                 <div className="detalhe-tabela-wrapper">
                     <table className="tabela-lancamentos detalhe">
                     <thead><tr><th>Data Pag.</th><th>Descrição</th><th style={{ textAlign: 'right' }}>Valor</th>{/*<th>Ação</th>*/}</tr></thead>
-                    <tbody>{despesasDoPeriodo.map(renderLinha)}</tbody> {/* Usando renderLinha */}
+                    <tbody>{despesasDoPeriodo.map(renderLinha)}</tbody>
                     </table>
                 </div>
             ) : (
@@ -209,9 +203,8 @@ function HistoricoLancamentos({ user, unidadeId }) {
 
       {/* Título e Conteúdo do Histórico */}
       <h2>Resumo do Período Selecionado</h2>
-      {/* Mostra 'A carregar...' apenas durante a busca */}
       {isLoading && <p className="historico-mensagem">A carregar...</p>}
-      {!isLoading && renderHistorico()} {/* Renderiza totais/tabelas se não estiver loading */}
+      {!isLoading && renderHistorico()}
     </div>
   );
 }
