@@ -6,7 +6,7 @@ import LoginForm from './LoginForm.jsx'; // Corrigido para L maiúsculo
 import EntradaRapidaForm from './EntradaRapidaForm.jsx';
 import AdicionarDespesaForm from './AdicionarDespesaForm.jsx';
 import HistoricoLancamentos from './HistoricoLancamentos.jsx';
-import logoBelezaBTO from './logo-beleza-bto.png'
+import logoBelezaBTO from './logo-beleza-bto.png';
 
 function App() {
   console.log("--- EXECUTANDO A VERSÃO MAIS RECENTE DO App.jsx (Build do Vercel) ---");
