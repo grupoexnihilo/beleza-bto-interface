@@ -9,22 +9,36 @@ const formatarDataParaInput = (data) => {
 };
 
 // Função auxiliar fora do componente para formatar data para DD/MM/YYYY
-const formatarData = (dataISO) => {
-    if (!dataISO || typeof dataISO !== 'string') return '-';
-    // Verifica se já está no formato DD/MM/YYYY (do título) ou YYYY-MM-DD (do input)
-    if (dataISO.includes('/')) return dataISO;
-    if (dataISO.includes('-')) {
-        const parts = dataISO.split('-');
-        if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+// SUBSTITUA A FUNÇÃO formatarData PELA SEGUINTE:
+
+const formatarData = (dataInput) => {
+  // Retorna '-' se a entrada for inválida ou vazia
+  if (!dataInput || typeof dataInput !== 'string') return '-';
+
+  try {
+    // Tenta criar um objeto Date a partir da string recebida (ISO ou YYYY-MM-DD)
+    // O construtor Date() tenta lidar com fusos horários (o 'Z' indica UTC)
+    const dataObj = new Date(dataInput);
+
+    // Verifica se a data criada é válida
+    if (isNaN(dataObj.getTime())) {
+      console.warn("Formato de data inválido recebido:", dataInput);
+      return '-'; // Retorna '-' se a data for inválida
     }
-    // Fallback para datas da API (com T)
-    try {
-        const [ano, mes, dia] = dataISO.split('T')[0].split('-');
-        return `${dia}/${mes}/${ano}`;
-    } catch (e) {
-        console.error("Erro ao formatar data:", dataISO, e);
-        return '-'; // Retorna '-' em caso de formato inesperado
-    }
+
+    // Extrai dia, mês e ano usando métodos que respeitam o fuso horário LOCAL do navegador
+    // Preenche com zero à esquerda se necessário (ex: '01', '02', ..., '10', '11')
+    const dia = String(dataObj.getDate()).padStart(2, '0');
+    const mes = String(dataObj.getMonth() + 1).padStart(2, '0'); // Mês é base 0 (Janeiro=0)
+    const ano = dataObj.getFullYear();
+
+    // Retorna no formato DD/MM/YYYY
+    return `${dia}/${mes}/${ano}`;
+
+  } catch (e) {
+    console.error("Erro inesperado ao formatar data:", dataInput, e);
+    return '-'; // Fallback em caso de erro
+  }
 };
 
 // Função auxiliar fora do componente para formatar valor monetário
