@@ -138,7 +138,7 @@ function HistoricoLancamentos({ user, unidadeId }) {
                 </tr>
               </thead>
               <tbody>
-                {receitasDoMes.map(renderLinhaDetalhe)}
+                {receitasDoMes.map(renderLinha)}
               </tbody>
             </table>
           </div>
@@ -166,7 +166,7 @@ function HistoricoLancamentos({ user, unidadeId }) {
                 </tr>
               </thead>
               <tbody>
-                {despesasDoMes.map(renderLinhaDetalhe)}
+                {despesasDoMes.map(renderLinha)}
               </tbody>
             </table>
           </div>
