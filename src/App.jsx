@@ -173,7 +173,7 @@ function App() {
       <header className="app-header">
   {/* --- ADICIONAR LOGO AQUI --- */}
         <div style={{ display: 'flex', alignItems: 'center' }}> {/* Wrapper para alinhar logo e texto */}
-          <img src={logo-beleza-bto.png} alt="Beleza BTO Logo" className="app-logo" />
+          <img src={logoBelezaBTO} alt="Beleza BTO Logo" className="app-logo" />
           <span>Bem-vindo, {userName || (user ? user.email : '')}!</span>
         </div>
         {/* --- FIM LOGO --- */}
