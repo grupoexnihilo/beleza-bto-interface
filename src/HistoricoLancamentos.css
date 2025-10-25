@@ -1,68 +1,82 @@
-.historico-wrapper {
-  margin-top: 40px;
-  width: 100%;
-  animation: fadeIn 0.6s ease-out;
-}
+/* Ajustes para HistoricoLancamentos.css */
 
 .historico-wrapper h2 {
-  text-align: left;
-  font-size: 1.8rem;
-  color: #2c3e50;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 15px;
+  /* Outros estilos para o título principal */
 }
 
-.tabela-lancamentos {
-  width: 100%;
-  border-collapse: collapse;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
-  overflow: hidden; /* Garante que o border-radius aplique nas células */
+.resumo-seccao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  background-color: #f8f9fa; /* Cor de fundo clara para os totais */
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.tabela-lancamentos th,
-.tabela-lancamentos td {
-  padding: 15px;
-  text-align: left;
+.resumo-seccao:hover {
+  background-color: #e9ecef; /* Cor ao passar o mouse */
 }
 
-.tabela-lancamentos th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-  color: #34495e;
-  font-size: 1rem;
+.resumo-seccao h3 {
+  margin: 0;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
 }
 
-.tabela-lancamentos tbody tr {
-  border-bottom: 1px solid #f1f1f1;
-}
-
-.tabela-lancamentos tbody tr:last-child {
-  border-bottom: none;
-}
-
-.tabela-lancamentos tbody tr:hover {
-  background-color: #f5f5f5;
-}
-
+/* Estilos para os valores (cores podem vir de index.css ou ser definidas aqui) */
 .valor-receita {
-  color: #28a745;
+  color: #28a745; /* Verde */
   font-weight: bold;
 }
 
 .valor-despesa {
-  color: #dc3545;
+  color: #dc3545; /* Vermelho */
   font-weight: bold;
 }
 
-.tabela-lancamentos tfoot td {
-  font-weight: bold;
-  font-size: 1.1rem;
-  padding-top: 15px;
-  border-top: 2px solid #333;
+/* Tabela de Detalhes */
+.tabela-lancamentos.detalhe {
+  margin-top: -5px; /* Cola na secção de resumo */
+  margin-bottom: 15px;
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.total-geral {
-  color: #007bff;
+.tabela-lancamentos.detalhe th,
+.tabela-lancamentos.detalhe td {
+  border: 1px solid #dee2e6; /* Borda da tabela */
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.tabela-lancamentos.detalhe thead {
+  background-color: #e9ecef; /* Fundo do cabeçalho */
+}
+
+.tabela-lancamentos.detalhe td:last-child { /* Alinha valor à direita */
+  text-align: right;
+}
+
+/* Mensagens (Carregando, Erro, Vazio) */
+.historico-mensagem {
+  padding: 20px;
+  text-align: center;
+  color: #6c757d; /* Cinza */
+}
+.historico-mensagem.erro {
+  color: #dc3545; /* Vermelho para erro */
+  font-weight: bold;
+}
+
+/* Botão Histórico Completo (Estilo básico) */
+.botao-historico-completo {
+  margin-top: 15px;
+  padding: 8px 15px;
+  cursor: pointer;
+  /* Outros estilos de botão */
 }
