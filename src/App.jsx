@@ -6,6 +6,7 @@ import LoginForm from './LoginForm.jsx'; // Corrigido para L maiúsculo
 import EntradaRapidaForm from './EntradaRapidaForm.jsx';
 import AdicionarDespesaForm from './AdicionarDespesaForm.jsx';
 import HistoricoLancamentos from './HistoricoLancamentos.jsx';
+import logoBelezaBTO from './logo-beleza-bto.png'
 
 function App() {
   console.log("--- EXECUTANDO A VERSÃO MAIS RECENTE DO App.jsx (Build do Vercel) ---");
@@ -172,7 +173,7 @@ function App() {
       <header className="app-header">
   {/* --- ADICIONAR LOGO AQUI --- */}
         <div style={{ display: 'flex', alignItems: 'center' }}> {/* Wrapper para alinhar logo e texto */}
-          <img src="/logo-beleza-bto.png" alt="Beleza BTO Logo" className="app-logo" />
+          <img src={logo-beleza-bto.png} alt="Beleza BTO Logo" className="app-logo" />
           <span>Bem-vindo, {userName || (user ? user.email : '')}!</span>
         </div>
         {/* --- FIM LOGO --- */}
