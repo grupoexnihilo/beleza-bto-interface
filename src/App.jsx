@@ -170,7 +170,12 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <span>Bem-vindo, {userName || (user ? user.email : '')}!</span>
+  {/* --- ADICIONAR LOGO AQUI --- */}
+        <div style={{ display: 'flex', alignItems: 'center' }}> {/* Wrapper para alinhar logo e texto */}
+          <img src="/logo-beleza-bto.png" alt="Beleza BTO Logo" className="app-logo" />
+          <span>Bem-vindo, {userName || (user ? user.email : '')}!</span>
+        </div>
+        {/* --- FIM LOGO --- */}
         <button onClick={handleLogout} className="logout-button">Sair</button>
       </header>
       <main>
