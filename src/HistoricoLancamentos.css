@@ -1,82 +1,174 @@
-/* Ajustes para HistoricoLancamentos.css */
+/* --- src/HistoricoLancamentos.css - DARK MODE THEME --- */
 
-.historico-wrapper h2 {
-  margin-bottom: 15px;
-  /* Outros estilos para o título principal */
+.historico-wrapper {
+  margin-top: 30px; /* Adiciona espaço acima do histórico */
 }
 
+.historico-wrapper h2 {
+  margin-bottom: 20px;
+  color: var(--text-color-primary); /* Texto claro para o título principal */
+  font-size: 1.4rem; /* Ajuste tamanho se necessário */
+  border-bottom: 1px solid var(--border-color); /* Linha divisória */
+  padding-bottom: 10px;
+}
+
+/* --- Filtros (Mantém o estilo claro/distinto, mas ajusta cores) --- */
+.filtro-historico {
+  display: flex;
+  flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+  gap: 15px;
+  align-items: flex-end;
+  margin-bottom: 25px;
+  padding: 15px 20px; /* Ajuste padding */
+  background-color: var(--surface-color-dark); /* <<< MUDANÇA: Fundo escuro secundário */
+  border-radius: 6px; /* Bordas consistentes */
+  border: 1px solid var(--border-color); /* <<< MUDANÇA: Borda escura */
+}
+
+.filtro-campo {
+  display: flex;
+  flex-direction: column;
+}
+
+.filtro-campo label {
+  margin-bottom: 5px;
+  font-size: 0.85rem; /* Menor para labels de filtro */
+  color: var(--text-color-secondary); /* <<< MUDANÇA: Cor secundária */
+  font-weight: 500;
+}
+
+/* Inputs dentro do filtro herdam o estilo global definido em index.css */
+/* Não precisamos redefinir input[type="date"], input[type="search"] aqui */
+
+.botao-filtrar {
+  padding: 8px 15px; /* Altura consistente com inputs */
+  cursor: pointer;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px; /* Consistente */
+  transition: background-color 0.2s ease;
+  height: 40px; /* Alinha altura com inputs (ajuste padding/height) */
+  box-sizing: border-box;
+}
+
+.botao-filtrar:hover {
+  background-color: var(--primary-color-hover);
+}
+
+.botao-filtrar:disabled {
+  background-color: var(--input-bg);
+  color: var(--text-color-secondary);
+  cursor: not-allowed;
+}
+
+/* --- Secções de Resumo Expansíveis --- */
 .resumo-seccao {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
-  margin-bottom: 5px;
-  background-color: #f8f9fa; /* Cor de fundo clara para os totais */
-  border-radius: 4px;
+  padding: 12px 18px; /* Ajuste padding */
+  margin-bottom: 8px; /* Aumenta espaço entre secções */
+  background-color: var(--surface-color-dark); /* <<< MUDANÇA: Fundo escuro secundário */
+  border-radius: 6px;
+  border: 1px solid var(--border-color); /* <<< MUDANÇA: Borda sutil */
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .resumo-seccao:hover {
-  background-color: #e9ecef; /* Cor ao passar o mouse */
+  background-color: #3a3c40; /* <<< MUDANÇA: Tom ligeiramente mais claro no hover */
 }
 
 .resumo-seccao h3 {
   margin: 0;
-  font-size: 1.1em;
+  font-size: 1.05em; /* Ajuste tamanho */
   display: flex;
   align-items: center;
+  color: var(--text-color-primary); /* <<< MUDANÇA: Texto principal claro (CORRIGE O PROBLEMA) */
+  font-weight: 600; /* Destaque leve */
 }
 
-/* Estilos para os valores (cores podem vir de index.css ou ser definidas aqui) */
+/* Cores dos valores de total (já definidas, mas confirmamos) */
 .valor-receita {
-  color: #28a745; /* Verde */
+  color: var(--success-color); /* Verde */
   font-weight: bold;
 }
 
 .valor-despesa {
-  color: #dc3545; /* Vermelho */
+  color: var(--danger-color); /* Vermelho */
   font-weight: bold;
 }
 
-/* Tabela de Detalhes */
+/* --- Tabelas de Detalhe --- */
+.detalhe-tabela-wrapper { /* Novo wrapper para margem/padding */
+    margin-top: -5px; /* Cola na secção */
+    margin-bottom: 15px;
+    padding: 0 10px; /* Pequeno recuo lateral */
+}
+
 .tabela-lancamentos.detalhe {
-  margin-top: -5px; /* Cola na secção de resumo */
-  margin-bottom: 15px;
   width: 100%;
   border-collapse: collapse;
+  background-color: var(--bg-color-dark); /* <<< MUDANÇA: Fundo principal escuro para a tabela */
+  border: 1px solid var(--border-color); /* Borda externa opcional */
+  border-radius: 4px; /* Pequeno arredondamento */
+  overflow: hidden; /* Garante que o radius funcione */
 }
 
 .tabela-lancamentos.detalhe th,
 .tabela-lancamentos.detalhe td {
-  border: 1px solid #dee2e6; /* Borda da tabela */
-  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color); /* <<< MUDANÇA: Apenas borda inferior */
+  padding: 10px 14px; /* Ajuste padding */
   text-align: left;
+  color: var(--text-color-secondary); /* <<< MUDANÇA: Cor secundária para dados */
+  font-size: 0.95rem;
 }
 
-.tabela-lancamentos.detalhe thead {
-  background-color: #e9ecef; /* Fundo do cabeçalho */
+.tabela-lancamentos.detalhe th { /* Estilo do Cabeçalho */
+   background-color: var(--surface-color-dark); /* <<< MUDANÇA: Fundo secundário */
+   color: var(--text-color-primary); /* <<< MUDANÇA: Texto principal */
+   font-weight: 600;
+   border-bottom-width: 2px; /* Linha mais grossa abaixo do header */
 }
 
-.tabela-lancamentos.detalhe td:last-child { /* Alinha valor à direita */
+.tabela-lancamentos.detalhe td:last-child { /* Alinha última coluna (Valor) à direita */
   text-align: right;
+  font-weight: 500; /* Leve destaque no valor */
 }
 
-/* Mensagens (Carregando, Erro, Vazio) */
+/* Cores específicas para valores na tabela */
+.tabela-lancamentos.detalhe td.valor-receita {
+    color: var(--success-color);
+}
+.tabela-lancamentos.detalhe td.valor-despesa {
+    color: var(--danger-color);
+}
+
+/* Remove borda inferior da última linha */
+.tabela-lancamentos.detalhe tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* --- Mensagens --- */
 .historico-mensagem {
-  padding: 20px;
+  padding: 25px; /* Aumenta padding */
   text-align: center;
-  color: #6c757d; /* Cinza */
+  color: var(--text-color-secondary); /* <<< MUDANÇA: Cor secundária */
+  font-style: italic; /* Estilo para mensagens */
 }
 .historico-mensagem.erro {
-  color: #dc3545; /* Vermelho para erro */
+  color: var(--danger-color); /* Vermelho */
   font-weight: bold;
+  font-style: normal;
+}
+.historico-mensagem.detalhe { /* Mensagem dentro de secção expandida */
+    padding: 15px;
+    font-size: 0.9em;
+    background-color: var(--bg-color-dark); /* Fundo consistente */
+    margin-top: -5px;
+    margin-bottom: 15px;
 }
 
-/* Botão Histórico Completo (Estilo básico) */
-.botao-historico-completo {
-  margin-top: 15px;
-  padding: 8px 15px;
-  cursor: pointer;
-  /* Outros estilos de botão */
-}
+/* Remover estilo do botão completo se não o estamos a usar */
+/* .botao-historico-completo { ... } */
