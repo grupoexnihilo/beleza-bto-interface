@@ -1,32 +1,38 @@
+/* --- src/EntradaRapidaForm.css - AJUSTADO PARA DARK MODE --- */
+
 /* Contenedor principal do formulário */
 .form-container {
-  background-color: #ffffff;
+  /* Mantém estrutura, mas remove fundo branco (será herdado ou definido pelo App/Dashboard) */
+  /* background-color: #ffffff; */ /* REMOVIDO */
   padding: 25px 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border-radius: 8px; /* Ajustado para consistência */
+  /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); */ /* Sombra virá do container pai ou index.css */
   max-width: 900px;
   margin: 20px auto;
   animation: fadeIn 0.5s ease-out;
+  color: var(--text-color-primary); /* Garante texto claro */
 }
 
 .form-container h3 {
   text-align: center;
-  color: #2c3e50;
+  color: var(--text-color-primary); /* Cor primária do texto */
   font-size: 1.5rem;
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 25px; /* Aumenta espaço abaixo do título */
+  border-bottom: 1px solid var(--border-color); /* Adiciona linha divisória */
+  padding-bottom: 15px;
 }
 
 .entrada-form {
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Espaçamento entre as secções */
+  gap: 25px; /* Aumenta espaçamento entre seções */
 }
 
 /* Linha de campos do formulário */
 .form-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Ajusta minmax */
   gap: 20px;
 }
 
@@ -36,80 +42,89 @@
   flex-direction: column;
 }
 
+/* Label herda cor padrão de index.css (--text-color-secondary) */
 .form-group label {
   margin-bottom: 8px;
-  color: #5d6d7e;
-  font-size: 14px;
+  /* color: #5d6d7e; */ /* REMOVIDO - Usa cor global */
+  font-size: 0.9rem; /* Ajustado */
   font-weight: 500;
 }
 
+/* === AJUSTE PRINCIPAL AQUI === */
+/* Estilo comum para inputs e selects DENTRO deste formulário */
 .form-group input,
 .form-group select {
-  padding: 12px;
-  border: 1px solid #c0d9e7;
-  border-radius: 8px;
-  font-size: 16px;
-  background-color: #f8f9fa;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
+  /* Removemos cores e bordas específicas para herdar do index.css */
+  /* background-color: #f8f9fa; */  /* REMOVIDO */
+  /* border: 1px solid #c0d9e7; */  /* REMOVIDO */
+  /* color: INICIAL; */             /* REMOVIDO */
 
-.form-group input:focus,
-.form-group select:focus {
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
-  outline: none;
+  /* Mantemos/Ajustamos outros estilos */
+  padding: 12px 15px; /* Padrão de index.css */
+  border-radius: 6px; /* Padrão de index.css */
+  font-size: 1rem;    /* Padrão de index.css */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+  width: 100%;
+  /* Foco será herdado do index.css */
 }
+/* === FIM AJUSTE PRINCIPAL === */
 
 /* Linha horizontal para separar */
 hr {
   border: none;
-  border-top: 1px solid #e0e0e0;
-  margin: 10px 0;
+  border-top: 1px solid var(--border-color); /* Usa cor de borda do tema */
+  margin: 15px 0; /* Ajusta margem */
 }
 
 .entrada-form h4 {
-  color: #34495e;
-  margin-bottom: 10px;
-  border-bottom: 2px solid #3498db;
-  padding-bottom: 5px;
+  color: var(--text-color-secondary); /* Usa cor secundária */
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--primary-color); /* Linha com cor primária */
+  padding-bottom: 8px;
   display: inline-block;
+  font-size: 1.1rem;
 }
 
-/* Botão de submissão */
+/* Botão de submissão (Mantém cor verde para Receita) */
 .submit-button {
-  padding: 14px;
+  padding: 12px 25px; /* Ajusta padding */
   border: none;
-  border-radius: 8px;
-  background-color: #28a745; /* Verde para sucesso/salvar */
+  border-radius: 6px; /* Consistente */
+  background-color: var(--success-color); /* Verde */
   color: white;
-  font-size: 17px;
-  font-weight: bold;
+  font-size: 1rem; /* Ajusta tamanho */
+  font-weight: 600; /* Peso */
   cursor: pointer;
   transition: background-color 0.3s ease;
-  align-self: flex-end; /* Alinha o botão à direita */
-  min-width: 200px;
+  align-self: flex-end;
+  min-width: 180px; /* Ajusta largura mínima */
 }
 
 .submit-button:hover {
-  background-color: #218838;
+  background-color: #218838; /* Verde mais escuro no hover */
 }
 
 .submit-button:disabled {
-  background-color: #9E9E9E;
+  background-color: #5a5a5a; /* Cinza mais escuro para desabilitado */
   cursor: not-allowed;
+  color: var(--text-color-secondary);
 }
 
 /* Mensagem de feedback (sucesso ou erro) */
 .message-feedback {
   text-align: center;
   margin-top: 15px;
-  font-size: 15px;
+  font-size: 0.95rem;
   font-weight: 500;
-  color: #28a745;
+  color: var(--success-color); /* Mantém verde para sucesso (ajustar para erro se necessário) */
 }
 
-/* Animações */
+/* Animações (mantidas) */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Botão Voltar (herdará de index.css se a classe for a mesma) */
+/* Se a classe for diferente, copie a regra .back-button do index.css para cá */

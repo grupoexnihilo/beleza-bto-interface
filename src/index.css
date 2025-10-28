@@ -4,8 +4,8 @@
   /* Paleta de Cores Dark Mode (Exemplo - Ajustar se necessário) */
   --bg-color-dark: #1a1d21;       /* Fundo principal bem escuro */
   --surface-color-dark: #2c2f33;  /* Fundo secundário (tom sobre tom) */
-  --text-color-primary: #e4e6eb; /* Texto principal (branco/cinza claro) */
-  --text-color-secondary: #b0b3b8;/* Texto secundário (cinza médio) */
+  --text-color-primary: #3f4d6f; /* Texto principal (branco/cinza claro) */
+  --text-color-secondary: #465672;/* Texto secundário (cinza médio) */
   --border-color: #404347;       /* Cor das bordas */
   --primary-color: #4a90e2;      /* Azul principal (mantido ou ajustado) */
   --primary-color-hover: #3a7bc8; /* Azul hover */

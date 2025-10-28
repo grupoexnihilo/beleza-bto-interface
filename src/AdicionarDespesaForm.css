@@ -1,54 +1,86 @@
-/* Contenedor principal do formulário de Despesa */
+/* --- src/AdicionarDespesaForm.css - AJUSTADO PARA DARK MODE --- */
+
+/* Contenedor principal (herda muitos estilos se a classe for a mesma de EntradaRapidaForm) */
+/* Se usar .form-container-despesa, aplicar estilos base */
 .form-container-despesa {
-  background-color: #ffffff;
   padding: 25px 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
   max-width: 900px;
   margin: 20px auto;
   animation: fadeIn 0.5s ease-out;
+  color: var(--text-color-primary);
 }
 
 .form-container-despesa h3 {
   text-align: center;
-  color: #2c3e50;
+  color: var(--text-color-primary);
   font-size: 1.5rem;
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 15px;
 }
 
 .despesa-form {
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Espaçamento entre as secções */
+  gap: 20px;
 }
 
-/* Botão de submissão para despesas */
+/* Garante que inputs/selects herdem o estilo global */
+.despesa-form .form-group input,
+.despesa-form .form-group select {
+    /* REMOVER background-color, color, border específicos se existirem */
+    /* Mantém padding, border-radius, font-size se quiser customizar */
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Linhas e Grupos herdam de index.css se as classes forem as mesmas */
+/* Se usar classes diferentes, copie .form-row e .form-group de EntradaRapidaForm.css */
+
+
+/* Botão de submissão para despesas (Mantém cor vermelha) */
 .submit-button-despesa {
-  padding: 14px;
+  padding: 12px 25px;
   border: none;
-  border-radius: 8px;
-  background-color: #e74c3c; /* Vermelho para despesas/saídas */
+  border-radius: 6px;
+  background-color: var(--danger-color); /* Vermelho */
   color: white;
-  font-size: 17px;
-  font-weight: bold;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
   align-self: flex-end;
-  min-width: 200px;
+  min-width: 180px;
 }
 
 .submit-button-despesa:hover {
-  background-color: #c0392b;
+  background-color: #c0392b; /* Vermelho mais escuro */
 }
 
 .submit-button-despesa:disabled {
-  background-color: #9E9E9E;
+  background-color: #5a5a5a;
   cursor: not-allowed;
+  color: var(--text-color-secondary);
 }
 
-/* A animação pode ser partilhada, mas incluímo-la aqui para garantir */
+/* Mensagem feedback (pode precisar de cor vermelha para erro) */
+.message-feedback {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  /* color: var(--success-color); */ /* Mudar para var(--danger-color) se for erro */
+}
+
+/* Animação (mantida) */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Botão Voltar (herdará de index.css) */
