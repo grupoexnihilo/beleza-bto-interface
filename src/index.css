@@ -3,8 +3,8 @@
 :root {
   /* Paleta de Cores Dark Mode (Exemplo - Ajustar se necessário) */
   --bg-color-dark: #1a1d21;       /* Fundo principal bem escuro */
-  --surface-color-dark: #0b0b27;  /* Fundo secundário (tom sobre tom) */
-  --text-color-primary: #b1b1b1; /* Texto principal (branco/cinza claro) */
+  --surface-color-dark: #ececec;  /* Fundo secundário (tom sobre tom) */
+  --text-color-primary: #0b0b27; /* Texto principal (branco/cinza claro) */
   --text-color-secondary: #465672;/* Texto secundário (cinza médio) */
   --border-color: #404347;       /* Cor das bordas */
   --primary-color: #4a90e2;      /* Azul principal (mantido ou ajustado) */
