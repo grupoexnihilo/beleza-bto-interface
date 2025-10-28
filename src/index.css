@@ -11,7 +11,7 @@
   --primary-color-hover: #3a7bc8; /* Azul hover */
   --success-color: #00af29;      /* Verde (mantido) */
   --danger-color: #e74c3c;       /* Vermelho (mantido) */
-  --input-bg: #3a3b3c;          /* Fundo dos inputs */
+  --input-bg: #232324;          /* Fundo dos inputs */
   --input-border: #55595c;       /* Borda dos inputs */
   --input-focus-border: var(--primary-color);
   --header-bg: var(--surface-color-dark); /* Fundo do header */
