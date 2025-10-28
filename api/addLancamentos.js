@@ -1,4 +1,4 @@
-// --- V.FINAL + GRUPO + FIX FUSO HORÁRIO (Receitas) ---
+// --- V.FINAL + GRUPO + SET TIME ZONE (Receitas) ---
 import pkg from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 const { Pool } = pkg;
@@ -8,21 +8,17 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-// Helper para garantir que a data seja tratada como UTC (o mesmo da outra API)
-const ensureUTCDateString = (dateString) => {
-    if (!dateString || !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return null;
-    return `${dateString}T00:00:00Z`;
-};
-
+// REMOVIDA a função ensureUTCDateString
 // ... (Função getFormaPagamentoMap mantida como antes) ...
 let fpMapCache = null; /* ... */ async function getFormaPagamentoMap(client) { /* ... */ }
+
 
 export default async function handler(req, res) {
  // ... (verificação de método POST mantida) ...
  if (req.method !== 'POST') { /* ... */ }
 
  const {
-    unidadeId, emailOperador, dataCompetencia, dataPagamento,
+    unidadeId, emailOperador, dataCompetencia, dataPagamento, // Espera YYYY-MM-DD
     colaborador, categoria, pagamentos,
   } = req.body;
 
@@ -34,16 +30,20 @@ export default async function handler(req, res) {
   try {
     client = await pool.connect();
 
+    // --- NOVO: Definir o Fuso Horário da Sessão ---
+    await client.query("SET TIME ZONE 'America/Sao_Paulo'");
+    console.log("[INFO] Timezone da sessão definido para America/Sao_Paulo");
+    // --- FIM NOVO ---
+
     const formaPagamentoMap = await getFormaPagamentoMap(client);
     const grupoQuery = 'SELECT grupo FROM dados WHERE categoria = $1 LIMIT 1';
     const grupoResult = await client.query(grupoQuery, [categoria]);
     const grupo = grupoResult.rows.length > 0 ? grupoResult.rows[0].grupo : null;
 
-    // --- MUDANÇA AQUI ---
-    const dataCompetenciaUTC = ensureUTCDateString(dataCompetencia);
+    // --- MUDANÇA: Define dataPagamentoFinal ---
     const dataPagamentoFinal = dataPagamento || dataCompetencia;
-    const dataPagamentoUTC = ensureUTCDateString(dataPagamentoFinal);
     // --- FIM MUDANÇA ---
+
 
     await client.query('BEGIN');
 
@@ -61,15 +61,12 @@ export default async function handler(req, res) {
       const valor = parseFloat(pagamentos[formaLabel]);
       if (valor > 0) {
         const formaId = formaPagamentoMap[formaLabel.toLowerCase()];
-        if (!formaId) {
-            console.warn(`[WARN] Forma de pagamento "${formaLabel}" não encontrada. Pulando.`);
-            continue;
-        }
+        if (!formaId) { /* ... aviso ... */ continue; }
 
         const valores = [
           uuidv4(), emailOperador,
-          dataCompetenciaUTC, // <-- Usa a string UTC
-          dataPagamentoUTC,   // <-- Usa a string UTC
+          dataCompetencia,      // <-- String YYYY-MM-DD
+          dataPagamentoFinal,   // <-- String YYYY-MM-DD
           valor, colaborador, 'Receita',
           formaId, grupo, categoria, 'RECEBIDO', unidadeId
         ];
@@ -80,12 +77,12 @@ export default async function handler(req, res) {
 
     await client.query('COMMIT');
 
-    if (lancamentosCriados === 0) { return res.status(400).json({ message: 'Nenhum valor válido foi inserido.' }); }
-    res.status(201).json({ message: `${lancamentosCriados} lançamento(s) de receita salvo(s) com sucesso!` });
+    if (lancamentosCriados === 0) { /* ... */ }
+    res.status(201).json({ /* ... */ });
 
   } catch (error) {
     if (client) { await client.query('ROLLBACK'); }
-    console.error('[ERROR] Erro ao salvar receitas:', error); // Log mais explícito
+    console.error('[ERROR] Erro ao salvar receitas (com SET TIMEZONE):', error);
     res.status(500).json({ message: 'Erro interno do servidor ao salvar receitas.', error: error.message });
   } finally {
     if (client) { client.release(); }

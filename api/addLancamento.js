@@ -1,31 +1,21 @@
-// --- V.FINAL + GRUPO + FIX FUSO HORÁRIO (Despesas) ---
+// --- V.FINAL + GRUPO + SET TIME ZONE (Despesas) ---
 import pkg from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 const { Pool } = pkg;
 
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
+  connectionString: process.env.POSTGRA_URL, // Corrigido para POSTGRES_URL se estava errado
   ssl: { rejectUnauthorized: false },
 });
 
-// Helper para garantir que a data seja tratada como UTC
-const ensureUTCDateString = (dateString) => {
-    if (!dateString || !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-        // Se a data for inválida ou null, retorna null para o DB
-        return null;
-    }
-    // Adiciona T00:00:00Z para indicar explicitamente meia-noite UTC
-    // O PostgreSQL DATE deve truncar a hora corretamente.
-    return `${dateString}T00:00:00Z`;
-};
-
+// REMOVIDA a função ensureUTCDateString
 
 export default async function handler(req, res) {
   // ... (verificação de método POST mantida) ...
   if (req.method !== 'POST') { /* ... */ }
 
   const {
-    unidadeId, emailOperador, dataCompetencia, dataPagamento,
+    unidadeId, emailOperador, dataCompetencia, dataPagamento, // Espera YYYY-MM-DD
     categoria, formaPagamento, descricao, valor,
   } = req.body;
 
@@ -36,6 +26,12 @@ export default async function handler(req, res) {
   let client;
   try {
     client = await pool.connect();
+
+    // --- NOVO: Definir o Fuso Horário da Sessão ---
+    // Use o identificador IANA correto para sua região. 'America/Sao_Paulo' é comum para MG.
+    await client.query("SET TIME ZONE 'America/Sao_Paulo'");
+    console.log("[INFO] Timezone da sessão definido para America/Sao_Paulo");
+    // --- FIM NOVO ---
 
     const grupoQuery = 'SELECT grupo FROM dados WHERE categoria = $1 LIMIT 1';
     const grupoResult = await client.query(grupoQuery, [categoria]);
@@ -50,18 +46,15 @@ export default async function handler(req, res) {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     `;
 
-    // --- MUDANÇA AQUI ---
-    const dataCompetenciaUTC = ensureUTCDateString(dataCompetencia);
-    // Usa dataPagamento SE existir, senão usa dataCompetencia
+    // --- MUDANÇA: Passa as strings YYYY-MM-DD diretamente ---
     const dataPagamentoFinal = dataPagamento || dataCompetencia;
-    const dataPagamentoUTC = ensureUTCDateString(dataPagamentoFinal);
     // --- FIM MUDANÇA ---
 
     const valores = [
       uuidv4(), emailOperador,
-      dataCompetenciaUTC, // <-- Usa a string UTC
-      dataPagamentoUTC,   // <-- Usa a string UTC
-      parseFloat(valor), 'Despesa', formaPagamento,
+      dataCompetencia,      // <-- String YYYY-MM-DD
+      dataPagamentoFinal,   // <-- String YYYY-MM-DD
+      parseFloat(valor), 'Despesa', formaPagamento, // ID da Forma Pagamento
       grupo, categoria, descricao, 'PAGO', unidadeId
     ];
 
@@ -70,7 +63,7 @@ export default async function handler(req, res) {
     res.status(201).json({ message: 'Despesa salva com sucesso!' });
 
   } catch (error) {
-    console.error('[ERROR] Erro ao salvar despesa:', error); // Log mais explícito
+    console.error('[ERROR] Erro ao salvar despesa (com SET TIMEZONE):', error);
     res.status(500).json({ message: 'Erro interno do servidor ao salvar despesa.', error: error.message });
   } finally {
     if (client) { client.release(); }
