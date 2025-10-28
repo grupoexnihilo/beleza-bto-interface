@@ -79,7 +79,7 @@
 }
 
 .resumo-seccao:hover {
-  background-color: #0c0c0d; /* <<< MUDANÇA: Tom ligeiramente mais claro no hover */
+  background-color: #303030; /* <<< MUDANÇA: Tom ligeiramente mais claro no hover */
   border-color: var(--text-color-secondary);
 }
 
