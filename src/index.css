@@ -221,7 +221,7 @@ select:focus {
 }
 
 input::placeholder { /* Estilo para placeholder */
-    color: var(--text-color-secondary);
+    color: var(--text-color-primary);
     opacity: 0.9;
 }
 
