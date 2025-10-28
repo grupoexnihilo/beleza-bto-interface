@@ -228,7 +228,7 @@ input::placeholder { /* Estilo para placeholder */
 label { /* Estilo padrão para labels */
     display: block; /* Garante que fique acima do input */
     margin-bottom: 6px;
-    color: var(--text-color-secondary);
+    color: var(--text-color-primary);
     font-size: 0.9rem;
     font-weight: 500;
 }
