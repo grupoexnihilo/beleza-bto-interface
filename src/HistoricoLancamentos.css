@@ -121,7 +121,7 @@
   border-bottom: 1px solid var(--border-color); /* <<< MUDANÇA: Apenas borda inferior */
   padding: 10px 14px; /* Ajuste padding */
   text-align: left;
-  color: var(--text-color-secondary); /* <<< MUDANÇA: Cor secundária para dados */
+  color: var(--text-color-primary); /* <<< MUDANÇA: Cor secundária para dados */
   font-size: 0.95rem;
 }
 
