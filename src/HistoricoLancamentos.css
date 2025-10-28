@@ -129,7 +129,7 @@
 }
 
 .tabela-lancamentos.detalhe th { /* Estilo do Cabeçalho */
-   background-color: var(--bg-color-dark); /* <<< MUDANÇA: Fundo secundário */
+   background-color: var(--shadow-color); /* <<< MUDANÇA: Fundo secundário */
    color: var(--text-color-primary); /* <<< MUDANÇA: Texto principal */
    font-weight: 600;
    border-bottom-width: 2px; /* Linha mais grossa abaixo do header */
