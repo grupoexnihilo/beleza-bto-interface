@@ -22,6 +22,10 @@ export default async function handler(req, res) {
     colaborador, categoria, pagamentos,
   } = req.body;
 
+  // --- ADICIONAR ESTE LOG ---
+  console.log("[DEBUG API addLancamentos] Objeto 'pagamentos' recebido:", pagamentos);
+  // -------------------------
+
   if (!unidadeId || !emailOperador || !dataCompetencia || !colaborador || !categoria) {
     return res.status(400).json({ message: 'Campos de cabeçalho obrigatórios.' });
   }

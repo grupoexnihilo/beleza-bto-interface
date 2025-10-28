@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 const { Pool } = pkg;
 
 const pool = new Pool({
-  connectionString: process.env.POSTGRA_URL, // Corrigido para POSTGRES_URL se estava errado
+  connectionString: process.env.POSTGRES_URL, // Corrigido para POSTGRES_URL se estava errado
   ssl: { rejectUnauthorized: false },
 });
 
