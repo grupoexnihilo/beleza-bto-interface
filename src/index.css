@@ -32,7 +32,7 @@ body {
   align-items: center;
   min-height: 100vh;
   font-size: 1.2rem;
-  color: var(--text-color-secondary); /* Cor secundária para loading */
+  color: var(--text-color-primary); /* Cor secundária para loading */
 }
 
 .app-container {
@@ -56,7 +56,7 @@ body {
 
 /* Estilo para a Logo (Adicionar <img> no App.jsx depois) */
 .app-logo {
-  height: 15px; /* Ajustar altura conforme necessário */
+  height: 20px; /* Ajustar altura conforme necessário */
   width: auto;
   margin-right: 20px; /* Espaço entre logo e "Bem-vindo" */
 }
