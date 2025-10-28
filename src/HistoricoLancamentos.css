@@ -74,10 +74,13 @@
   border: 1px solid var(--border-color); /* <<< MUDANÇA: Borda sutil */
   cursor: pointer;
   transition: background-color 0.2s ease;
+  background-color: var(--input-bg); /* <<< ADICIONE/MODIFIQUE AQUI (Cor de fundo escura padrão) */
+  color: var(--text-color-primary); /* Garante texto claro */
 }
 
 .resumo-seccao:hover {
   background-color: #0c0c0d; /* <<< MUDANÇA: Tom ligeiramente mais claro no hover */
+  border-color: var(--text-color-secondary);
 }
 
 .resumo-seccao h3 {
