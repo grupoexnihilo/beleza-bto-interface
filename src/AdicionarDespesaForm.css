@@ -1,14 +1,15 @@
-/* --- src/AdicionarDespesaForm.css - AJUSTADO PARA DARK MODE --- */
+/* --- src/AdicionarDespesaForm.css - AJUSTADO PARA DARK MODE E LAYOUT VERTICAL --- */
 
-/* Contenedor principal (herda muitos estilos se a classe for a mesma de EntradaRapidaForm) */
-/* Se usar .form-container-despesa, aplicar estilos base */
+/* Contenedor principal */
 .form-container-despesa {
   padding: 25px 30px;
   border-radius: 8px;
-  max-width: 900px;
+  max-width: 900px; /* Ou ajuste conforme necessário */
   margin: 20px auto;
   animation: fadeIn 0.5s ease-out;
   color: var(--text-color-primary);
+  /* background-color: var(--surface-color-dark); /* Adicione se o fundo não for herdado */
+  /* box-shadow: 0 4px 12px var(--shadow-color); /* Adicione se a sombra não for herdada */
 }
 
 .form-container-despesa h3 {
@@ -24,26 +25,36 @@
 .despesa-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 20px; /* Espaço entre linhas/campos */
 }
 
 /* Garante que inputs/selects herdem o estilo global */
 .despesa-form .form-group input,
 .despesa-form .form-group select {
-    /* REMOVER background-color, color, border específicos se existirem */
-    /* Mantém padding, border-radius, font-size se quiser customizar */
     padding: 12px 15px;
     border-radius: 6px;
     font-size: 1rem;
     box-sizing: border-box;
     width: 100%;
+    /* Cores e bordas devem ser herdadas de index.css */
 }
 
-/* Linhas e Grupos herdam de index.css se as classes forem as mesmas */
-/* Se usar classes diferentes, copie .form-row e .form-group de EntradaRapidaForm.css */
+/* --- NOVA REGRA ADICIONADA AQUI (OU NO FINAL DO FICHEIRO) --- */
+/* Força os campos dentro das linhas a ocuparem a largura total, empilhando-os */
+.despesa-form .form-row {
+  display: grid; /* Garante que é grid */
+  grid-template-columns: 1fr; /* Define apenas uma coluna */
+  gap: 20px; /* Adiciona espaço vertical entre os campos empilhados na mesma row */
+}
+
+/* Garante que os grupos ocupem a largura (geralmente já fazem por padrão) */
+.despesa-form .form-group {
+  width: 100%;
+}
+/* --- FIM DA NOVA REGRA --- */
 
 
-/* Botão de submissão para despesas (Mantém cor vermelha) */
+/* Botão de submissão para despesas */
 .submit-button-despesa {
   padding: 12px 25px;
   border: none;
@@ -54,7 +65,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  align-self: flex-end;
+  align-self: flex-end; /* Mantém à direita */
   min-width: 180px;
 }
 
@@ -68,16 +79,16 @@
   color: var(--text-color-secondary);
 }
 
-/* Mensagem feedback (pode precisar de cor vermelha para erro) */
+/* Mensagem feedback */
 .message-feedback {
   text-align: center;
   margin-top: 15px;
   font-size: 0.95rem;
   font-weight: 500;
-  /* color: var(--success-color); */ /* Mudar para var(--danger-color) se for erro */
+  /* A cor deve ser definida dinamicamente no JS ou ter classes separadas .success .error */
 }
 
-/* Animação (mantida) */
+/* Animação */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
