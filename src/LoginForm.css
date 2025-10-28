@@ -87,7 +87,7 @@ body {
 }
 
 .login-button:hover {
-  background-color: #2980b9; /* Um tom mais escuro no hover */
+  background-color: #064772; /* Um tom mais escuro no hover */
   transform: translateY(-1px); /* Pequeno efeito de elevação */
 }
 
@@ -113,12 +113,12 @@ body {
   text-align: center;
   margin-top: 16px;
   font-size: 14px;
-  color: #a9cce3; /* Um tom de azul-claro, fácil de ler no fundo escuro */
+  color: #4eacec; /* Um tom de azul-claro, fácil de ler no fundo escuro */
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .forgot-password-link:hover {
   text-decoration: underline;
-  color: #ffffff; /* Fica branco ao passar o rato por cima */
+  color: #ffffff; /* Fica branco ao passar o mouse por cima */
 }
