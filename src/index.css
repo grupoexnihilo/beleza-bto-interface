@@ -3,13 +3,13 @@
 :root {
   /* Paleta de Cores Dark Mode (Exemplo - Ajustar se necessário) */
   --bg-color-dark: #1a1d21;       /* Fundo principal bem escuro */
-  --surface-color-dark: #ececec;  /* Fundo secundário (tom sobre tom) */
+  --surface-color-dark: #444444;  /* Fundo secundário (tom sobre tom) */
   --text-color-primary: #888890; /* Texto principal (branco/cinza claro) */
   --text-color-secondary: #465672;/* Texto secundário (cinza médio) */
   --border-color: #404347;       /* Cor das bordas */
   --primary-color: #4a90e2;      /* Azul principal (mantido ou ajustado) */
   --primary-color-hover: #3a7bc8; /* Azul hover */
-  --success-color: #28a745;      /* Verde (mantido) */
+  --success-color: #00af29;      /* Verde (mantido) */
   --danger-color: #e74c3c;       /* Vermelho (mantido) */
   --input-bg: #3a3b3c;          /* Fundo dos inputs */
   --input-border: #55595c;       /* Borda dos inputs */
