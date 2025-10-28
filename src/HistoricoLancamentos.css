@@ -69,7 +69,7 @@
   align-items: center;
   padding: 12px 18px; /* Ajuste padding */
   margin-bottom: 8px; /* Aumenta espaço entre secções */
-  background-color: var(--surface-color-dark); /* <<< MUDANÇA: Fundo escuro secundário */
+  background-color: var(--bg-color-dark); /* <<< MUDANÇA: Fundo escuro secundário */
   border-radius: 6px;
   border: 1px solid var(--border-color); /* <<< MUDANÇA: Borda sutil */
   cursor: pointer;
