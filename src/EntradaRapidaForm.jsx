@@ -22,6 +22,23 @@ function EntradaRapidaForm({ user, unidadeId, onBack }) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
 
+// --- NOVO: Cálculo da Soma Total ---
+  const calcularSomaTotal = () => {
+    const valores = [dinheiro, pix, credito, debito, outros];
+    let soma = 0;
+    valores.forEach(valorStr => {
+      // Tenta converter para número, tratando string vazia ou inválida como 0
+      const valorNum = parseFloat(valorStr || '0');
+      if (!isNaN(valorNum)) { // Soma apenas se for um número válido
+        soma += valorNum;
+      }
+    });
+    return soma;
+  };
+
+  const somaTotal = calcularSomaTotal(); // Calcula a soma
+  // --- FIM NOVO CÁLCULO ---
+
   // Efeito para buscar os dados dos dropdowns (colaboradores, categorias)
   useEffect(() => {
     const fetchData = async () => {
@@ -154,6 +171,14 @@ function EntradaRapidaForm({ user, unidadeId, onBack }) {
             <input type="number" placeholder="0.00" value={outros} onChange={e => setOutros(e.target.value)} />
           </div>
         </div>
+{/* --- NOVO: Display da Soma Total --- */}
+      <div className="soma-total-display">
+        <h4>Total Lançado:</h4>
+        <span className="valor-total-calculado">
+          {somaTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+        </span>
+      </div>
+      {/* --- FIM NOVO DISPLAY --- */}
         <button type="submit" className="submit-button" disabled={isLoading}>
           {isLoading ? 'A Salvar...' : 'Salvar Lançamentos'}
         </button>

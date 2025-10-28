@@ -128,3 +128,30 @@ hr {
 
 /* Botão Voltar (herdará de index.css se a classe for a mesma) */
 /* Se a classe for diferente, copie a regra .back-button do index.css para cá */
+/* Adicionar ao final de EntradaRapidaForm.css */
+
+.soma-total-display {
+  display: flex;
+  justify-content: flex-end; /* Alinha à direita, perto do botão salvar */
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px; /* Espaço acima */
+  margin-bottom: 5px; /* Espaço abaixo, antes do botão */
+  padding: 10px 15px;
+  background-color: var(--input-bg); /* Fundo sutil */
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.soma-total-display h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color-secondary);
+}
+
+.valor-total-calculado {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-color-primary); /* Cor primária para o valor */
+}
