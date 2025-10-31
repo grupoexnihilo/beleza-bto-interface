@@ -414,8 +414,7 @@ function HistoricoLancamentos({ user, unidadeId }) {
               <thead><tr>
                 <th>Data Pag.</th>
                 <th>Descrição</th>
-                <th>Forma Pag.</th> {/* <<< COLUNA ADICIONADA */}
-                <th style={{ textAlign: 'right' }}>Valor</th>
+                <th>Valor</th> {/* <<< COLUNA ADICIONADA */}
                 <th className="coluna-acoes-header">Ações</th>
               </tr></thead>
               <tbody>{despesasDoPeriodo.map(renderLinhaDespesa)}</tbody>
