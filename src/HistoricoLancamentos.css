@@ -1,14 +1,12 @@
-/* --- src/HistoricoLancamentos.css - V3 COMPLETO (Fonte + Contraste) --- */
+/* --- src/HistoricoLancamentos.css - V3 COMPLETO (Fonte + Contraste + Edição) --- */
 
 .historico-wrapper {
-  /* NOVA FONTE: Aplica Lato a todo o componente */
-  font-family: 'Lato', sans-serif;
+  font-family: 'Lato', 'Open Sans', -apple-system, sans-serif;
   margin-top: 30px;
 }
-
 .historico-wrapper h2 {
   margin-bottom: 15px;
-  font-weight: 700; /* Título mais forte */
+  font-weight: 700;
   color: var(--text-color-primary);
   text-align: left;
 }
@@ -40,7 +38,6 @@
 .filtro-campo input[type="search"] {
   padding: 8px 12px;
   min-width: 150px;
-  /* Estilos (fundo, cor, borda) herdados de index.css */
 }
 .botao-filtrar {
   padding: 9px 20px;
@@ -53,16 +50,14 @@
   transition: background-color 0.2s ease;
   flex-shrink: 0;
 }
-.botao-filtrar:hover {
-  background-color: var(--primary-color-hover);
-}
+.botao-filtrar:hover { background-color: var(--primary-color-hover); }
 .botao-filtrar:disabled {
   background-color: var(--input-bg);
   color: var(--text-color-secondary);
   cursor: not-allowed;
 }
 
-/* --- Secções de Resumo Expansíveis (CORREÇÃO DE CONTRASTE) --- */
+/* --- Secções de Resumo Expansíveis (Contraste Corrigido) --- */
 .resumo-seccao {
   display: flex;
   justify-content: space-between;
@@ -84,7 +79,7 @@
   font-size: 1.0em;
   display: flex;
   align-items: center;
-  color: var(--text-color-secondary); /* <<< COR CLARA (CINZA) */
+  color: var(--text-color-primary); /* <<< COR CLARA (BRANCO) */
   font-weight: 700;
 }
 .resumo-seccao .valor-receita {
@@ -119,7 +114,7 @@
   padding: 10px 14px;
   text-align: left;
   font-size: 0.95em;
-  color: var(--text-color-primary); /* <<< TEXTO CLARO NA TABELA */
+  color: var(--text-color-primary); /* <<< TEXTO CLARO */
 }
 .tabela-lancamentos.detalhe th:first-child,
 .tabela-lancamentos.detalhe td:first-child {
@@ -131,9 +126,11 @@
   font-size: 0.9em;
   text-transform: uppercase;
 }
+/* Alinha última coluna (Ações) */
 .tabela-lancamentos.detalhe td:last-child {
   text-align: center;
 }
+/* Alinha penúltima coluna (Valor) */
 .tabela-lancamentos.detalhe td:nth-last-child(2) { 
   text-align: right;
   font-weight: 600;
@@ -162,16 +159,11 @@
   opacity: 0.7;
   color: var(--text-color-secondary);
 }
-.botao-acao:hover {
-  opacity: 1;
-}
-.botao-acao:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
+.botao-acao:hover { opacity: 1; }
+.botao-acao:disabled { opacity: 0.3; cursor: not-allowed; }
 
 .botao-acao.editar {
-  color: var(--text-color-primary); /* <<< COR CLARA POR PADRÃO */
+  color: var(--text-color-primary); /* <<< ÍCONE CLARO */
   opacity: 0.6;
 }
 .botao-acao.editar:hover {
@@ -212,7 +204,6 @@ tr.deleting {
   border-radius: 0 0 5px 5px;
 }
 
-
 /* --- Estilos do Modal de Edição --- */
 .modal-overlay {
   position: fixed;
@@ -233,7 +224,7 @@ tr.deleting {
   max-width: 600px;
   z-index: 2001;
   border: 1px solid var(--border-color);
-  font-family: 'Lato', sans-serif; /* <<< USA A NOVA FONTE */
+  font-family: 'Lato', sans-serif;
 }
 .modal-content h3 {
   margin-top: 0;
@@ -254,8 +245,11 @@ tr.deleting {
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
-.edit-form .form-group {
+.edit-form .form-group { width: 100%; }
+.edit-form .form-group input,
+.edit-form .form-group select {
   width: 100%;
+  box-sizing: border-box;
 }
 .modal-actions {
   display: flex;
@@ -279,16 +273,12 @@ tr.deleting {
   color: var(--text-color-primary);
   border: 1px solid var(--border-color);
 }
-.botao-cancelar:hover {
-  background-color: #4b4d4f;
-}
+.botao-cancelar:hover { background-color: #4b4d4f; }
 .botao-salvar {
   background-color: var(--primary-color);
   color: white;
 }
-.botao-salvar:hover {
-  background-color: var(--primary-color-hover);
-}
+.botao-salvar:hover { background-color: var(--primary-color-hover); }
 .botao-salvar:disabled,
 .botao-cancelar:disabled {
   background-color: #5a5a5a;
