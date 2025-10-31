@@ -1,12 +1,12 @@
-/* --- src/HistoricoLancamentos.css - V3 COMPLETO (Fonte + Contraste + Edição) --- */
+/* --- src/HistoricoLancamentos.css - V.REVERTIDA (Apenas Filtros e Resumo) --- */
 
+/* Wrapper principal (sem fonte específica) */
 .historico-wrapper {
-  font-family: 'Lato', 'Open Sans', -apple-system, sans-serif;
   margin-top: 30px;
 }
 .historico-wrapper h2 {
   margin-bottom: 15px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--text-color-primary);
   text-align: left;
 }
@@ -19,7 +19,7 @@
   align-items: flex-end;
   margin-bottom: 25px;
   padding: 15px 20px;
-  background-color: var(--bg-color-dark);
+  background-color: var(--bg-color-dark); /* Fundo escuro */
   border-radius: 6px;
   border: 1px solid var(--border-color);
 }
@@ -57,14 +57,14 @@
   cursor: not-allowed;
 }
 
-/* --- Secções de Resumo Expansíveis (Contraste Corrigido) --- */
+/* --- Secções de Resumo Expansíveis --- */
 .resumo-seccao {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 14px 18px;
   margin-bottom: 4px;
-  background-color: var(--input-bg); /* Fundo padrão (cinza escuro) */
+  background-color: var(--input-bg);
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -79,21 +79,21 @@
   font-size: 1.0em;
   display: flex;
   align-items: center;
-  color: var(--text-color-primary); /* <<< COR CLARA (BRANCO) */
+  color: var(--text-color-primary); /* Corrigido para primário */
   font-weight: 700;
 }
 .resumo-seccao .valor-receita {
-  color: var(--success-color, #28a745); /* <<< COR CLARA (VERDE) */
+  color: var(--success-color);
   font-weight: bold;
   font-size: 1.1em;
 }
 .resumo-seccao .valor-despesa {
-  color: var(--danger-color, #dc3545); /* <<< COR CLARA (VERMELHO) */
+  color: var(--danger-color);
   font-weight: bold;
   font-size: 1.1em;
 }
 
-/* --- Tabelas de Detalhe --- */
+/* --- Tabelas de Detalhe (Simples) --- */
 .detalhe-tabela-wrapper {
   overflow: hidden;
   margin-bottom: 15px;
@@ -114,7 +114,7 @@
   padding: 10px 14px;
   text-align: left;
   font-size: 0.95em;
-  color: var(--text-color-primary); /* <<< TEXTO CLARO */
+  color: var(--text-color-primary);
 }
 .tabela-lancamentos.detalhe th:first-child,
 .tabela-lancamentos.detalhe td:first-child {
@@ -126,60 +126,13 @@
   font-size: 0.9em;
   text-transform: uppercase;
 }
-/* Alinha última coluna (Ações) */
+/* Alinha coluna "Valor" (última) à direita */
 .tabela-lancamentos.detalhe td:last-child {
-  text-align: center;
-}
-/* Alinha penúltima coluna (Valor) */
-.tabela-lancamentos.detalhe td:nth-last-child(2) { 
   text-align: right;
   font-weight: 600;
 }
-.tabela-lancamentos.detalhe th:nth-last-child(2) {
+.tabela-lancamentos.detalhe th:last-child {
   text-align: right;
-}
-
-
-/* --- Coluna de Ações e Botões --- */
-.coluna-acoes,
-.coluna-acoes-header {
-  width: 90px;
-  text-align: center;
-  padding: 8px 5px;
-}
-.botao-acao {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.1rem;
-  padding: 5px;
-  margin: 0 4px;
-  border-radius: 4px;
-  transition: background-color 0.2s, color 0.2s;
-  opacity: 0.7;
-  color: var(--text-color-secondary);
-}
-.botao-acao:hover { opacity: 1; }
-.botao-acao:disabled { opacity: 0.3; cursor: not-allowed; }
-
-.botao-acao.editar {
-  color: var(--text-color-primary); /* <<< ÍCONE CLARO */
-  opacity: 0.6;
-}
-.botao-acao.editar:hover {
-   background-color: rgba(74, 144, 226, 0.2);
-   color: var(--primary-color, #4a90e2);
-   opacity: 1;
-}
-.botao-acao.apagar:hover {
-  background-color: rgba(220, 53, 69, 0.2);
-  color: var(--danger-color, #dc3545);
-  opacity: 1;
-}
-tr.deleting {
-  opacity: 0.4;
-  background-color: #5d383f;
-  transition: all 0.3s ease;
 }
 
 /* --- Mensagens (Loading, Erro, Vazio) --- */
@@ -204,88 +157,7 @@ tr.deleting {
   border-radius: 0 0 5px 5px;
 }
 
-/* --- Estilos do Modal de Edição --- */
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-  animation: fadeInModal 0.3s ease;
-}
-.modal-content {
-  background-color: var(--surface-color-dark);
-  padding: 25px 30px;
-  border-radius: 8px;
-  box-shadow: 0 5px 20px var(--shadow-color);
-  width: 100%;
-  max-width: 600px;
-  z-index: 2001;
-  border: 1px solid var(--border-color);
-  font-family: 'Lato', sans-serif;
-}
-.modal-content h3 {
-  margin-top: 0;
-  margin-bottom: 25px;
-  color: var(--text-color-primary);
-  text-align: center;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 15px;
-  font-weight: 500;
-}
-.edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.edit-form .form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-.edit-form .form-group { width: 100%; }
-.edit-form .form-group input,
-.edit-form .form-group select {
-  width: 100%;
-  box-sizing: border-box;
-}
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-  margin-top: 25px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-color);
-}
-.modal-actions button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-.botao-cancelar {
-  background-color: var(--input-bg);
-  color: var(--text-color-primary);
-  border: 1px solid var(--border-color);
-}
-.botao-cancelar:hover { background-color: #4b4d4f; }
-.botao-salvar {
-  background-color: var(--primary-color);
-  color: white;
-}
-.botao-salvar:hover { background-color: var(--primary-color-hover); }
-.botao-salvar:disabled,
-.botao-cancelar:disabled {
-  background-color: #5a5a5a;
-  cursor: not-allowed;
-}
-
-@keyframes fadeInModal {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
+/* --- REGRAS DE EDIÇÃO/DELETE REMOVIDAS --- */
+/* .coluna-acoes ... */
+/* .botao-acao ... */
+/* .modal-overlay ... */
