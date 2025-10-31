@@ -1,11 +1,10 @@
-// --- VERSÃO COMPLETA FINAL (Filtros + Pesquisa + Delete + Edit + Syntax Fix) ---
+// --- VERSÃO COMPLETA, FINAL E CORRIGIDA ---
 import React, { useState, useEffect } from 'react';
 import './HistoricoLancamentos.css';
 
-// ***** INÍCIO DAS FUNÇÕES AUXILIARES (DEFINIDAS ANTES DO COMPONENTE) *****
-// (Garante que não há erros de "função não definida")
+// ***** INÍCIO DAS FUNÇÕES AUXILIARES (DEFINIDAS FORA DO COMPONENTE) *****
 
-// Formata Data (Date object) para YYYY-MM-DD
+// Formata Data (Date object) para YYYY-MM-DD (para inputs)
 const formatarDataParaInput = (data) => {
   if (!data || !(data instanceof Date) || isNaN(data.getTime())) {
     console.warn("formatarDataParaInput recebeu data inválida:", data);
@@ -22,12 +21,13 @@ const formatarDataParaInput = (data) => {
   }
 };
 
-// Formata Data (String ISO ou YYYY-MM-DD) para DD/MM/YYYY
+// Formata Data (String ISO ou YYYY-MM-DD) para DD/MM/YYYY (para exibição)
 const formatarData = (dataInput) => {
   if (!dataInput || typeof dataInput !== 'string') return '-';
   try {
     const dataObj = new Date(dataInput);
     if (isNaN(dataObj.getTime())) {
+      // Tenta formatar YYYY-MM-DD
       const parts = dataInput.split('-');
       if (parts.length === 3) {
         const [ano, mes, dia] = parts;
@@ -37,8 +37,9 @@ const formatarData = (dataInput) => {
           return `${diaF}/${mesF}/${ano}`;
         }
       }
-      return '-';
+      return '-'; // Retorna '-' se inválido
     }
+    // Formata data ISO (vinda da API) usando UTC para evitar erros de fuso
     const dia = String(dataObj.getUTCDate()).padStart(2, '0');
     const mes = String(dataObj.getUTCMonth() + 1).padStart(2, '0');
     const ano = dataObj.getUTCFullYear();
@@ -62,10 +63,10 @@ const formatarValor = (valor) => {
 
 // ***** INÍCIO DO COMPONENTE PRINCIPAL *****
 function HistoricoLancamentos({ user, unidadeId }) {
-  // --- Estados do Componente ---
-  const [lancamentos, setLancamentos] = useState([]);
+  // --- Estados Principais ---
+  const [lancamentos, setLancamentos] = useState([]); // GARANTIDO COMO ARRAY
   const [isLoading, setIsLoading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(null); // ID do item sendo apagado
   const [error, setError] = useState(null);
   const [mostrarReceitas, setMostrarReceitas] = useState(false);
   const [mostrarDespesas, setMostrarDespesas] = useState(false);
@@ -74,14 +75,17 @@ function HistoricoLancamentos({ user, unidadeId }) {
   const [termoPesquisa, setTermoPesquisa] = useState('');
 
   // --- Estados para Edição ---
-  const [editingItem, setEditingItem] = useState(null);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [editFormError, setEditFormError] = useState(null);
-  const [allCategorias, setAllCategorias] = useState([]);
-  const [editFormData, setEditFormData] = useState({});
+  const [editingItem, setEditingItem] = useState(null); // Item a ser editado
+  const [isUpdating, setIsUpdating] = useState(false); // Loading do modal
+  const [editFormError, setEditFormError] = useState(null); // Erro do modal
+  const [allCategorias, setAllCategorias] = useState([]); // Todas as categorias (Receita/Despesa)
+  const [allColaboradores, setAllColaboradores] = useState([]); // Todos os colaboradores
+  const [allFormasPagamento, setAllFormasPagamento] = useState([]); // Todas as FPs
+  const [editFormData, setEditFormData] = useState({}); // Dados do form de edição
 
-  // --- Função para Buscar Dados ---
+  // --- Função para Buscar Dados (Histórico) ---
   const fetchHistorico = async (inicio, fim, pesquisa) => {
+    // Validação robusta dos parâmetros
     if (!user?.email || !unidadeId || !inicio || !fim) {
       console.warn("[HISTORICO fetch] Parâmetros inválidos. Abortando.", { email: user?.email, unidadeId, inicio, fim });
       setError("Erro: Dados do utilizador, unidade ou período inválidos para a busca.");
@@ -116,31 +120,41 @@ function HistoricoLancamentos({ user, unidadeId }) {
         try { errorData = JSON.parse(responseText); } catch (e) { /* Ignora */ }
         throw new Error(errorData.message || `Falha ao buscar histórico (${response.status})`);
       }
+      
       const data = responseText ? JSON.parse(responseText) : [];
       console.log("[HISTORICO fetch] Dados JSON recebidos:", data);
-      setLancamentos(Array.isArray(data) ? data : []); // Garante que é SEMPRE um array
+      
+      // *** CORREÇÃO DO BUG "TELA BRANCA" (TypeError: Array.filter) ***
+      // Garante que o estado 'lancamentos' é SEMPRE um array
+      setLancamentos(Array.isArray(data) ? data : []);
+
     } catch (err) {
       console.error("[HISTORICO fetch] Erro no bloco catch:", err);
       setError(err.message || "Ocorreu um erro ao buscar o histórico.");
-      setLancamentos([]);
+      setLancamentos([]); // Garante array no erro
     } finally {
       setIsLoading(false);
     }
   }; // --- FIM fetchHistorico ---
 
-  // --- Efeito para Carga Inicial E BUSCA DE CATEGORIAS ---
+  // --- Efeito para Carga Inicial E BUSCA DE OPÇÕES DE EDIÇÃO ---
   useEffect(() => {
     console.log(`[HISTORICO useEffect inicial] User ou Unidade mudou.`);
+    // 1. Define datas e busca o histórico inicial
     try {
       const agora = new Date();
       const inicioMesAtual = formatarDataParaInput(new Date(agora.getFullYear(), agora.getMonth(), 1));
       const fimMesAtual = formatarDataParaInput(new Date(agora.getFullYear(), agora.getMonth() + 1, 0));
 
       if (inicioMesAtual && fimMesAtual) {
-        setDataInicioFiltro(inicioMesAtual); setDataFimFiltro(fimMesAtual); setTermoPesquisa('');
+        setDataInicioFiltro(inicioMesAtual);
+        setDataFimFiltro(fimMesAtual);
+        setTermoPesquisa('');
         if (user && user.email && unidadeId) {
-          fetchHistorico(inicioMesAtual, fimMesAtual, '');
-        } else { setLancamentos([]); }
+          fetchHistorico(inicioMesAtual, fimMesAtual, ''); // Busca inicial
+        } else {
+          setLancamentos([]); // Limpa se user/unidade não estiverem prontos
+        }
       } else {
         console.error("[HISTORICO useEffect inicial] Erro ao calcular datas do mês atual (resultado vazio).");
         setError("Erro ao definir período inicial.");
@@ -155,48 +169,53 @@ function HistoricoLancamentos({ user, unidadeId }) {
       setMostrarDespesas(false);
     }
 
-    // Buscar TODAS as categorias para o modal de edição
-    const fetchAllCategorias = async () => {
+    // 2. Busca TODAS as opções para os dropdowns do modal de edição
+    const fetchAllOptions = async () => {
       if (!unidadeId) return;
-      console.log("[HISTORICO useEffect] Buscando todas as categorias para o modal...");
+      console.log("[HISTORICO useEffect] Buscando todas as opções para o modal...");
       try {
+        // Busca Receita (para Cats Receita + Colaboradores)
+        // Busca Despesa (para Cats Despesa + Formas Pagamento)
         const [resReceita, resDespesa] = await Promise.all([
           fetch(`/api/getFormOptions?unidadeId=${unidadeId}&tipo=Receita`),
           fetch(`/api/getFormOptions?unidadeId=${unidadeId}&tipo=Despesa`)
         ]);
         if (!resReceita.ok || !resDespesa.ok) {
-          console.error("Falha ao buscar uma ou mais listas de categorias.");
-          return;
+          console.error("Falha ao buscar listas de opções para edição.");
+          return; // Sai se uma das buscas falhar
         }
         const dataReceita = await resReceita.json();
         const dataDespesa = await resDespesa.json();
 
-        // Adiciona a propriedade 'tipo' correta (baseado no que a API 'getFormOptions' usa)
-        // A API já usa 'tipo: Receita' e 'tipo: Despesa' no filtro, mas não adiciona
-        // a propriedade ao objeto retornado. Vamos buscar pela coluna 'operacao' ou 'tipo'
-        // que deve existir em 'cat'
+        // Adiciona a propriedade 'tipo' a cada categoria para filtragem
         const categoriasReceita = (dataReceita.categorias || []).map(cat => ({ ...cat, tipo: 'Receita' }));
         const categoriasDespesa = (dataDespesa.categorias || []).map(cat => ({ ...cat, tipo: 'Despesa' }));
-
+        
         setAllCategorias([...categoriasReceita, ...categoriasDespesa]);
-        console.log("[HISTORICO useEffect] Todas as categorias carregadas.");
+        setAllColaboradores(dataReceita.colaboradores || []);
+        
+        // Assume que as FPs de Despesa da unidade são suficientes (ou busca todas se necessário)
+        // Se precisar de TODAS as FPs (ex: Receita usa FP diferente), teríamos que criar uma API getTodasFormasPagamento
+        setAllFormasPagamento(dataDespesa.formasPagamento || []);
+        
+        console.log("[HISTORICO useEffect] Todas as opções para edição carregadas.");
       } catch (catError) {
-        console.error("Erro ao buscar todas as categorias para edição:", catError);
+        console.error("Erro ao buscar opções para edição:", catError);
       }
-    }; // Fim fetchAllCategorias
+    }; // Fim fetchAllOptions
 
-    fetchAllCategorias(); // Chama a função
+    fetchAllOptions(); // Chama a função
 
   }, [user, unidadeId]); // --- FIM useEffect ---
 
-  // --- Handlers ---
+  // --- Handlers (Filtrar, Delete, Edit) ---
   const handleFiltrarClick = () => {
     if (!dataInicioFiltro || !dataFimFiltro) {
       setError("Por favor, selecione as datas de início e fim.");
       return;
     }
-    const inicio = new Date(dataInicioFiltro + 'T00:00:00Z');
-    const fim = new Date(dataFimFiltro + 'T23:59:59Z');
+    const inicio = new Date(dataInicioFiltro + 'T00:00:00Z'); // Compara em UTC
+    const fim = new Date(dataFimFiltro + 'T23:59:59Z'); // Compara em UTC
     if (isNaN(inicio.getTime()) || isNaN(fim.getTime())) {
       setError("Datas selecionadas são inválidas.");
       return;
@@ -237,7 +256,7 @@ function HistoricoLancamentos({ user, unidadeId }) {
 
   const handleEditClick = (item) => {
     console.log("Iniciando edição para:", item);
-    // Formata datas ISO (do Neon) para YYYY-MM-DD (para o input)
+    // Formata datas ISO (do Neon) para YYYY-MM-DD (para o input type="date")
     const dataCompFormatada = item.data_competencia ? formatarData(item.data_competencia).split('/').reverse().join('-') : '';
     const dataPagFormatada = item.data_pagamento ? formatarData(item.data_pagamento).split('/').reverse().join('-') : '';
     
@@ -246,8 +265,8 @@ function HistoricoLancamentos({ user, unidadeId }) {
       data_competencia: dataCompFormatada,
       data_pagamento: dataPagFormatada,
     };
-    setEditFormData(itemFormatado);
-    setEditingItem(itemFormatado);
+    setEditFormData(itemFormatado); // Preenche o estado do formulário com os dados da linha
+    setEditingItem(itemFormatado);  // Abre o modal
     setEditFormError(null);
   }; // Fim handleEditClick
 
@@ -261,7 +280,7 @@ function HistoricoLancamentos({ user, unidadeId }) {
     setIsUpdating(true);
     setEditFormError(null);
     
-    // Converte datas YYYY-MM-DD (do form) para ISOString UTC (para a API)
+    // Converte datas YYYY-MM-DD (do form) de volta para ISOString UTC (para a API)
     const dataCompetenciaUTC = editFormData.data_competencia ? new Date(editFormData.data_competencia + 'T00:00:00.000Z').toISOString() : null;
     const dataPagamentoFinal = editFormData.data_pagamento || editFormData.data_competencia;
     const dataPagamentoUTC = dataPagamentoFinal ? new Date(dataPagamentoFinal + 'T00:00:00.000Z').toISOString() : null;
@@ -273,23 +292,24 @@ function HistoricoLancamentos({ user, unidadeId }) {
       categoria: editFormData.categoria,
       descricao: editFormData.descricao,
       valor_r: editFormData.valor_r,
-      profissional: editingItem.profissional || null,
-      formaPagamento: editingItem.forma_de_pagamento || null
+      // Envia os IDs corretos (ou null) com base no tipo
+      profissional: editingItem.tipo_de_operacao === 'Receita' ? editFormData.profissional : null,
+      formaPagamento: editFormData.forma_de_pagamento, // Envia o ID da FP
     };
-
+    console.log("Enviando payload de update:", updatePayload);
     try {
       const response = await fetch('/api/updateLancamento', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatePayload)
       });
-      const data = await response.json(); // Tenta ler JSON
+      const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || 'Falha ao atualizar lançamento.');
       }
       console.log("Atualização bem-sucedida:", data);
       
-      // Atualiza a lista local com os dados *retornados* pela API (que incluem o 'grupo' recalculado)
+      // Atualiza a lista local com os dados *retornados* pela API
       setLancamentos(prevLancamentos =>
         prevLancamentos.map(lanc =>
           lanc.id_de_lancamento === data.id_de_lancamento ? data : lanc
@@ -304,7 +324,7 @@ function HistoricoLancamentos({ user, unidadeId }) {
     }
   }; // Fim handleUpdateSubmit
 
-  // --- Cálculos de Totais ---
+  // --- Cálculos de Totais (COM FALLBACK) ---
   const totalReceitas = (lancamentos || [])
     .filter(item => item.tipo_de_operacao === 'Receita')
     .reduce((acc, item) => acc + parseFloat(item.valor_r || 0), 0);
@@ -312,14 +332,13 @@ function HistoricoLancamentos({ user, unidadeId }) {
     .filter(item => item.tipo_de_operacao === 'Despesa')
     .reduce((acc, item) => acc + parseFloat(item.valor_r || 0), 0);
 
-  // --- Função para Renderizar Linha ---
-  const renderLinha = (item) => (
+  // --- Funções de Renderização de Linha (SEPARADAS) ---
+  // Linha para Despesas (Layout antigo, 4 colunas + Ações)
+  const renderLinhaDespesa = (item) => (
     <tr key={item.id_de_lancamento} className={isDeleting === item.id_de_lancamento ? 'deleting' : ''}>
       <td>{formatarData(item.data_pagamento)}</td>
       <td>{item.descricao || item.categoria}</td>
-      <td className={`valor-${item.tipo_de_operacao?.toLowerCase()}`}>
-        {formatarValor(item.valor_r)}
-      </td>
+      <td className="valor-despesa">{formatarValor(item.valor_r)}</td>
       <td className="coluna-acoes">
         <button className="botao-acao editar" onClick={() => handleEditClick(item)} disabled={isDeleting || isUpdating} title="Editar"> ✎ </button>
         <button className="botao-acao apagar" onClick={() => handleDeleteClick(item.id_de_lancamento)} disabled={isDeleting || isUpdating} title="Apagar">
@@ -327,17 +346,35 @@ function HistoricoLancamentos({ user, unidadeId }) {
         </button>
       </td>
     </tr>
-  ); // Fim renderLinha
+  );
+  // Linha para Receitas (Layout NOVO, 5 colunas + Ações)
+  const renderLinhaReceita = (item) => (
+    <tr key={item.id_de_lancamento} className={isDeleting === item.id_de_lancamento ? 'deleting' : ''}>
+      <td>{formatarData(item.data_pagamento)}</td>
+      <td>{item.categoria}</td>
+      <td>{item.profissional_nome || '(Não definido)'}</td>
+      <td>{item.forma_pagamento_nome || '(Não definido)'}</td>
+      <td className="valor-receita">{formatarValor(item.valor_r)}</td>
+      <td className="coluna-acoes">
+        <button className="botao-acao editar" onClick={() => handleEditClick(item)} disabled={isDeleting || isUpdating} title="Editar"> ✎ </button>
+        <button className="botao-acao apagar" onClick={() => handleDeleteClick(item.id_de_lancamento)} disabled={isDeleting || isUpdating} title="Apagar">
+          {isDeleting === item.id_de_lancamento ? '...' : '🗑️'}
+        </button>
+      </td>
+    </tr>
+  );
+  // --- FIM Funções de Linha ---
 
-  // --- Lógica de Renderização Principal ---
+  // --- Lógica de Renderização Principal (COM CABEÇALHOS CORRIGIDOS) ---
   const renderHistorico = () => {
     if (!unidadeId) { return <p className="historico-mensagem">Por favor, selecione uma unidade.</p>; }
     if (error && !isLoading) { return <p className="historico-mensagem erro">{error}</p>; }
-    if (lancamentos.length === 0 && !isLoading && !error) {
+    if ((!lancamentos || lancamentos.length === 0) && !isLoading && !error) {
       return <p className="historico-mensagem">Nenhum lançamento encontrado para o período e pesquisa selecionados.</p>;
     }
     if (isLoading && (!lancamentos || lancamentos.length === 0)) { return null; }
 
+    // Garante que 'lancamentos' é um array antes de filtrar
     const receitasDoPeriodo = (lancamentos || []).filter(item => item.tipo_de_operacao === 'Receita');
     const despesasDoPeriodo = (lancamentos || []).filter(item => item.tipo_de_operacao === 'Despesa');
 
@@ -348,14 +385,42 @@ function HistoricoLancamentos({ user, unidadeId }) {
           <h3>{mostrarReceitas ? '▼' : '►'} Total Receitas ({formatarData(dataInicioFiltro)} a {formatarData(dataFimFiltro)}):</h3>
           <span className="valor-receita">{formatarValor(totalReceitas)}</span>
         </div>
-        {mostrarReceitas && (receitasDoPeriodo.length > 0 ? (<div className="detalhe-tabela-wrapper"> <table className="tabela-lancamentos detalhe"><thead><tr><th>Data Pag.</th><th>Descrição</th><th style={{ textAlign: 'right' }}>Valor</th><th className="coluna-acoes-header">Ações</th></tr></thead><tbody>{receitasDoPeriodo.map(renderLinha)}</tbody></table></div>) : (<p className="historico-mensagem detalhe">Nenhuma receita encontrada no período.</p>))}
+        {mostrarReceitas && (receitasDoPeriodo.length > 0 ? (
+          <div className="detalhe-tabela-wrapper">
+            <table className="tabela-lancamentos detalhe">
+              {/* CABEÇALHO CORRETO PARA RECEITAS (6 COLUNAS) */}
+              <thead><tr>
+                <th>Data Pag.</th>
+                <th>Categoria</th>
+                <th>Profissional</th>
+                <th>Forma Pag.</th>
+                <th style={{ textAlign: 'right' }}>Valor</th>
+                <th className="coluna-acoes-header">Ações</th>
+              </tr></thead>
+              <tbody>{receitasDoPeriodo.map(renderLinhaReceita)}</tbody>
+            </table>
+          </div>
+        ) : (<p className="historico-mensagem detalhe">Nenhuma receita encontrada no período.</p>))}
 
         {/* Secção Despesas */}
         <div className="resumo-seccao" onClick={() => setMostrarDespesas(!mostrarDespesas)} role="button" tabIndex={0}>
           <h3>{mostrarDespesas ? '▼' : '►'} Total Despesas ({formatarData(dataInicioFiltro)} a {formatarData(dataFimFiltro)}):</h3>
           <span className="valor-despesa">{formatarValor(totalDespesas)}</span>
         </div>
-        {mostrarDespesas && (despesasDoPeriodo.length > 0 ? (<div className="detalhe-tabela-wrapper"> <table className="tabela-lancamentos detalhe"><thead><tr><th>Data Pag.</th><th>Descrição</th><th style={{ textAlign: 'right' }}>Valor</th><th className="coluna-acoes-header">Ações</th></tr></thead><tbody>{despesasDoPeriodo.map(renderLinha)}</tbody></table></div>) : (<p className="historico-mensagem detalhe">Nenhuma despesa encontrada no período.</p>))}
+        {mostrarDespesas && (despesasDoPeriodo.length > 0 ? (
+          <div className="detalhe-tabela-wrapper">
+            <table className="tabela-lancamentos detalhe">
+              {/* CABEÇALHO CORRETO PARA DESPESAS (4 COLUNAS) */}
+              <thead><tr>
+                <th>Data Pag.</th>
+                <th>Descrição</th>
+                <th style={{ textAlign: 'right' }}>Valor</th>
+                <th className="coluna-acoes-header">Ações</th>
+              </tr></thead>
+              <tbody>{despesasDoPeriodo.map(renderLinhaDespesa)}</tbody>
+            </table>
+          </div>
+        ) : (<p className="historico-mensagem detalhe">Nenhuma despesa encontrada no período.</p>))}
       </>
     );
   }; // --- FIM renderHistorico ---
@@ -363,7 +428,7 @@ function HistoricoLancamentos({ user, unidadeId }) {
   // --- Return Principal ---
   return (
     <div className="historico-wrapper">
-          {/* Filtro */}
+      {/* Filtro */}
       <div className="filtro-historico">
         <div className="filtro-campo"> <label htmlFor="dataInicio">De:</label> <input type="date" id="dataInicio" value={dataInicioFiltro} onChange={(e) => setDataInicioFiltro(e.target.value)} /> </div>
         <div className="filtro-campo"> <label htmlFor="dataFim">Até:</label> <input type="date" id="dataFim" value={dataFimFiltro} onChange={(e) => setDataFimFiltro(e.target.value)} /> </div>
@@ -372,37 +437,58 @@ function HistoricoLancamentos({ user, unidadeId }) {
       </div>
 
       {/* Resumo */}
-      <h2>Histórico de Lançamentos</h2>
+      <h2>Resumo do Período Selecionado</h2>
       {isLoading && <p className="historico-mensagem">A carregar...</p>}
       {!isLoading && renderHistorico()}
 
-      {/* --- MODAL DE EDIÇÃO (COM CORREÇÕES DE SINTAXE) --- */}
+      {/* --- MODAL DE EDIÇÃO (COM CORREÇÕES FINAIS) --- */}
       {editingItem && (
         <div className="modal-overlay" onClick={() => setEditingItem(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>Editar Lançamento</h3>
             <form onSubmit={handleUpdateSubmit} className="edit-form">
-              <div className="form-group"> <label htmlFor="edit-dataCompetencia">Data de Competência</label> <input type="date" id="edit-dataCompetencia" name="data_competencia" value={editFormData.data_competencia || ''} onChange={handleEditFormChange} required /> </div>
-              <div className="form-group"> <label htmlFor="edit-dataPagamento">Data de Pagamento</label> <input type="date" id="edit-dataPagamento" name="data_pagamento" value={editFormData.data_pagamento || ''} onChange={handleEditFormChange} /> </div>
+              {/* Campos Comuns */}
+              <div className="form-row">
+                <div className="form-group"> <label htmlFor="edit-dataCompetencia">Data de Competência</label> <input type="date" id="edit-dataCompetencia" name="data_competencia" value={editFormData.data_competencia || ''} onChange={handleEditFormChange} required /> </div>
+                <div className="form-group"> <label htmlFor="edit-dataPagamento">Data de Pagamento</label> <input type="date" id="edit-dataPagamento" name="data_pagamento" value={editFormData.data_pagamento || ''} onChange={handleEditFormChange} /> </div>
+              </div>
               <div className="form-group"> <label htmlFor="edit-valor_r">Valor (R$)</label> <input type="number" step="0.01" id="edit-valor_r" name="valor_r" value={editFormData.valor_r || ''} onChange={handleEditFormChange} required /> </div>
               
-              <div className="form-group">
-                <label htmlFor="edit-categoria">Categoria</label>
-                <select id="edit-categoria" name="categoria" value={editFormData.categoria || ''} onChange={handleEditFormChange} required>
-                  <option value="">Selecione...</option>
-                  {(allCategorias || []) // Fallback para array vazio
-                    .filter(cat => cat.tipo === editingItem.tipo_de_operacao) // CORRIGIDO (era 'operacao')
-                    .map(cat => (
-                      <option key={cat.id} value={cat.id}>{cat.nome}</option>
-                  ))}
-                </select>
+              {/* Campo Condicional: Profissional (SÓ PARA RECEITAS) */}
+              {editingItem.tipo_de_operacao === 'Receita' && (
+                <div className="form-group">
+                  <label htmlFor="edit-profissional">Profissional</label>
+                  <select id="edit-profissional" name="profissional" value={editFormData.profissional || ''} onChange={handleEditFormChange} required>
+                    <option value="">Selecione...</option>
+                    {(allColaboradores || []).map(colab => ( <option key={colab.id} value={colab.id}>{colab.nome}</option> ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Campos Condicionais: Categoria e Forma de Pagamento */}
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="edit-categoria">Categoria</label>
+                  <select id="edit-categoria" name="categoria" value={editFormData.categoria || ''} onChange={handleEditFormChange} required>
+                    <option value="">Selecione...</option>
+                    {(allCategorias || [])
+                      .filter(cat => cat.tipo === editingItem.tipo_de_operacao) // CORRIGIDO
+                      .map(cat => ( <option key={cat.id} value={cat.id}>{cat.nome}</option>))}
+                  </select>
+                </div>
+                
+                <div className="form-group">
+                    <label htmlFor="edit-formaPagamento">Forma de Pagamento</label>
+                    <select id="edit-formaPagamento" name="forma_de_pagamento" value={editFormData.forma_de_pagamento || ''} onChange={handleEditFormChange} required>
+                        <option value="">Selecione...</option>
+                        {(allFormasPagamento || []).map(fp => ( <option key={fp.id} value={fp.id}>{fp.nome}</option> ))}
+                    </select>
+                </div>
               </div>
-              
+               
                <div className="form-group"> <label htmlFor="edit-descricao">Descrição</label> <input type="text" id="edit-descricao" name="descricao" value={editFormData.descricao || ''} onChange={handleEditFormChange} /> </div>
 
-              {editFormError && (
-                <p className="historico-mensagem erro">{editFormError}</p>
-              )}
+              {editFormError && ( <p className="historico-mensagem erro">{editFormError}</p> )}
 
               <div className="modal-actions">
                 <button type="button" className="botao-cancelar" onClick={() => setEditingItem(null)} disabled={isUpdating}> Cancelar </button>
