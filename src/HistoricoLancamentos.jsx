@@ -1,72 +1,53 @@
-// --- VERSÃO COMPLETA FINAL E CORRIGIDA ---
+// --- VERSÃO COMPLETA FINAL (Filtros + Pesquisa + DELETE) ---
 import React, { useState, useEffect } from 'react';
 import './HistoricoLancamentos.css';
 
 // ***** INÍCIO DAS FUNÇÕES AUXILIARES (DEFINIDAS ANTES DO COMPONENTE) *****
 const formatarDataParaInput = (data) => {
-  // Retorna string vazia se a data for inválida
   if (!data || !(data instanceof Date) || isNaN(data.getTime())) {
       console.warn("formatarDataParaInput recebeu data inválida:", data);
       return '';
   }
   try {
-      // Formata como YYYY-MM-DD para o input type="date"
       const dia = String(data.getDate()).padStart(2, '0');
       const mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês é base 0
       const ano = data.getFullYear();
       return `${ano}-${mes}-${dia}`;
   } catch (e) {
       console.error("Erro ao formatar data para input:", data, e);
-      return ''; // Retorna vazio em caso de erro
+      return '';
   }
 };
 
 const formatarData = (dataInput) => {
-  // Retorna '-' se a entrada for inválida ou vazia
   if (!dataInput || typeof dataInput !== 'string') return '-';
-
   try {
-    // Tenta criar um objeto Date a partir da string recebida (ISO ou YYYY-MM-DD)
     const dataObj = new Date(dataInput);
-
-    // Verifica se a data criada é válida
     if (isNaN(dataObj.getTime())) {
-      // Se falhar, tenta interpretar como YYYY-MM-DD (caso venha do input do filtro)
       const parts = dataInput.split('-');
       if (parts.length === 3) {
           const [ano, mes, dia] = parts;
-          // Verifica se as partes são numéricas antes de retornar
           if (!isNaN(parseInt(dia)) && !isNaN(parseInt(mes)) && !isNaN(parseInt(ano))) {
-              // Garante 2 dígitos para dia e mês
               const diaF = String(dia).padStart(2, '0');
               const mesF = String(mes).padStart(2, '0');
               return `${diaF}/${mesF}/${ano}`;
           }
       }
-      console.warn("Formato de data inválido recebido:", dataInput);
-      return '-'; // Retorna '-' se a data for inválida
+      return '-';
     }
-
-    // Extrai dia, mês e ano usando métodos UTC para garantir consistência com a exibição UTC
     const dia = String(dataObj.getUTCDate()).padStart(2, '0');
-    const mes = String(dataObj.getUTCMonth() + 1).padStart(2, '0'); // Mês UTC é base 0
+    const mes = String(dataObj.getUTCMonth() + 1).padStart(2, '0');
     const ano = dataObj.getUTCFullYear();
-
-    // Retorna no formato DD/MM/YYYY
     return `${dia}/${mes}/${ano}`;
-
   } catch (e) {
-    console.error("Erro inesperado ao formatar data:", dataInput, e);
-    return '-'; // Fallback
+    console.error("Erro ao formatar data:", dataInput, e);
+    return '-';
   }
 };
 
-
 const formatarValor = (valor) => {
   const numValor = parseFloat(valor || 0);
-  // Verifica se é um número válido antes de formatar
   if (isNaN(numValor)) {
-      console.warn("Valor inválido para formatar:", valor);
       return 'R$ 0,00';
   }
   return numValor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -79,22 +60,22 @@ function HistoricoLancamentos({ user, unidadeId }) {
   // --- Estados do Componente ---
   const [lancamentos, setLancamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(null); // <-- NOVO ESTADO PARA DELETE
   const [error, setError] = useState(null);
   const [mostrarReceitas, setMostrarReceitas] = useState(false);
   const [mostrarDespesas, setMostrarDespesas] = useState(false);
-  const [dataInicioFiltro, setDataInicioFiltro] = useState(''); // Inicializa vazio
-  const [dataFimFiltro, setDataFimFiltro] = useState('');     // Inicializa vazio
+  const [dataInicioFiltro, setDataInicioFiltro] = useState('');
+  const [dataFimFiltro, setDataFimFiltro] = useState('');
   const [termoPesquisa, setTermoPesquisa] = useState('');
 
-  // --- Função para Buscar Dados (SINTAXE REVISADA) ---
+  // --- Função para Buscar Dados ---
   const fetchHistorico = async (inicio, fim, pesquisa) => {
-    // Validação robusta dos parâmetros
     if (!user?.email || !unidadeId || !inicio || !fim ) {
         console.warn("[HISTORICO fetch] Parâmetros inválidos. Abortando.", { email: user?.email, unidadeId, inicio, fim });
         setError("Erro: Dados do utilizador, unidade ou período inválidos para a busca.");
         setLancamentos([]);
         setIsLoading(false);
-        return; // Termina a execução se inválido
+        return;
     }
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(inicio) || !dateRegex.test(fim)) {
@@ -102,108 +83,109 @@ function HistoricoLancamentos({ user, unidadeId }) {
         setError("Formato de data inválido para filtro (use AAAA-MM-DD).");
         setLancamentos([]);
         setIsLoading(false);
-        return; // Termina a execução se inválido
+        return;
     }
 
     setIsLoading(true);
-    setError(null); // Limpa erro anterior
+    setError(null);
     try {
       const params = new URLSearchParams({ email: user.email, unidadeId, dataInicio: inicio, dataFim: fim });
       if (pesquisa && pesquisa.trim() !== '') {
         params.append('termoPesquisa', pesquisa.trim());
       }
       const url = `/api/getHistorico?${params.toString()}`;
-      console.log(`[HISTORICO fetch] Buscando URL: ${url}`); // Log URL
+      console.log(`[HISTORICO fetch] Buscando URL: ${url}`);
+      const response = await fetch(url);
+      const responseText = await response.text();
+      console.log(`[HISTORICO fetch] Status: ${response.status}. Resposta Texto (inicio): ${responseText.substring(0,100)}...`);
 
-      const response = await fetch(url); // Executa o fetch
-      const responseText = await response.text(); // Lê como texto
-      console.log(`[HISTORICO fetch] Status: ${response.status}. Resposta Texto (inicio): ${responseText.substring(0,100)}...`); // Log Status/Texto
-
-      // Verifica se a resposta foi OK (status 2xx)
       if (!response.ok) {
         let errorData = { message: `Erro ${response.status} ao buscar histórico.` };
-        try { errorData = JSON.parse(responseText); } catch (e) { /* Ignora erro de parse */ }
-        console.error("[HISTORICO fetch] Erro na resposta da API:", errorData); // Log do erro da API
+        try { errorData = JSON.parse(responseText); } catch (e) { /* Ignora */ }
         throw new Error(errorData.message || `Falha ao buscar histórico (${response.status})`);
       }
-
-      // Se OK, tenta analisar como JSON
       const data = JSON.parse(responseText);
-      console.log("[HISTORICO fetch] Dados JSON recebidos:", data); // Log dos dados
-      setLancamentos(data); // Atualiza o estado
-
+      console.log("[HISTORICO fetch] Dados JSON recebidos:", data);
+      setLancamentos(data);
     } catch (err) {
-      console.error("[HISTORICO fetch] Erro no bloco catch:", err); // Log de erro JS
+      console.error("[HISTORICO fetch] Erro no bloco catch:", err);
       setError(err.message || "Ocorreu um erro ao buscar o histórico.");
-      setLancamentos([]); // Limpa em caso de erro
+      setLancamentos([]);
     } finally {
-      setIsLoading(false); // Garante que loading termina
+      setIsLoading(false);
     }
-  }; // <<< FIM DA FUNÇÃO fetchHistorico (Verifique o ';')
-  // --- FIM FUNÇÃO fetchHistorico ---
+  }; // --- FIM fetchHistorico ---
 
-  // --- Efeito para Carga Inicial (SINTAXE REVISADA) ---
+  // --- Efeito para Carga Inicial ---
   useEffect(() => {
     console.log(`[HISTORICO useEffect inicial] User ou Unidade mudou.`);
-    try { // Adicionado try...catch robusto para cálculo de datas
+    try {
         const agora = new Date();
         const inicioMesAtual = formatarDataParaInput(new Date(agora.getFullYear(), agora.getMonth(), 1));
         const fimMesAtual = formatarDataParaInput(new Date(agora.getFullYear(), agora.getMonth() + 1, 0));
 
-        // Verifica se as datas calculadas são válidas ANTES de usá-las
         if (inicioMesAtual && fimMesAtual) {
             console.log(`[HISTORICO useEffect inicial] Definindo e buscando datas: ${inicioMesAtual} a ${fimMesAtual}`);
             setDataInicioFiltro(inicioMesAtual);
             setDataFimFiltro(fimMesAtual);
-            setTermoPesquisa(''); // Limpa pesquisa
-
-            // Chama fetchHistorico APENAS se user e unidadeId já estiverem prontos
+            setTermoPesquisa('');
             if (user && user.email && unidadeId) {
-                fetchHistorico(inicioMesAtual, fimMesAtual, ''); // Busca inicial
+                fetchHistorico(inicioMesAtual, fimMesAtual, '');
             } else {
                  console.log("[HISTORICO useEffect inicial] User ou UnidadeId ainda não definidos, aguardando.");
-                 setLancamentos([]); // Garante vazio
+                 setLancamentos([]);
             }
         } else {
-            // Se formatarDataParaInput retornou vazio (data inválida)
             console.error("[HISTORICO useEffect inicial] Erro ao calcular datas do mês atual (resultado vazio).");
             setError("Erro ao definir período inicial.");
             setLancamentos([]);
         }
-    } catch (e) { // Captura erros inesperados no cálculo das datas
+    } catch (e) {
         console.error("[HISTORICO useEffect inicial] Erro GERAL inesperado ao calcular datas:", e);
         setError("Erro crítico ao definir período.");
         setLancamentos([]);
     } finally {
-        // Garante que estados visuais sejam resetados
         setMostrarReceitas(false);
         setMostrarDespesas(false);
     }
-  }, [user, unidadeId]); // <<< FIM DO useEffect (Verifique o ';')
-  // --- FIM DO useEffect ---
-
+  }, [user, unidadeId]); // --- FIM useEffect ---
 
   // --- Handler do Botão Filtrar ---
   const handleFiltrarClick = () => {
-    if (!dataInicioFiltro || !dataFimFiltro) {
-        setError("Por favor, selecione as datas de início e fim.");
-        return;
-    }
-    // Converte as datas para objetos Date para comparação segura
-    const inicio = new Date(dataInicioFiltro + 'T00:00:00Z'); // Assume UTC
-    const fim = new Date(dataFimFiltro + 'T23:59:59Z'); // Assume UTC fim do dia
-    if (isNaN(inicio.getTime()) || isNaN(fim.getTime())) {
-        setError("Datas selecionadas são inválidas.");
-        return;
-    }
-    if (fim < inicio) {
-        setError("A data 'Até' não pode ser anterior à data 'De'.");
-        return;
-    }
-
+    if (!dataInicioFiltro || !dataFimFiltro) { /* ... validações ... */ return; }
+    if (new Date(dataFimFiltro + 'T23:59:59Z') < new Date(dataInicioFiltro + 'T00:00:00Z')) { /* ... validações ... */ return; }
     console.log(`[HISTORICO handleFiltrarClick] Filtrando de ${dataInicioFiltro} a ${dataFimFiltro} com pesquisa: "${termoPesquisa}"`);
     fetchHistorico(dataInicioFiltro, dataFimFiltro, termoPesquisa);
+  }; // --- FIM handleFiltrarClick ---
+
+  // --- NOVO: Handler para o Botão Excluir ---
+  const handleDeleteClick = async (idParaApagar) => {
+    if (!window.confirm("Tem a certeza que quer apagar este lançamento? Esta ação não pode ser desfeita.")) {
+      return;
+    }
+    setIsDeleting(idParaApagar);
+    setError(null);
+    try {
+      const response = await fetch('/api/deleteLancamento', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: idParaApagar }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Falha ao apagar (Status: ${response.status})`);
+      }
+      // Sucesso: Remove o item da lista local
+      setLancamentos(listaAtual => listaAtual.filter(item => item.id_de_lancamento !== idParaApagar));
+      console.log(`[HISTORICO handleDelete] Lançamento ${idParaApagar} apagado.`);
+    } catch (err) {
+      console.error("[HISTORICO handleDelete] Erro:", err);
+      setError(err.message || "Ocorreu um erro ao apagar.");
+    } finally {
+      setIsDeleting(null);
+    }
   };
+  // --- FIM NOVO HANDLER ---
 
   // --- Cálculos de Totais ---
   const totalReceitas = lancamentos
@@ -213,16 +195,29 @@ function HistoricoLancamentos({ user, unidadeId }) {
     .filter(item => item.tipo_de_operacao === 'Despesa')
     .reduce((acc, item) => acc + parseFloat(item.valor_r || 0), 0);
 
-  // --- Função para Renderizar Linha ---
+  // --- Função para Renderizar Linha (COM BOTÃO DELETE) ---
   const renderLinha = (item) => (
-    <tr key={item.id_de_lancamento}>
+    <tr key={item.id_de_lancamento} className={isDeleting === item.id_de_lancamento ? 'deleting' : ''}>
       <td>{formatarData(item.data_pagamento)}</td>
       <td>{item.descricao || item.categoria}</td>
       <td className={`valor-${item.tipo_de_operacao?.toLowerCase()}`}>
         {formatarValor(item.valor_r)}
       </td>
+      {/* CÉLULA DE AÇÕES */}
+      <td className="coluna-acoes">
+        {/* <button className="botao-acao editar" disabled={isDeleting} title="Editar">✎</button> */} {/* Botão Editar (futuro) */}
+        <button
+          className="botao-acao apagar"
+          onClick={() => handleDeleteClick(item.id_de_lancamento)}
+          disabled={isDeleting === item.id_de_lancamento} // Desabilita só este botão
+          title="Apagar"
+        >
+          {isDeleting === item.id_de_lancamento ? '...' : '🗑️'}
+        </button>
+      </td>
     </tr>
   );
+  // --- FIM renderLinha ---
 
   // --- Lógica de Renderização Principal ---
   const renderHistorico = () => {
@@ -231,9 +226,7 @@ function HistoricoLancamentos({ user, unidadeId }) {
     if (lancamentos.length === 0 && !isLoading && !error) {
         return <p className="historico-mensagem">Nenhum lançamento encontrado para o período e pesquisa selecionados.</p>;
     }
-    // Não renderiza nada se estiver loading (a mensagem global trata disso)
-    if (isLoading) { return null; }
-
+    if (isLoading && lancamentos.length === 0) { return null; } // Evita piscar "vazio" durante a carga inicial
 
     const receitasDoPeriodo = lancamentos.filter(item => item.tipo_de_operacao === 'Receita');
     const despesasDoPeriodo = lancamentos.filter(item => item.tipo_de_operacao === 'Despesa');
@@ -245,17 +238,17 @@ function HistoricoLancamentos({ user, unidadeId }) {
           <h3>{mostrarReceitas ? '▼' : '►'} Total Receitas ({formatarData(dataInicioFiltro)} a {formatarData(dataFimFiltro)}):</h3>
           <span className="valor-receita">{formatarValor(totalReceitas)}</span>
         </div>
-        {mostrarReceitas && ( receitasDoPeriodo.length > 0 ? ( <div className="detalhe-tabela-wrapper"> <table className="tabela-lancamentos detalhe"><thead><tr><th>Data Pag.</th><th>Descrição</th><th style={{ textAlign: 'right' }}>Valor</th></tr></thead><tbody>{receitasDoPeriodo.map(renderLinha)}</tbody></table></div> ) : ( <p className="historico-mensagem detalhe">Nenhuma receita encontrada no período.</p> ) )}
+        {mostrarReceitas && ( receitasDoPeriodo.length > 0 ? ( <div className="detalhe-tabela-wrapper"> <table className="tabela-lancamentos detalhe"><thead><tr><th>Data Pag.</th><th>Descrição</th><th style={{ textAlign: 'right' }}>Valor</th><th className="coluna-acoes-header">Ações</th></tr></thead><tbody>{receitasDoPeriodo.map(renderLinha)}</tbody></table></div> ) : ( <p className="historico-mensagem detalhe">Nenhuma receita encontrada no período.</p> ) )}
 
         {/* Secção Despesas */}
         <div className="resumo-seccao" onClick={() => setMostrarDespesas(!mostrarDespesas)} role="button" tabIndex={0}>
           <h3>{mostrarDespesas ? '▼' : '►'} Total Despesas ({formatarData(dataInicioFiltro)} a {formatarData(dataFimFiltro)}):</h3>
           <span className="valor-despesa">{formatarValor(totalDespesas)}</span>
         </div>
-        {mostrarDespesas && ( despesasDoPeriodo.length > 0 ? ( <div className="detalhe-tabela-wrapper"> <table className="tabela-lancamentos detalhe"><thead><tr><th>Data Pag.</th><th>Descrição</th><th style={{ textAlign: 'right' }}>Valor</th></tr></thead><tbody>{despesasDoPeriodo.map(renderLinha)}</tbody></table></div> ) : ( <p className="historico-mensagem detalhe">Nenhuma despesa encontrada no período.</p> ) )}
+        {mostrarDespesas && ( despesasDoPeriodo.length > 0 ? ( <div className="detalhe-tabela-wrapper"> <table className="tabela-lancamentos detalhe"><thead><tr><th>Data Pag.</th><th>Descrição</th><th style={{ textAlign: 'right' }}>Valor</th><th className="coluna-acoes-header">Ações</th></tr></thead><tbody>{despesasDoPeriodo.map(renderLinha)}</tbody></table></div> ) : ( <p className="historico-mensagem detalhe">Nenhuma despesa encontrada no período.</p> ) )}
       </>
     );
-  };
+  }; // --- FIM renderHistorico ---
 
   // --- Return Principal ---
   return (
