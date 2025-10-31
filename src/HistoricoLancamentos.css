@@ -1,64 +1,64 @@
-/* --- src/HistoricoLancamentos.css - DARK MODE THEME --- */
+/* --- src/HistoricoLancamentos.css - V3 com Edição, Fonte e Novas Colunas --- */
 
 .historico-wrapper {
-  margin-top: 30px; /* Adiciona espaço acima do histórico */
+  /* NOVA FONTE: Roboto é profissional e limpa, menos "abaulada" que Segoe/San Francisco */
+  font-family: 'Roboto', 'Open Sans', -apple-system, sans-serif;
+  margin-top: 30px; /* Adiciona espaço acima do filtro */
 }
 
 .historico-wrapper h2 {
-  margin-bottom: 20px;
-  color: var(--text-color-primary); /* Texto claro para o título principal */
-  font-size: 1.4rem; /* Ajuste tamanho se necessário */
-  border-bottom: 1px solid var(--border-color); /* Linha divisória */
-  padding-bottom: 10px;
+  margin-bottom: 15px;
+  font-weight: 500; /* Fonte um pouco mais leve para o título */
+  color: var(--text-color-primary);
+  text-align: left; /* Alinha o título "Resumo..." à esquerda */
 }
 
-/* --- Filtros (Mantém o estilo claro/distinto, mas ajusta cores) --- */
+/* --- Filtro --- */
 .filtro-historico {
   display: flex;
   flex-wrap: wrap; /* Permite quebrar linha em telas menores */
   gap: 15px;
   align-items: flex-end;
   margin-bottom: 25px;
-  padding: 15px 20px; /* Ajuste padding */
-  background-color: var(--surface-color-dark); /* <<< MUDANÇA: Fundo escuro secundário */
-  border-radius: 6px; /* Bordas consistentes */
-  border: 1px solid var(--border-color); /* <<< MUDANÇA: Borda escura */
+  padding: 15px 20px;
+  background-color: var(--bg-color-dark); /* Fundo mais escuro */
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
 }
-
 .filtro-campo {
   display: flex;
   flex-direction: column;
+  flex-grow: 1; /* Permite que os campos cresçam */
 }
-
 .filtro-campo label {
-  margin-bottom: 5px;
-  font-size: 0.85rem; /* Menor para labels de filtro */
-  color: var(--text-color-secondary); /* <<< MUDANÇA: Cor secundária */
-  font-weight: 500;
+  margin-bottom: 6px;
+  font-size: 0.85em; /* Label menor */
+  color: var(--text-color-secondary);
+  text-transform: uppercase; /* Mais formal */
 }
-
-/* Inputs dentro do filtro herdam o estilo global definido em index.css */
-/* Não precisamos redefinir input[type="date"], input[type="search"] aqui */
-
+.filtro-campo input[type="date"],
+.filtro-campo input[type="search"] {
+  padding: 8px 12px; /* Inputs um pouco menores */
+  /* Estilos (fundo, cor, borda) herdados de index.css */
+  min-width: 150px;
+}
 .botao-filtrar {
-  padding: 8px 15px; /* Altura consistente com inputs */
+  padding: 9px 20px;
   cursor: pointer;
   background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 6px; /* Consistente */
+  border-radius: 5px;
+  font-weight: 600;
   transition: background-color 0.2s ease;
-  height: 40px; /* Alinha altura com inputs (ajuste padding/height) */
-  box-sizing: border-box;
+  flex-shrink: 0; /* Impede que o botão encolha */
 }
-
 .botao-filtrar:hover {
   background-color: var(--primary-color-hover);
 }
-
 .botao-filtrar:disabled {
   background-color: var(--input-bg);
-  color: var(--text-color-primary);
+  color: var(--text-color-secondary);
   cursor: not-allowed;
 }
 
@@ -67,133 +67,102 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 18px; /* Ajuste padding */
-  margin-bottom: 8px; /* Aumenta espaço entre secções */
-  background-color: var(--bg-color-dark); /* <<< MUDANÇA: Fundo escuro secundário */
-  border-radius: 6px;
-  border: 1px solid var(--border-color); /* <<< MUDANÇA: Borda sutil */
+  padding: 14px 18px;
+  margin-bottom: 4px;
+  background-color: var(--input-bg); /* Fundo padrão (cinza escuro) */
+  border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  background-color: var(--input-bg); /* <<< ADICIONE/MODIFIQUE AQUI (Cor de fundo escura padrão) */
-  color: var(--text-color-primary); /* Garante texto claro */
+  border: 1px solid var(--border-color);
 }
-
 .resumo-seccao:hover {
-  background-color: #303030; /* <<< MUDANÇA: Tom ligeiramente mais claro no hover */
+  background-color: #4b4d4f; /* Tom mais claro no hover */
   border-color: var(--text-color-secondary);
 }
-
 .resumo-seccao h3 {
   margin: 0;
-  font-size: 1.05em; /* Ajuste tamanho */
+  font-size: 1.0em;
   display: flex;
   align-items: center;
-  color: var(--text-color-primary); /* <<< MUDANÇA: Texto principal claro (CORRIGE O PROBLEMA) */
-  font-weight: 600; /* Destaque leve */
+  color: var(--text-color-secondary);
+  font-weight: 500;
 }
-
-/* Cores dos valores de total (já definidas, mas confirmamos) */
-.valor-receita {
-  color: var(--success-color); /* Verde */
+.resumo-seccao .valor-receita {
+  color: var(--success-color, #28a745);
   font-weight: bold;
+  font-size: 1.1em;
 }
-
-.valor-despesa {
-  color: var(--danger-color); /* Vermelho */
+.resumo-seccao .valor-despesa {
+  color: var(--danger-color, #dc3545);
   font-weight: bold;
+  font-size: 1.1em;
 }
 
 /* --- Tabelas de Detalhe --- */
-.detalhe-tabela-wrapper { /* Novo wrapper para margem/padding */
-    margin-top: -5px; /* Cola na secção */
-    margin-bottom: 15px;
-    padding: 0 10px; /* Pequeno recuo lateral */
+.detalhe-tabela-wrapper {
+  /* Pode ser usado para animações de "slide down" no futuro */
+  overflow: hidden;
+  margin-bottom: 15px;
 }
-
 .tabela-lancamentos.detalhe {
+  margin-top: -1px; /* Cola na secção de resumo */
   width: 100%;
   border-collapse: collapse;
-  background-color: var(--bg-color-dark); /* <<< MUDANÇA: Fundo principal escuro para a tabela */
-  border: 1px solid var(--border-color); /* Borda externa opcional */
-  border-radius: 4px; /* Pequeno arredondamento */
-  overflow: hidden; /* Garante que o radius funcione */
+  border: 1px solid var(--border-color);
+  border-top: none; /* Remove borda dupla */
+  border-radius: 0 0 5px 5px; /* Arredonda cantos inferiores */
+  background-color: var(--surface-color-dark); /* Fundo da tabela */
 }
-
 .tabela-lancamentos.detalhe th,
 .tabela-lancamentos.detalhe td {
-  border-bottom: 1px solid var(--border-color); /* <<< MUDANÇA: Apenas borda inferior */
-  padding: 10px 14px; /* Ajuste padding */
+  border-bottom: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-color); /* Apenas bordas verticais leves */
+  padding: 10px 14px;
   text-align: left;
-  color: var(--text-color-primary); /* <<< MUDANÇA: Cor secundária para dados */
-  font-size: 0.95rem;
+  font-size: 0.95em;
+  color: var(--text-color-primary);
 }
-
-.tabela-lancamentos.detalhe th { /* Estilo do Cabeçalho */
-   background-color: var(--shadow-color); /* <<< MUDANÇA: Fundo secundário */
-   color: var(--text-color-primary); /* <<< MUDANÇA: Texto principal */
-   font-weight: 600;
-   border-bottom-width: 2px; /* Linha mais grossa abaixo do header */
+.tabela-lancamentos.detalhe th:first-child,
+.tabela-lancamentos.detalhe td:first-child {
+  border-left: none; /* Remove borda da primeira coluna */
 }
-
-.tabela-lancamentos.detalhe td:last-child { /* Alinha última coluna (Valor) à direita */
+.tabela-lancamentos.detalhe thead {
+  background-color: var(--bg-color-dark); /* Cabeçalho mais escuro */
+  color: var(--text-color-secondary);
+  font-size: 0.9em;
+  text-transform: uppercase;
+}
+.tabela-lancamentos.detalhe td:last-child {
+  text-align: center; /* Alinha coluna "Ações" */
+}
+/* Alinha coluna "Valor" (penúltima) à direita */
+.tabela-lancamentos.detalhe td:nth-last-child(2) { 
   text-align: right;
-  font-weight: 500; /* Leve destaque no valor */
+  font-weight: 600;
+}
+.tabela-lancamentos.detalhe th:nth-last-child(2) {
+  text-align: right;
 }
 
-/* Cores específicas para valores na tabela */
-.tabela-lancamentos.detalhe td.valor-receita {
-    color: var(--success-color);
-}
-.tabela-lancamentos.detalhe td.valor-despesa {
-    color: var(--danger-color);
-}
 
-/* Remove borda inferior da última linha */
-.tabela-lancamentos.detalhe tbody tr:last-child td {
-    border-bottom: none;
-}
-
-/* --- Mensagens --- */
-.historico-mensagem {
-  padding: 25px; /* Aumenta padding */
-  text-align: center;
-  color: var(--text-color-secondary); /* <<< MUDANÇA: Cor secundária */
-  font-style: italic; /* Estilo para mensagens */
-}
-.historico-mensagem.erro {
-  color: var(--danger-color); /* Vermelho */
-  font-weight: bold;
-  font-style: normal;
-}
-.historico-mensagem.detalhe { /* Mensagem dentro de secção expandida */
-    padding: 15px;
-    font-size: 0.9em;
-    background-color: var(--bg-color-dark); /* Fundo consistente */
-    margin-top: -5px;
-    margin-bottom: 15px;
-}
-
-/* Remover estilo do botão completo se não o estamos a usar */
-/* .botao-historico-completo { ... } */
-/* Adicionar ao final de HistoricoLancamentos.css */
-
+/* --- Coluna de Ações e Botões --- */
 .coluna-acoes,
 .coluna-acoes-header {
-  width: 80px; /* Largura fixa para os botões */
+  width: 90px;
   text-align: center;
   padding: 8px 5px;
 }
-
 .botao-acao {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.2rem; /* Tamanho do ícone */
+  font-size: 1.1rem;
   padding: 5px;
-  margin: 0 3px;
+  margin: 0 4px;
   border-radius: 4px;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, color 0.2s;
   opacity: 0.7;
+  color: var(--text-color-secondary); /* Cor padrão do ícone */
 }
 .botao-acao:hover {
   opacity: 1;
@@ -203,127 +172,138 @@
   cursor: not-allowed;
 }
 
-/* Cor específica para o botão apagar */
-.botao-acao.apagar:hover {
-  background-color: rgba(220, 53, 69, 0.2); /* Fundo vermelho claro no hover */
-  color: var(--danger-color, #dc3545); /* Cor vermelha */
+/* CORREÇÃO DO ÍCONE EDITAR (Mais claro por padrão) */
+.botao-acao.editar {
+  color: var(--text-color-primary); /* <<< COR CLARA POR PADRÃO */
+  opacity: 0.6;
 }
-
-/* Cor específica para o botão editar (futuro) */
 .botao-acao.editar:hover {
-   background-color: rgba(0, 123, 255, 0.2); /* Fundo azul claro no hover */
-   color: var(--primary-color, #007bff); /* Cor azul */
+   background-color: rgba(74, 144, 226, 0.2);
+   color: var(--primary-color, #4a90e2); /* Azul no hover */
+   opacity: 1;
 }
-
-/* Efeito visual durante a exclusão */
+.botao-acao.apagar:hover {
+  background-color: rgba(220, 53, 69, 0.2);
+  color: var(--danger-color, #dc3545);
+  opacity: 1;
+}
 tr.deleting {
-  opacity: 0.5;
-  background-color: var(--danger-color, #dc3545) !important;
+  opacity: 0.4;
+  background-color: #5d383f; /* Fundo avermelhado escuro */
   transition: all 0.3s ease;
 }
-/* Adicionar ao final de HistoricoLancamentos.css */
+
+/* --- Mensagens (Loading, Erro, Vazio) --- */
+.historico-mensagem {
+  padding: 20px 15px;
+  text-align: center;
+  color: var(--text-color-secondary);
+}
+.historico-mensagem.erro {
+  color: var(--danger-color);
+  font-weight: 600;
+}
+.historico-mensagem.detalhe { /* Mensagem dentro da secção expandida */
+  padding: 10px 15px;
+  text-align: center;
+  font-size: 0.9em;
+  background-color: var(--surface-color-dark);
+  border: 1px solid var(--border-color);
+  border-top: none;
+  margin-top: -16px;
+  margin-bottom: 15px;
+  border-radius: 0 0 5px 5px;
+}
+
 
 /* --- Estilos do Modal de Edição --- */
-
 .modal-overlay {
-  position: fixed; /* Cobre a tela inteira */
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7); /* Fundo preto translúcido */
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75); /* Mais escuro */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000; /* Fica acima de tudo */
-  animation: fadeInModal 0.3s ease; /* Animação suave */
+  z-index: 2000;
+  animation: fadeInModal 0.3s ease;
 }
-
 .modal-content {
-  background-color: var(--surface-color-dark, #2c2f33); /* Fundo escuro do modal */
+  background-color: var(--surface-color-dark);
   padding: 25px 30px;
   border-radius: 8px;
-  box-shadow: 0 5px 20px var(--shadow-color, rgba(0,0,0,0.5));
+  box-shadow: 0 5px 20px var(--shadow-color);
   width: 100%;
-  max-width: 500px; /* Largura do modal */
+  max-width: 600px; /* Um pouco mais largo para os form rows */
   z-index: 2001;
-  border: 1px solid var(--border-color, #404347);
+  border: 1px solid var(--border-color);
 }
-
 .modal-content h3 {
   margin-top: 0;
   margin-bottom: 25px;
-  color: var(--text-color-primary, #e4e6eb);
+  color: var(--text-color-primary);
   text-align: center;
-  border-bottom: 1px solid var(--border-color, #404347);
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 15px;
+  font-weight: 500;
 }
-
 .edit-form {
   display: flex;
   flex-direction: column;
-  gap: 18px; /* Espaço entre os campos */
+  gap: 20px;
 }
-
-/* Herda .form-group de index.css, mas podemos ajustar se necessário */
+.edit-form .form-row { /* Define 2 colunas para o modal */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
 .edit-form .form-group {
   width: 100%;
 }
-.edit-form .form-group label {
-  color: var(--text-color-secondary, #b0b3b8);
-  font-size: 0.9rem;
-}
+.edit-form .form-group label
 .edit-form .form-group input,
 .edit-form .form-group select {
-  /* Herda os estilos globais de input/select (fundo escuro, texto claro) */
-  width: 100%; /* Garante largura total */
-  box-sizing: border-box; /* Garante que padding não quebre o layout */
+  width: 100%;
+  box-sizing: border-box;
 }
-
-
 .modal-actions {
   display: flex;
-  justify-content: flex-end; /* Alinha botões à direita */
+  justify-content: flex-end;
   gap: 15px;
   margin-top: 25px;
-  padding-top: 15px;
-  border-top: 1px solid var(--border-color, #404347);
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
 }
-
 .modal-actions button {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
-
 .botao-cancelar {
-  background-color: var(--input-bg, #3a3b3c); /* Fundo cinza */
-  color: var(--text-color-primary, #e4e6eb);
-  border: 1px solid var(--border-color, #55595c);
+  background-color: var(--input-bg);
+  color: var(--text-color-primary);
+  border: 1px solid var(--border-color);
 }
 .botao-cancelar:hover {
-  background-color: #4b4d4f; /* Tom mais claro */
+  background-color: #4b4d4f;
 }
-
 .botao-salvar {
-  background-color: var(--primary-color, #4a90e2); /* Azul */
+  background-color: var(--primary-color);
   color: white;
 }
 .botao-salvar:hover {
-  background-color: var(--primary-color-hover, #3a7bc8);
+  background-color: var(--primary-color-hover);
 }
-.botao-salvar:disabled {
+.botao-salvar:disabled,
+.botao-cancelar:disabled {
   background-color: #5a5a5a;
   cursor: not-allowed;
 }
 
-
-/* Animação do Modal */
 @keyframes fadeInModal {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }

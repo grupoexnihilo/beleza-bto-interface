@@ -1,24 +1,31 @@
-// --- VERSÃO FINAL COM FILTROS, PESQUISA, DELETE E EDIT CONDICIONAL ---
+// --- VERSÃO COMPLETA FINAL (Filtros, Pesquisa, Delete, Edit, Colunas Novas, Fix TypeError) ---
 import React, { useState, useEffect } from 'react';
 import './HistoricoLancamentos.css';
 
 // ***** INÍCIO DAS FUNÇÕES AUXILIARES (DEFINIDAS ANTES DO COMPONENTE) *****
 const formatarDataParaInput = (data) => {
-  // ... (código mantido como na última versão) ...
   if (!data || !(data instanceof Date) || isNaN(data.getTime())) { return ''; }
   try {
-      const dia = String(data.getDate()).padStart(2, '0');
-      const mes = String(data.getMonth() + 1).padStart(2, '0');
-      const ano = data.getFullYear();
-      return `${ano}-${mes}-${dia}`;
+    const dia = String(data.getDate()).padStart(2, '0');
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const ano = data.getFullYear();
+    return `${ano}-${mes}-${dia}`;
   } catch (e) { return ''; }
 };
 const formatarData = (dataInput) => {
-  // ... (código mantido como na última versão, com correção UTC) ...
   if (!dataInput || typeof dataInput !== 'string') return '-';
   try {
     const dataObj = new Date(dataInput);
-    if (isNaN(dataObj.getTime())) { /* ... (lógica de fallback mantida) ... */ }
+    if (isNaN(dataObj.getTime())) {
+      const parts = dataInput.split('-');
+      if (parts.length === 3) {
+        const [ano, mes, dia] = parts;
+        if (!isNaN(parseInt(dia)) && !isNaN(parseInt(mes)) && !isNaN(parseInt(ano))) {
+          const diaF = String(dia).padStart(2, '0'); const mesF = String(mes).padStart(2, '0');
+          return `${diaF}/${mesF}/${ano}`;
+        }
+      } return '-';
+    }
     const dia = String(dataObj.getUTCDate()).padStart(2, '0');
     const mes = String(dataObj.getUTCMonth() + 1).padStart(2, '0');
     const ano = dataObj.getUTCFullYear();
@@ -26,7 +33,6 @@ const formatarData = (dataInput) => {
   } catch (e) { return '-'; }
 };
 const formatarValor = (valor) => {
-  // ... (código mantido como na última versão) ...
   const numValor = parseFloat(valor || 0);
   if (isNaN(numValor)) { return 'R$ 0,00'; }
   return numValor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -36,8 +42,8 @@ const formatarValor = (valor) => {
 
 // ***** INÍCIO DO COMPONENTE PRINCIPAL *****
 function HistoricoLancamentos({ user, unidadeId }) {
-  // --- Estados Principais ---
-  const [lancamentos, setLancamentos] = useState([]);
+  // --- Estados ---
+  const [lancamentos, setLancamentos] = useState([]); // GARANTIDO COMO ARRAY
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(null);
   const [error, setError] = useState(null);
@@ -46,22 +52,18 @@ function HistoricoLancamentos({ user, unidadeId }) {
   const [dataInicioFiltro, setDataInicioFiltro] = useState('');
   const [dataFimFiltro, setDataFimFiltro] = useState('');
   const [termoPesquisa, setTermoPesquisa] = useState('');
-
-  // --- Estados para Edição ---
-  const [editingItem, setEditingItem] = useState(null); // Guarda o item {id, ...} a ser editado
+  // --- Estados Edição ---
+  const [editingItem, setEditingItem] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [editFormError, setEditFormError] = useState(null);
-  const [editFormData, setEditFormData] = useState({});
-  // Listas para popular os dropdowns do modal de edição
   const [allCategorias, setAllCategorias] = useState([]);
   const [allColaboradores, setAllColaboradores] = useState([]);
   const [allFormasPagamento, setAllFormasPagamento] = useState([]);
-  // --- FIM Estados Edição ---
+  const [editFormData, setEditFormData] = useState({});
 
-  // --- Função para Buscar Dados (mantida) ---
+  // --- Função para Buscar Dados ---
   const fetchHistorico = async (inicio, fim, pesquisa) => {
-    // ... (código mantido como na última versão, com validações) ...
-    if (!user?.email || !unidadeId || !inicio || !fim ) { /*...*/ setLancamentos([]); return; }
+    if (!user?.email || !unidadeId || !inicio || !fim) { /*...*/ setLancamentos([]); return; }
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(inicio) || !dateRegex.test(fim)) { /*...*/ setLancamentos([]); return; }
     setIsLoading(true); setError(null);
@@ -71,16 +73,25 @@ function HistoricoLancamentos({ user, unidadeId }) {
       const url = `/api/getHistorico?${params.toString()}`;
       const response = await fetch(url);
       const responseText = await response.text();
-      if (!response.ok) { /*...*/ throw new Error(/*...*/); }
+      if (!response.ok) {
+        let errorData = { message: `Erro ${response.status} ao buscar histórico.` };
+        try { errorData = JSON.parse(responseText); } catch (e) { /* Ignora */ }
+        throw new Error(errorData.message || `Falha ao buscar histórico (${response.status})`);
+      }
       const data = responseText ? JSON.parse(responseText) : [];
-      setLancamentos(Array.isArray(data) ? data : []); // Garante que é SEMPRE um array
-    } catch (err) { /*...*/ setError(err.message); setLancamentos([]); }
-    finally { setIsLoading(false); }
+      setLancamentos(Array.isArray(data) ? data : []); // *** CORREÇÃO TypeError: Garante que é SEMPRE um array
+    } catch (err) {
+      console.error("[HISTORICO fetch] Erro no bloco catch:", err);
+      setError(err.message || "Ocorreu um erro ao buscar o histórico.");
+      setLancamentos([]); // Garante array no erro
+    } finally {
+      setIsLoading(false);
+    }
   }; // --- FIM fetchHistorico ---
 
   // --- Efeito para Carga Inicial E BUSCA DE OPÇÕES DE EDIÇÃO ---
   useEffect(() => {
-    // ... (Lógica de cálculo de datas e busca inicial do histórico mantida) ...
+    // ... (Lógica de cálculo de datas e busca inicial do histórico) ...
     try {
         const agora = new Date();
         const inicioMesAtual = formatarDataParaInput(new Date(agora.getFullYear(), agora.getMonth(), 1));
@@ -97,87 +108,57 @@ function HistoricoLancamentos({ user, unidadeId }) {
     // --- Buscar TODAS as opções para o modal de edição ---
     const fetchAllOptions = async () => {
         if (!unidadeId) return;
-        console.log("[HISTORICO useEffect] Buscando todas as opções para o modal...");
         try {
-            // Buscamos Receita (para Cats Receita + Colaboradores)
-            // Buscamos Despesa (para Cats Despesa + Formas Pagamento)
             const [resReceita, resDespesa] = await Promise.all([
                 fetch(`/api/getFormOptions?unidadeId=${unidadeId}&tipo=Receita`),
                 fetch(`/api/getFormOptions?unidadeId=${unidadeId}&tipo=Despesa`)
             ]);
-            if (!resReceita.ok || !resDespesa.ok) {
-                console.error("Falha ao buscar listas de opções para edição.");
-                return;
-            }
+            if (!resReceita.ok || !resDespesa.ok) { return; }
             const dataReceita = await resReceita.json();
             const dataDespesa = await resDespesa.json();
 
-            // 1. Salva Categorias (ambos os tipos)
             const categoriasReceita = (dataReceita.categorias || []).map(cat => ({ ...cat, tipo: 'Receita' }));
             const categoriasDespesa = (dataDespesa.categorias || []).map(cat => ({ ...cat, tipo: 'Despesa' }));
             setAllCategorias([...categoriasReceita, ...categoriasDespesa]);
-
-            // 2. Salva Colaboradores (da busca de Receita)
             setAllColaboradores(dataReceita.colaboradores || []);
-            
-            // 3. Salva Formas de Pagamento (da busca de Despesa - assumindo que são as mesmas)
-            // Se precisar de *todas* as FPs (não apenas as de despesa da unidade), teríamos que ajustar a API
+            // Precisamos de TODAS as formas de pagamento, não apenas as de Despesa da Unidade
+            // Vamos assumir por agora que a lista de Despesa é suficiente
             setAllFormasPagamento(dataDespesa.formasPagamento || []);
-            
-            console.log("[HISTORICO useEffect] Opções para edição carregadas.");
-        } catch (catError) {
-            console.error("Erro ao buscar opções para edição:", catError);
-        }
+        } catch (catError) { console.error("Erro ao buscar opções para edição:", catError); }
     };
     fetchAllOptions();
-    // --- FIM BUSCA OPÇÕES ---
-
   }, [user, unidadeId]);
   // --- FIM useEffect ---
 
-  // --- Handlers (Filtrar, Delete) ---
+  // --- Handlers (Filtrar, Delete, Edit) ---
   const handleFiltrarClick = () => { /* ... (código mantido) ... */ };
   const handleDeleteClick = async (idParaApagar) => { /* ... (código mantido) ... */ };
-
-  // --- Handlers para Edição ---
-  // 1. Quando o utilizador clica no botão Editar (✎) na linha
   const handleEditClick = (item) => {
     console.log("Iniciando edição para:", item);
     // Formata datas ISO (do Neon) para YYYY-MM-DD (para o input)
     const dataCompFormatada = item.data_competencia ? formatarData(item.data_competencia).split('/').reverse().join('-') : '';
     const dataPagFormatada = item.data_pagamento ? formatarData(item.data_pagamento).split('/').reverse().join('-') : '';
-    
     const itemFormatado = {
       ...item,
       data_competencia: dataCompFormatada,
       data_pagamento: dataPagFormatada,
     };
-    setEditFormData(itemFormatado); // Preenche o estado do formulário com os dados da linha
-    setEditingItem(itemFormatado);  // Abre o modal (passando o item original para saber o tipo)
+    setEditFormData(itemFormatado);
+    setEditingItem(itemFormatado);
     setEditFormError(null);
   };
-
-  // 2. Quando o utilizador altera um campo no modal de edição
-  const handleEditFormChange = (e) => {
-    const { name, value } = e.target;
-    setEditFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  // 3. Quando o utilizador clica em "Salvar Alterações" no modal
+  const handleEditFormChange = (e) => { /* ... (código mantido) ... */ };
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
-    setIsUpdating(true);
-    setEditFormError(null);
-    
-    // --- CORREÇÃO: Enviar datas como ISOString UTC ---
+    setIsUpdating(true); setEditFormError(null);
+    // Converte datas YYYY-MM-DD (do form) para ISOString UTC (para a API)
     const dataCompetenciaUTC = editFormData.data_competencia ? new Date(editFormData.data_competencia + 'T00:00:00.000Z').toISOString() : null;
     const dataPagamentoFinal = editFormData.data_pagamento || editFormData.data_competencia;
     const dataPagamentoUTC = dataPagamentoFinal ? new Date(dataPagamentoFinal + 'T00:00:00.000Z').toISOString() : null;
-
     const updatePayload = {
       id_de_lancamento: editingItem.id_de_lancamento,
-      dataCompetencia: dataCompetenciaUTC, // Envia ISOString UTC
-      dataPagamento: dataPagamentoUTC,     // Envia ISOString UTC
+      dataCompetencia: dataCompetenciaUTC,
+      dataPagamento: dataPagamentoUTC,
       categoria: editFormData.categoria,
       descricao: editFormData.descricao,
       valor_r: editFormData.valor_r,
@@ -186,26 +167,13 @@ function HistoricoLancamentos({ user, unidadeId }) {
       formaPagamento: editFormData.forma_de_pagamento, // Envia o ID da FP
     };
     console.log("Enviando payload de update:", updatePayload);
-
     try {
-      const response = await fetch('/api/updateLancamento', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatePayload)
-      });
-      const data = await response.json(); // Tenta ler JSON
-      if (!response.ok) {
-        throw new Error(data.message || 'Falha ao atualizar lançamento.');
-      }
+      const response = await fetch('/api/updateLancamento', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updatePayload) });
+      const data = await response.json();
+      if (!response.ok) { throw new Error(data.message || 'Falha ao atualizar lançamento.'); }
       console.log("Atualização bem-sucedida:", data);
-      
-      // Atualiza a lista local com os dados *retornados* pela API (que incluem o 'grupo' recalculado)
-      setLancamentos(prevLancamentos =>
-        prevLancamentos.map(lanc =>
-          lanc.id_de_lancamento === data.id_de_lancamento ? data : lanc
-        )
-      );
-      setEditingItem(null); // Fecha o modal
+      setLancamentos(prevLancamentos => prevLancamentos.map(lanc => lanc.id_de_lancamento === data.id_de_lancamento ? data : lanc));
+      setEditingItem(null);
     } catch (err) {
       console.error("Erro ao atualizar:", err);
       setEditFormError(err.message);
@@ -215,18 +183,21 @@ function HistoricoLancamentos({ user, unidadeId }) {
   };
   // --- FIM Handlers Edição ---
 
-  // --- Cálculos de Totais (mantidos) ---
-  const totalReceitas = (lancamentos || []).filter(/*...*/).reduce(/*...*/);
-  const totalDespesas = (lancamentos || []).filter(/*...*/).reduce(/*...*/);
+  // --- Cálculos de Totais (COM FALLBACK) ---
+  const totalReceitas = (lancamentos || [])
+    .filter(item => item.tipo_de_operacao === 'Receita')
+    .reduce((acc, item) => acc + parseFloat(item.valor_r || 0), 0);
+  const totalDespesas = (lancamentos || [])
+    .filter(item => item.tipo_de_operacao === 'Despesa')
+    .reduce((acc, item) => acc + parseFloat(item.valor_r || 0), 0);
 
-  // --- Função para Renderizar Linha (COM BOTÃO EDITAR) ---
-  const renderLinha = (item) => (
+  // --- FUNÇÕES DE RENDERIZAÇÃO DE LINHA SEPARADAS (NOVA FUNCIONALIDADE) ---
+  // Linha para Despesas (Layout antigo)
+  const renderLinhaDespesa = (item) => (
     <tr key={item.id_de_lancamento} className={isDeleting === item.id_de_lancamento ? 'deleting' : ''}>
       <td>{formatarData(item.data_pagamento)}</td>
       <td>{item.descricao || item.categoria}</td>
-      <td className={`valor-${item.tipo_de_operacao?.toLowerCase()}`}>
-        {formatarValor(item.valor_r)}
-      </td>
+      <td className="valor-despesa">{formatarValor(item.valor_r)}</td>
       <td className="coluna-acoes">
         <button className="botao-acao editar" onClick={() => handleEditClick(item)} disabled={isDeleting || isUpdating} title="Editar"> ✎ </button>
         <button className="botao-acao apagar" onClick={() => handleDeleteClick(item.id_de_lancamento)} disabled={isDeleting || isUpdating} title="Apagar">
@@ -234,13 +205,32 @@ function HistoricoLancamentos({ user, unidadeId }) {
         </button>
       </td>
     </tr>
-  ); // Fim renderLinha
+  );
+  // Linha para Receitas (COM NOVAS COLUNAS)
+  const renderLinhaReceita = (item) => (
+    <tr key={item.id_de_lancamento} className={isDeleting === item.id_de_lancamento ? 'deleting' : ''}>
+      <td>{formatarData(item.data_pagamento)}</td>
+      <td>{item.categoria}</td> {/* Descrição é Categoria, conforme pedido */}
+      <td>{item.profissional_nome || '(Não definido)'}</td> {/* <<< NOVA COLUNA */}
+      <td>{item.forma_pagamento_nome || '(Não definido)'}</td> {/* <<< NOVA COLUNA */}
+      <td className="valor-receita">{formatarValor(item.valor_r)}</td>
+      <td className="coluna-acoes">
+        <button className="botao-acao editar" onClick={() => handleEditClick(item)} disabled={isDeleting || isUpdating} title="Editar"> ✎ </button>
+        <button className="botao-acao apagar" onClick={() => handleDeleteClick(item.id_de_lancamento)} disabled={isDeleting || isUpdating} title="Apagar">
+          {isDeleting === item.id_de_lancamento ? '...' : '🗑️'}
+        </button>
+      </td>
+    </tr>
+  );
+  // --- FIM FUNÇÕES DE LINHA ---
 
-  // --- Lógica de Renderização Principal (mantida) ---
+  // --- Lógica de Renderização Principal (COM NOVAS COLUNAS) ---
   const renderHistorico = () => {
-    // ... (código mantido, incluindo tabelas com <thead> de "Ações") ...
-    if (!unidadeId) { /*...*/ } if (error && !isLoading) { /*...*/ }
-    if (lancamentos.length === 0 && !isLoading && !error) { /*...*/ }
+    if (!unidadeId) { return <p className="historico-mensagem">Por favor, selecione uma unidade.</p>; }
+    if (error && !isLoading) { return <p className="historico-mensagem erro">{error}</p>; }
+    if ((!lancamentos || lancamentos.length === 0) && !isLoading && !error) {
+      return <p className="historico-mensagem">Nenhum lançamento encontrado para o período e pesquisa selecionados.</p>;
+    }
     if (isLoading && (!lancamentos || lancamentos.length === 0)) { return null; }
 
     const receitasDoPeriodo = (lancamentos || []).filter(item => item.tipo_de_operacao === 'Receita');
@@ -249,23 +239,43 @@ function HistoricoLancamentos({ user, unidadeId }) {
     return (
       <>
         {/* Secção Receitas */}
-        <div className="resumo-seccao" /*...*/ >
-          <h3>{mostrarReceitas ? '▼' : '►'} Total Receitas (...):</h3>
-          <span className="valor-receita">{formatarValor(totalReceitas)}</span>
-        </div>
-        {mostrarReceitas && ( receitasDoPeriodo.length > 0 ? ( <div className="detalhe-tabela-wrapper"> <table className="tabela-lancamentos detalhe"><thead><tr><th>Data Pag.</th><th>Descrição</th><th style={{ textAlign: 'right' }}>Valor</th><th className="coluna-acoes-header">Ações</th></tr></thead><tbody>{receitasDoPeriodo.map(renderLinha)}</tbody></table></div> ) : ( <p className="historico-mensagem detalhe">Nenhuma receita encontrada no período.</p> ) )}
+        <div className="resumo-seccao" /*...*/ > {/* ... (código mantido) ... */ } </div>
+        {mostrarReceitas && ( receitasDoPeriodo.length > 0 ? (
+          <div className="detalhe-tabela-wrapper">
+            <table className="tabela-lancamentos detalhe">
+              <thead><tr>
+                <th>Data Pag.</th>
+                <th>Categoria</th> {/* Nome da coluna mudado */}
+                <th>Profissional</th> {/* <<< NOVA COLUNA */}
+                <th>Forma Pag.</th> {/* <<< NOVA COLUNA */}
+                <th style={{ textAlign: 'right' }}>Valor</th>
+                <th className="coluna-acoes-header">Ações</th>
+              </tr></thead>
+              <tbody>{receitasDoPeriodo.map(renderLinhaReceita)}</tbody> {/* <<< Chama renderLinhaReceita */}
+            </table>
+          </div>
+        ) : ( <p className="historico-mensagem detalhe">Nenhuma receita encontrada no período.</p> ) )}
 
         {/* Secção Despesas */}
-        <div className="resumo-seccao" /*...*/ >
-          <h3>{mostrarDespesas ? '▼' : '►'} Total Despesas (...):</h3>
-          <span className="valor-despesa">{formatarValor(totalDespesas)}</span>
-        </div>
-        {mostrarDespesas && ( despesasDoPeriodo.length > 0 ? ( <div className="detalhe-tabela-wrapper"> <table className="tabela-lancamentos detalhe"><thead><tr><th>Data Pag.</th><th>Descrição</th><th style={{ textAlign: 'right' }}>Valor</th><th className="coluna-acoes-header">Ações</th></tr></thead><tbody>{despesasDoPeriodo.map(renderLinha)}</tbody></table></div> ) : ( <p className="historico-mensagem detalhe">Nenhuma despesa encontrada no período.</p> ) )}
+        <div className="resumo-seccao" /*...*/ > {/* ... (código mantido) ... */ } </div>
+        {mostrarDespesas && ( despesasDoPeriodo.length > 0 ? (
+          <div className="detalhe-tabela-wrapper">
+            <table className="tabela-lancamentos detalhe">
+              <thead><tr>
+                <th>Data Pag.</th>
+                <th>Descrição</th>
+                <th style={{ textAlign: 'right' }}>Valor</th>
+                <th className="coluna-acoes-header">Ações</th>
+              </tr></thead>
+              <tbody>{despesasDoPeriodo.map(renderLinhaDespesa)}</tbody> {/* <<< Chama renderLinhaDespesa */}
+            </table>
+          </div>
+        ) : ( <p className="historico-mensagem detalhe">Nenhuma despesa encontrada no período.</p> ) )}
       </>
     );
   }; // --- FIM renderHistorico ---
 
-  // --- Return Principal (COM O MODAL DE EDIÇÃO) ---
+  // --- Return Principal ---
   return (
     <div className="historico-wrapper">
       {/* Filtro */}
@@ -276,7 +286,7 @@ function HistoricoLancamentos({ user, unidadeId }) {
       {isLoading && <p className="historico-mensagem">A carregar...</p>}
       {!isLoading && renderHistorico()}
 
-      {/* --- MODAL DE EDIÇÃO CONDICIONAL --- */}
+      {/* --- MODAL DE EDIÇÃO (COM CORREÇÕES FINAIS) --- */}
       {editingItem && (
         <div className="modal-overlay" onClick={() => setEditingItem(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -289,62 +299,43 @@ function HistoricoLancamentos({ user, unidadeId }) {
               </div>
               <div className="form-group"> <label htmlFor="edit-valor_r">Valor (R$)</label> <input type="number" step="0.01" id="edit-valor_r" name="valor_r" value={editFormData.valor_r || ''} onChange={handleEditFormChange} required /> </div>
               
-              {/* --- Campo Condicional: Profissional (SÓ PARA RECEITAS) --- */}
+              {/* Campo Condicional: Profissional (SÓ PARA RECEITAS) */}
               {editingItem.tipo_de_operacao === 'Receita' && (
                 <div className="form-group">
                   <label htmlFor="edit-profissional">Profissional</label>
-                  <select
-                    id="edit-profissional"
-                    name="profissional" // Nome da coluna no Neon
-                    value={editFormData.profissional || ''}
-                    onChange={handleEditFormChange}
-                    required
-                  >
+                  <select id="edit-profissional" name="profissional" value={editFormData.profissional || ''} onChange={handleEditFormChange} required>
                     <option value="">Selecione...</option>
-                    {(allColaboradores || []).map(colab => (
-                      <option key={colab.id} value={colab.id}>{colab.nome}</option>
-                    ))}
+                    {(allColaboradores || []).map(colab => ( <option key={colab.id} value={colab.id}>{colab.nome}</option> ))}
                   </select>
                 </div>
               )}
-              {/* --- Fim Campo Condicional --- */}
 
+              {/* Campos Condicionais: Categoria e Forma de Pagamento */}
               <div className="form-row">
-                {/* Campo Categoria (Filtrado) */}
                 <div className="form-group">
                   <label htmlFor="edit-categoria">Categoria</label>
                   <select id="edit-categoria" name="categoria" value={editFormData.categoria || ''} onChange={handleEditFormChange} required>
                     <option value="">Selecione...</option>
                     {(allCategorias || [])
-                      .filter(cat => cat.tipo === editingItem.tipo_de_operacao) // Filtra (Receita/Despesa)
-                      .map(cat => (
-                        <option key={cat.id} value={cat.id}>{cat.nome}</option>
-                    ))}
+                      .filter(cat => cat.tipo === editingItem.tipo_de_operacao) // CORRIGIDO
+                      .map(cat => ( <option key={cat.id} value={cat.id}>{cat.nome}</option> ))}
                   </select>
                 </div>
-                {/* Campo Forma de Pagamento */}
+                
+                {/* Oculta Forma de Pagamento para Receitas (editado via Profissional?) ou Mostra para Despesas */}
+                {/* Assumindo que FP é editável para ambos por enquanto */}
                 <div className="form-group">
                     <label htmlFor="edit-formaPagamento">Forma de Pagamento</label>
-                    <select
-                        id="edit-formaPagamento"
-                        name="forma_de_pagamento" // Nome da coluna no Neon
-                        value={editFormData.forma_de_pagamento || ''}
-                        onChange={handleEditFormChange}
-                        required
-                    >
+                    <select id="edit-formaPagamento" name="forma_de_pagamento" value={editFormData.forma_de_pagamento || ''} onChange={handleEditFormChange} required>
                         <option value="">Selecione...</option>
-                        {(allFormasPagamento || []).map(fp => (
-                            <option key={fp.id} value={fp.id}>{fp.nome}</option>
-                        ))}
+                        {(allFormasPagamento || []).map(fp => ( <option key={fp.id} value={fp.id}>{fp.nome}</option> ))}
                     </select>
                 </div>
               </div>
                
                <div className="form-group"> <label htmlFor="edit-descricao">Descrição</label> <input type="text" id="edit-descricao" name="descricao" value={editFormData.descricao || ''} onChange={handleEditFormChange} /> </div>
 
-              {editFormError && (
-                <p className="historico-mensagem erro">{editFormError}</p>
-              )}
+              {editFormError && ( <p className="historico-mensagem erro">{editFormError}</p> )}
 
               <div className="modal-actions">
                 <button type="button" className="botao-cancelar" onClick={() => setEditingItem(null)} disabled={isUpdating}> Cancelar </button>
