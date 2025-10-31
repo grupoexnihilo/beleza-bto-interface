@@ -329,12 +329,11 @@ function HistoricoLancamentos({ user, unidadeId }) {
     </tr>
   ); // Fim renderLinha
 
-// --- Lógica de Renderização Principal (COM CABEÇALHOS CORRIGIDOS) ---
+  // --- Lógica de Renderização Principal ---
   const renderHistorico = () => {
-    // ... (if !unidadeId, if error, etc. mantidos) ...
     if (!unidadeId) { return <p className="historico-mensagem">Por favor, selecione uma unidade.</p>; }
     if (error && !isLoading) { return <p className="historico-mensagem erro">{error}</p>; }
-    if ((!lancamentos || lancamentos.length === 0) && !isLoading && !error) {
+    if (lancamentos.length === 0 && !isLoading && !error) {
       return <p className="historico-mensagem">Nenhum lançamento encontrado para o período e pesquisa selecionados.</p>;
     }
     if (isLoading && (!lancamentos || lancamentos.length === 0)) { return null; }
@@ -344,61 +343,19 @@ function HistoricoLancamentos({ user, unidadeId }) {
 
     return (
       <>
-        {/* === Secção Receitas === */}
+        {/* Secção Receitas */}
         <div className="resumo-seccao" onClick={() => setMostrarReceitas(!mostrarReceitas)} role="button" tabIndex={0}>
           <h3>{mostrarReceitas ? '▼' : '►'} Total Receitas ({formatarData(dataInicioFiltro)} a {formatarData(dataFimFiltro)}):</h3>
           <span className="valor-receita">{formatarValor(totalReceitas)}</span>
         </div>
-        {mostrarReceitas && ( receitasDoPeriodo.length > 0 ? (
-          <div className="detalhe-tabela-wrapper">
-            <table className="tabela-lancamentos detalhe">
-              
-              {/* --- CABEÇALHO DE RECEITAS (6 COLUNAS) CORRIGIDO --- */}
-              <thead>
-                <tr>
-                  <th>Data Pag.</th>
-                  <th>Categoria</th>
-                  <th>Profissional</th>
-                  <th>Forma Pag.</th>
-                  <th style={{ textAlign: 'right' }}>Valor</th>
-                  <th className="coluna-acoes-header">Ações</th>
-                </tr>
-              </thead>
-              {/* --- FIM CABEÇALHO --- */}
-              
-              <tbody>
-                {receitasDoPeriodo.map(renderLinhaReceita)}
-              </tbody>
-            </table>
-          </div>
-        ) : ( <p className="historico-mensagem detalhe">Nenhuma receita encontrada no período.</p> ) )}
+        {mostrarReceitas && (receitasDoPeriodo.length > 0 ? (<div className="detalhe-tabela-wrapper"> <table className="tabela-lancamentos detalhe"><thead><tr><th>Data Pag.</th><th>Descrição</th><th style={{ textAlign: 'right' }}>Valor</th><th className="coluna-acoes-header">Ações</th></tr></thead><tbody>{receitasDoPeriodo.map(renderLinha)}</tbody></table></div>) : (<p className="historico-mensagem detalhe">Nenhuma receita encontrada no período.</p>))}
 
-        {/* === Secção Despesas === */}
+        {/* Secção Despesas */}
         <div className="resumo-seccao" onClick={() => setMostrarDespesas(!mostrarDespesas)} role="button" tabIndex={0}>
           <h3>{mostrarDespesas ? '▼' : '►'} Total Despesas ({formatarData(dataInicioFiltro)} a {formatarData(dataFimFiltro)}):</h3>
           <span className="valor-despesa">{formatarValor(totalDespesas)}</span>
         </div>
-        {mostrarDespesas && ( despesasDoPeriodo.length > 0 ? (
-          <div className="detalhe-tabela-wrapper">
-            <table className="tabela-lancamentos detalhe">
-              
-              {/* --- CABEÇALHO DE DESPESAS (4 COLUNAS) --- */}
-              <thead>
-                <tr>
-                  <th>Data Pag.</th>
-                  <th>Descrição</th>
-                  <th style={{ textAlign: 'right' }}>Valor</th>
-                  <th className="coluna-acoes-header">Ações</th>
-                </tr>
-              </thead>
-              {/* --- FIM CABEÇALHO --- */}
-              
-              <tbody>
-                {despesasDoPeriodo.map(renderLinhaDespesa)}
-              </tbody>
-            </table>
-          </div>
-        ) : ( <p className="historico-mensagem detalhe">Nenhuma despesa encontrada no período.</p> ) )}
+        {mostrarDespesas && (despesasDoPeriodo.length > 0 ? (<div className="detalhe-tabela-wrapper"> <table className="tabela-lancamentos detalhe"><thead><tr><th>Data Pag.</th><th>Descrição</th><th style={{ textAlign: 'right' }}>Valor</th><th className="coluna-acoes-header">Ações</th></tr></thead><tbody>{despesasDoPeriodo.map(renderLinha)}</tbody></table></div>) : (<p className="historico-mensagem detalhe">Nenhuma despesa encontrada no período.</p>))}
       </>
     );
   }; // --- FIM renderHistorico ---
