@@ -221,3 +221,109 @@ tr.deleting {
   background-color: var(--danger-color, #dc3545) !important;
   transition: all 0.3s ease;
 }
+/* Adicionar ao final de HistoricoLancamentos.css */
+
+/* --- Estilos do Modal de Edição --- */
+
+.modal-overlay {
+  position: fixed; /* Cobre a tela inteira */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7); /* Fundo preto translúcido */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* Fica acima de tudo */
+  animation: fadeInModal 0.3s ease; /* Animação suave */
+}
+
+.modal-content {
+  background-color: var(--surface-color-dark, #2c2f33); /* Fundo escuro do modal */
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 5px 20px var(--shadow-color, rgba(0,0,0,0.5));
+  width: 100%;
+  max-width: 500px; /* Largura do modal */
+  z-index: 2001;
+  border: 1px solid var(--border-color, #404347);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: var(--text-color-primary, #e4e6eb);
+  text-align: center;
+  border-bottom: 1px solid var(--border-color, #404347);
+  padding-bottom: 15px;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* Espaço entre os campos */
+}
+
+/* Herda .form-group de index.css, mas podemos ajustar se necessário */
+.edit-form .form-group {
+  width: 100%;
+}
+.edit-form .form-group label {
+  color: var(--text-color-secondary, #b0b3b8);
+  font-size: 0.9rem;
+}
+.edit-form .form-group input,
+.edit-form .form-group select {
+  /* Herda os estilos globais de input/select (fundo escuro, texto claro) */
+  width: 100%; /* Garante largura total */
+  box-sizing: border-box; /* Garante que padding não quebre o layout */
+}
+
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end; /* Alinha botões à direita */
+  gap: 15px;
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-color, #404347);
+}
+
+.modal-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.botao-cancelar {
+  background-color: var(--input-bg, #3a3b3c); /* Fundo cinza */
+  color: var(--text-color-primary, #e4e6eb);
+  border: 1px solid var(--border-color, #55595c);
+}
+.botao-cancelar:hover {
+  background-color: #4b4d4f; /* Tom mais claro */
+}
+
+.botao-salvar {
+  background-color: var(--primary-color, #4a90e2); /* Azul */
+  color: white;
+}
+.botao-salvar:hover {
+  background-color: var(--primary-color-hover, #3a7bc8);
+}
+.botao-salvar:disabled {
+  background-color: #5a5a5a;
+  cursor: not-allowed;
+}
+
+
+/* Animação do Modal */
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
