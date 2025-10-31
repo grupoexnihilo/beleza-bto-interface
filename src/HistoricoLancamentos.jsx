@@ -363,6 +363,7 @@ function HistoricoLancamentos({ user, unidadeId }) {
   // --- Return Principal ---
   return (
     <div className="historico-wrapper">
+      <h1 style={{ color: 'red' }}>TESTE DE ATUALIZAÇÃO V6 - SE ISTO APARECER, FUNCIONOU</h1>
       {/* Filtro */}
       <div className="filtro-historico">
         <div className="filtro-campo"> <label htmlFor="dataInicio">De:</label> <input type="date" id="dataInicio" value={dataInicioFiltro} onChange={(e) => setDataInicioFiltro(e.target.value)} /> </div>
