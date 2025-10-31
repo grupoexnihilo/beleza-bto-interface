@@ -1,46 +1,47 @@
-/* --- src/HistoricoLancamentos.css - V3 com Edição, Fonte e Novas Colunas --- */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+/* --- src/HistoricoLancamentos.css - V3 COMPLETO (Fonte + Contraste) --- */
 
 .historico-wrapper {
-  /* NOVA FONTE: Roboto é profissional e limpa, menos "abaulada" que Segoe/San Francisco */
-  font-family: 'Roboto', 'Open Sans', -apple-system, sans-serif;
-  margin-top: 30px; /* Adiciona espaço acima do filtro */
+  /* NOVA FONTE: Aplica Lato a todo o componente */
+  font-family: 'Lato', sans-serif;
+  margin-top: 30px;
 }
 
 .historico-wrapper h2 {
   margin-bottom: 15px;
-  font-weight: 500; /* Fonte um pouco mais leve para o título */
+  font-weight: 700; /* Título mais forte */
   color: var(--text-color-primary);
-  text-align: left; /* Alinha o título "Resumo..." à esquerda */
+  text-align: left;
 }
 
 /* --- Filtro --- */
 .filtro-historico {
   display: flex;
-  flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+  flex-wrap: wrap;
   gap: 15px;
   align-items: flex-end;
   margin-bottom: 25px;
   padding: 15px 20px;
-  background-color: var(--bg-color-dark); /* Fundo mais escuro */
+  background-color: var(--bg-color-dark);
   border-radius: 6px;
   border: 1px solid var(--border-color);
 }
 .filtro-campo {
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Permite que os campos cresçam */
+  flex-grow: 1;
 }
 .filtro-campo label {
   margin-bottom: 6px;
-  font-size: 0.85em; /* Label menor */
+  font-size: 0.85em;
   color: var(--text-color-secondary);
-  text-transform: uppercase; /* Mais formal */
+  text-transform: uppercase;
 }
 .filtro-campo input[type="date"],
 .filtro-campo input[type="search"] {
-  padding: 8px 12px; /* Inputs um pouco menores */
-  /* Estilos (fundo, cor, borda) herdados de index.css */
+  padding: 8px 12px;
   min-width: 150px;
+  /* Estilos (fundo, cor, borda) herdados de index.css */
 }
 .botao-filtrar {
   padding: 9px 20px;
@@ -51,7 +52,7 @@
   border-radius: 5px;
   font-weight: 600;
   transition: background-color 0.2s ease;
-  flex-shrink: 0; /* Impede que o botão encolha */
+  flex-shrink: 0;
 }
 .botao-filtrar:hover {
   background-color: var(--primary-color-hover);
@@ -62,7 +63,7 @@
   cursor: not-allowed;
 }
 
-/* --- Secções de Resumo Expansíveis --- */
+/* --- Secções de Resumo Expansíveis (CORREÇÃO DE CONTRASTE) --- */
 .resumo-seccao {
   display: flex;
   justify-content: space-between;
@@ -76,7 +77,7 @@
   border: 1px solid var(--border-color);
 }
 .resumo-seccao:hover {
-  background-color: #4b4d4f; /* Tom mais claro no hover */
+  background-color: #4b4d4f;
   border-color: var(--text-color-secondary);
 }
 .resumo-seccao h3 {
@@ -84,58 +85,56 @@
   font-size: 1.0em;
   display: flex;
   align-items: center;
-  color: var(--text-color-secondary);
-  font-weight: 500;
+  color: var(--text-color-secondary); /* <<< COR CLARA (CINZA) */
+  font-weight: 700;
 }
 .resumo-seccao .valor-receita {
-  color: var(--success-color, #28a745);
+  color: var(--success-color, #28a745); /* <<< COR CLARA (VERDE) */
   font-weight: bold;
   font-size: 1.1em;
 }
 .resumo-seccao .valor-despesa {
-  color: var(--danger-color, #dc3545);
+  color: var(--danger-color, #dc3545); /* <<< COR CLARA (VERMELHO) */
   font-weight: bold;
   font-size: 1.1em;
 }
 
 /* --- Tabelas de Detalhe --- */
 .detalhe-tabela-wrapper {
-  /* Pode ser usado para animações de "slide down" no futuro */
   overflow: hidden;
   margin-bottom: 15px;
 }
 .tabela-lancamentos.detalhe {
-  margin-top: -1px; /* Cola na secção de resumo */
+  margin-top: -1px;
   width: 100%;
   border-collapse: collapse;
   border: 1px solid var(--border-color);
-  border-top: none; /* Remove borda dupla */
-  border-radius: 0 0 5px 5px; /* Arredonda cantos inferiores */
-  background-color: var(--surface-color-dark); /* Fundo da tabela */
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+  background-color: var(--surface-color-dark);
 }
 .tabela-lancamentos.detalhe th,
 .tabela-lancamentos.detalhe td {
   border-bottom: 1px solid var(--border-color);
-  border-left: 1px solid var(--border-color); /* Apenas bordas verticais leves */
+  border-left: 1px solid var(--border-color);
   padding: 10px 14px;
   text-align: left;
   font-size: 0.95em;
-  color: var(--text-color-primary);
+  color: var(--text-color-primary); /* <<< TEXTO CLARO NA TABELA */
 }
 .tabela-lancamentos.detalhe th:first-child,
 .tabela-lancamentos.detalhe td:first-child {
-  border-left: none; /* Remove borda da primeira coluna */
+  border-left: none;
 }
 .tabela-lancamentos.detalhe thead {
-  background-color: var(--bg-color-dark); /* Cabeçalho mais escuro */
+  background-color: var(--bg-color-dark);
   color: var(--text-color-secondary);
   font-size: 0.9em;
   text-transform: uppercase;
 }
 .tabela-lancamentos.detalhe td:last-child {
-  text-align: center; /* Alinha coluna "Ações" */
+  text-align: center;
 }
-/* Alinha coluna "Valor" (penúltima) à direita */
 .tabela-lancamentos.detalhe td:nth-last-child(2) { 
   text-align: right;
   font-weight: 600;
@@ -162,7 +161,7 @@
   border-radius: 4px;
   transition: background-color 0.2s, color 0.2s;
   opacity: 0.7;
-  color: var(--text-color-secondary); /* Cor padrão do ícone */
+  color: var(--text-color-secondary);
 }
 .botao-acao:hover {
   opacity: 1;
@@ -172,14 +171,13 @@
   cursor: not-allowed;
 }
 
-/* CORREÇÃO DO ÍCONE EDITAR (Mais claro por padrão) */
 .botao-acao.editar {
   color: var(--text-color-primary); /* <<< COR CLARA POR PADRÃO */
   opacity: 0.6;
 }
 .botao-acao.editar:hover {
    background-color: rgba(74, 144, 226, 0.2);
-   color: var(--primary-color, #4a90e2); /* Azul no hover */
+   color: var(--primary-color, #4a90e2);
    opacity: 1;
 }
 .botao-acao.apagar:hover {
@@ -189,7 +187,7 @@
 }
 tr.deleting {
   opacity: 0.4;
-  background-color: #5d383f; /* Fundo avermelhado escuro */
+  background-color: #5d383f;
   transition: all 0.3s ease;
 }
 
@@ -203,7 +201,7 @@ tr.deleting {
   color: var(--danger-color);
   font-weight: 600;
 }
-.historico-mensagem.detalhe { /* Mensagem dentro da secção expandida */
+.historico-mensagem.detalhe {
   padding: 10px 15px;
   text-align: center;
   font-size: 0.9em;
@@ -220,7 +218,7 @@ tr.deleting {
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75); /* Mais escuro */
+  background-color: rgba(0, 0, 0, 0.75);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -233,9 +231,10 @@ tr.deleting {
   border-radius: 8px;
   box-shadow: 0 5px 20px var(--shadow-color);
   width: 100%;
-  max-width: 600px; /* Um pouco mais largo para os form rows */
+  max-width: 600px;
   z-index: 2001;
   border: 1px solid var(--border-color);
+  font-family: 'Lato', sans-serif; /* <<< USA A NOVA FONTE */
 }
 .modal-content h3 {
   margin-top: 0;
@@ -251,19 +250,13 @@ tr.deleting {
   flex-direction: column;
   gap: 20px;
 }
-.edit-form .form-row { /* Define 2 colunas para o modal */
+.edit-form .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
 .edit-form .form-group {
   width: 100%;
-}
-.edit-form .form-group label
-.edit-form .form-group input,
-.edit-form .form-group select {
-  width: 100%;
-  box-sizing: border-box;
 }
 .modal-actions {
   display: flex;
