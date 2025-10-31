@@ -254,22 +254,29 @@ function HistoricoLancamentos({ user, unidadeId }) {
     }
   }; // Fim handleDeleteClick
 
+  // --- Handler para o Botão Editar (CORRIGIDO) ---
   const handleEditClick = (item) => {
     console.log("Iniciando edição para:", item);
-    // Formata datas ISO (do Neon) para YYYY-MM-DD (para o input type="date")
-    const dataCompFormatada = item.data_competencia ? formatarData(item.data_competencia).split('/').reverse().join('-') : '';
-    const dataPagFormatada = item.data_pagamento ? formatarData(item.data_pagamento).split('/').reverse().join('-') : '';
     
+    // --- CORREÇÃO DA DATA ---
+    // Cria objetos Date a partir das strings ISO do Neon
+    // E usa a nossa função auxiliar 'formatarDataParaInput' para converter
+    // com segurança para 'YYYY-MM-DD'
+    const dataCompFormatada = item.data_competencia ? formatarDataParaInput(new Date(item.data_competencia)) : '';
+    const dataPagFormatada = item.data_pagamento ? formatarDataParaInput(new Date(item.data_pagamento)) : '';
+    // --- FIM DA CORREÇÃO ---
+
     const itemFormatado = {
       ...item,
-      data_competencia: dataCompFormatada,
-      data_pagamento: dataPagFormatada,
+      data_competencia: dataCompFormatada, // Agora '2025-10-28'
+      data_pagamento: dataPagFormatada,   // Agora '2025-10-28'
     };
-    setEditFormData(itemFormatado); // Preenche o estado do formulário com os dados da linha
-    setEditingItem(itemFormatado);  // Abre o modal
+
+    setEditFormData(itemFormatado);
+    setEditingItem(itemFormatado);
     setEditFormError(null);
   }; // Fim handleEditClick
-
+  
   const handleEditFormChange = (e) => {
     const { name, value } = e.target;
     setEditFormData(prev => ({ ...prev, [name]: value }));
