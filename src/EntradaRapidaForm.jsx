@@ -1,178 +1,232 @@
-// --- VERSÃO COM ENVIO DE DATA UTC ISOString ---
+// --- VERSÃO CORRIGIDA (Fix 'toLocaleString' bug) ---
 import React, { useState, useEffect } from 'react';
 import './EntradaRapidaForm.css';
 
-function EntradaRapidaForm({ user, unidadeId, onBack }) {
-  // --- Estados ---
-  const [colaboradores, setColaboradores] = useState([]);
-  const [categorias, setCategorias] = useState([]);
-  const today = new Date().toISOString().slice(0, 10);
-  const [dataCompetencia, setDataCompetencia] = useState(today);
-  const [dataPagamento, setDataPagamento] = useState(today);
-  const [colaborador, setColaborador] = useState(''); // Guarda ID
-  const [categoria, setCategoria] = useState(''); // Guarda Nome
-  const [dinheiro, setDinheiro] = useState('');
-  const [pix, setPix] = useState('');
-  const [credito, setCredito] = useState('');
-  const [debito, setDebito] = useState('');
-  const [outros, setOutros] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState('');
+// Função para formatar a data para YYYY-MM-DD
+const getHojeFormatado = () => {
+  const agora = new Date();
+  // Ajusta para o fuso horário de Brasília (UTC-3)
+  const offset = -3 * 60; 
+  const dataLocal = new Date(agora.getTime() + (offset * 60 * 1000));
+  return dataLocal.toISOString().split('T')[0];
+};
 
-  // --- Efeito para buscar opções ---
+function EntradaRapidaForm({ user, unidadeId, onBack }) {
+  const [categorias, setCategorias] = useState([]);
+  const [colaboradores, setColaboradores] = useState([]);
+  const [formasPagamento, setFormasPagamento] = useState([]); // Embora não usado, mantém consistência
+  const [isLoadingOptions, setIsLoadingOptions] = useState(true);
+
+  // --- Estados do Formulário ---
+  const [dataCompetencia, setDataCompetencia] = useState(getHojeFormatado());
+  const [categoria, setCategoria] = useState('');
+  const [colaborador, setColaborador] = useState('');
+  const [pagamentos, setPagamentos] = useState({
+    dinheiro: '',
+    pix: '',
+    credito: '',
+    debito: '',
+    outros: '',
+  });
+
+  // --- ESTA É A CORREÇÃO ---
+  // O total deve começar como 0, não como undefined.
+  const [total, setTotal] = useState(0); 
+  // --- FIM DA CORREÇÃO ---
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+
+  // Efeito para buscar opções do formulário
   useEffect(() => {
-    if (unidadeId) {
-      const fetchData = async () => {
-        try {
-          const response = await fetch(`/api/getFormOptions?unidadeId=${unidadeId}&tipo=Receita`);
-          if (!response.ok) throw new Error('Falha ao buscar dados do formulário');
-          const data = await response.json();
-          setColaboradores(data.colaboradores || []);
-          setCategorias(data.categorias || []);
-        } catch (error) {
-          console.error("Erro ao buscar opções:", error);
-          setMessage("Erro ao carregar opções. Tente novamente.");
-        }
-      };
-      fetchData();
-    }
+    const fetchOptions = async () => {
+      if (!unidadeId) return;
+      setIsLoadingOptions(true);
+      try {
+        const response = await fetch(`/api/getFormOptions?unidadeId=${unidadeId}&tipo=Receita`);
+        if (!response.ok) throw new Error('Falha ao buscar opções');
+        const data = await response.json();
+        setCategorias(data.categorias || []);
+        setColaboradores(data.colaboradores || []);
+        setFormasPagamento(data.formasPagamento || []); // Armazena FPs
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoadingOptions(false);
+      }
+    };
+    fetchOptions();
   }, [unidadeId]);
 
-  // --- Cálculo Soma Total ---
-  const calcularSomaTotal = () => { /* ... código mantido ... */ };
-  const somaTotal = calcularSomaTotal();
+  // Efeito para calcular o total
+  useEffect(() => {
+    try {
+      const valores = Object.values(pagamentos).map(val => parseFloat(val || 0));
+      const soma = valores.reduce((acc, v) => acc + v, 0);
+      setTotal(soma); // Atualiza o total
+    } catch (e) {
+      console.error("Erro ao calcular total:", e);
+      setTotal(0); // Garante que não falhe
+    }
+  }, [pagamentos]); // Recalcula sempre que 'pagamentos' mudar
 
-  // --- Handler de Submit (com conversão UTC) ---
+  const handlePagamentoChange = (e) => {
+    const { name, value } = e.target;
+    // Permite apenas números e um ponto decimal
+    if (/^[0-9]*\.?[0-9]*$/.test(value)) {
+      setPagamentos(prev => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const resetForm = () => {
+    setPagamentos({ dinheiro: '', pix: '', credito: '', debito: '', outros: '' });
+    setCategoria('');
+    setColaborador('');
+    // Mantém a data para o próximo lançamento
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setMessage('');
-
-    // Agrupa pagamentos
-    const pagamentos = { dinheiro, pix, credito, debito, outros };
-    // Verifica se pelo menos um valor foi inserido
-    const algumValorInserido = Object.values(pagamentos).some(valStr => parseFloat(valStr || '0') > 0);
-    if (!algumValorInserido) {
-        setMessage("Erro: Insira pelo menos um valor de pagamento.");
-        setIsLoading(false);
-        return;
+    if (total <= 0) {
+      setError("O valor total deve ser maior que zero.");
+      return;
+    }
+    if (!categoria || !colaborador) {
+      setError("Categoria e Profissional são obrigatórios.");
+      return;
     }
 
+    setIsLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    // Converte a data (YYYY-MM-DD) para ISOString UTC
+    const dataCompetenciaUTC = new Date(dataCompetencia + 'T00:00:00.000Z').toISOString();
+
+    const payload = {
+      unidadeId,
+      emailOperador: user.email,
+      dataCompetencia: dataCompetenciaUTC,
+      dataPagamento: dataCompetenciaUTC, // Assumindo pagamento no mesmo dia
+      colaborador,
+      categoria,
+      pagamentos, // Envia o objeto de pagamentos
+    };
 
     try {
-      // --- CONVERSÃO PARA UTC ISOString ---
-      const dataCompetenciaUTC = dataCompetencia ? new Date(dataCompetencia + 'T00:00:00.000Z').toISOString() : null;
-      const dataPagamentoFinal = dataPagamento || dataCompetencia;
-      const dataPagamentoUTC = dataPagamentoFinal ? new Date(dataPagamentoFinal + 'T00:00:00.000Z').toISOString() : null;
-      // --- FIM CONVERSÃO ---
-
-      if (!dataCompetenciaUTC || !dataPagamentoUTC) {
-          throw new Error("Data inválida selecionada.");
-      }
-
-      const response = await fetch('/api/addLancamentos', {
+      const response = await fetch('/api/addLancamentos', { // Chama a API de Receitas
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          unidadeId: unidadeId,
-          emailOperador: user.email,
-          dataCompetencia: dataCompetenciaUTC, // <-- Envia ISOString
-          dataPagamento: dataPagamentoUTC,   // <-- Envia ISOString
-          colaborador, // ID do colaborador
-          categoria,   // Nome da categoria
-          pagamentos, // Objeto {dinheiro: '10', pix: '20', ...}
-        }),
+        body: JSON.stringify(payload),
       });
-
+      
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || 'Erro ao salvar receitas');
+        throw new Error(data.message || `Erro ${response.status}`);
       }
-
-      setMessage(data.message); // Mensagem de sucesso
-      // Limpa apenas os valores após sucesso
-      setDinheiro('');
-      setPix('');
-      setCredito('');
-      setDebito('');
-      setOutros('');
-      // Mantém data, colaborador, categoria para facilitar
-
-    } catch (error) {
-      console.error("Erro ao chamar a API de salvar receitas:", error);
-      setMessage(`Erro: ${error.message}`);
+      
+      setSuccess(data.message || "Receita salva com sucesso!");
+      resetForm();
+      
+    } catch (err) {
+      setError(err.message || "Ocorreu um erro ao salvar.");
+      console.error("Erro no handleSubmit:", err);
     } finally {
       setIsLoading(false);
     }
   };
+  
+  if (isLoadingOptions) {
+    return <div className="loading-options">A carregar opções do formulário...</div>;
+  }
 
-  // --- JSX ---
   return (
-    <div className="form-container">
-      <button onClick={onBack} className="back-button">← Voltar</button>
-      <h3>Adicionar Receitas</h3>
-      <form onSubmit={handleSubmit} className="entrada-form">
+    <div className="form-container-wrapper">
+      <button onClick={onBack} className="back-button">← Voltar ao Painel</button>
+      <form onSubmit={handleSubmit} className="entrada-rapida-form">
+        <h2>Adicionar Receita</h2>
+        
+        {error && <p className="mensagem erro">{error}</p>}
+        {success && <p className="mensagem sucesso">{success}</p>}
+
+        {/* --- Linha 1: Data, Categoria, Profissional --- */}
         <div className="form-row">
           <div className="form-group">
-            <label htmlFor="rec-dataCompetencia">Data de Competência</label>
-            <input type="date" id="rec-dataCompetencia" value={dataCompetencia} onChange={e => setDataCompetencia(e.target.value)} required />
+            <label htmlFor="dataCompetencia">Data</label>
+            <input
+              type="date"
+              id="dataCompetencia"
+              value={dataCompetencia}
+              onChange={(e) => setDataCompetencia(e.target.value)}
+              required
+            />
           </div>
           <div className="form-group">
-            <label htmlFor="rec-dataPagamento">Data de Pagamento</label>
-            <input type="date" id="rec-dataPagamento" value={dataPagamento} onChange={e => setDataPagamento(e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label htmlFor="rec-colaborador">Colaborador</label>
-            <select id="rec-colaborador" value={colaborador} onChange={e => setColaborador(e.target.value)} required>
-              <option value="">Selecione...</option>
-              {colaboradores.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+            <label htmlFor="categoria">Categoria</label>
+            <select id="categoria" value={categoria} onChange={(e) => setCategoria(e.target.value)} required>
+              <option value="">Selecione a categoria</option>
+              {categorias.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.nome}</option>
+              ))}
             </select>
           </div>
           <div className="form-group">
-            <label htmlFor="rec-categoria">Categoria</label>
-            <select id="rec-categoria" value={categoria} onChange={e => setCategoria(e.target.value)} required>
-              <option value="">Selecione...</option>
-              {categorias.map(cat => <option key={cat.id} value={cat.id}>{cat.nome}</option>)}
+            <label htmlFor="colaborador">Profissional</label>
+            <select id="colaborador" value={colaborador} onChange={(e) => setColaborador(e.target.value)} required>
+              <option value="">Selecione o profissional</option>
+              {colaboradores.map(colab => (
+                <option key={colab.id} value={colab.id}>{colab.nome}</option>
+              ))}
             </select>
           </div>
         </div>
-        <hr />
-        <h4>Valores por Forma de Pagamento</h4>
-        <div className="form-row">
-          <div className="form-group"> <label htmlFor="rec-dinheiro">Dinheiro</label> <input type="number" step="0.01" placeholder="0.00" id="rec-dinheiro" value={dinheiro} onChange={e => setDinheiro(e.target.value)} /> </div>
-          <div className="form-group"> <label htmlFor="rec-pix">Pix</label> <input type="number" step="0.01" placeholder="0.00" id="rec-pix" value={pix} onChange={e => setPix(e.target.value)} /> </div>
-          <div className="form-group"> <label htmlFor="rec-credito">Crédito</label> <input type="number" step="0.01" placeholder="0.00" id="rec-credito" value={credito} onChange={e => setCredito(e.target.value)} /> </div>
-          <div className="form-group"> <label htmlFor="rec-debito">Débito</label> <input type="number" step="0.01" placeholder="0.00" id="rec-debito" value={debito} onChange={e => setDebito(e.target.value)} /> </div>
-          <div className="form-group"> <label htmlFor="rec-outros">Outros</label> <input type="number" step="0.01" placeholder="0.00" id="rec-outros" value={outros} onChange={e => setOutros(e.target.value)} /> </div>
-        </div>
 
-        {/* Display da Soma Total */}
-        <div className="soma-total-display">
-          <h4>Total Lançado:</h4>
-          <span className="valor-total-calculado">
-            {somaTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-          </span>
-        </div>
+        {/* --- Linha 2: Formas de Pagamento --- */}
+        <fieldset className="pagamentos-fieldset">
+          <legend>Formas de Pagamento (R$)</legend>
+          <div className="form-row pagamentos-grid">
+            <div className="form-group">
+              <label htmlFor="dinheiro">Dinheiro</label>
+              <input type="text" id="dinheiro" name="dinheiro" value={pagamentos.dinheiro} onChange={handlePagamentoChange} placeholder="0.00" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="pix">Pix</label>
+              <input type="text" id="pix" name="pix" value={pagamentos.pix} onChange={handlePagamentoChange} placeholder="0.00" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="credito">Crédito</label>
+              <input type="text" id="credito" name="credito" value={pagamentos.credito} onChange={handlePagamentoChange} placeholder="0.00" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="debito">Débito</label>
+              <input type="text" id="debito" name="debito" value={pagamentos.debito} onChange={handlePagamentoChange} placeholder="0.00" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="outros">Outros</label>
+              <input type="text" id="outros" name="outros" value={pagamentos.outros} onChange={handlePagamentoChange} placeholder="0.00" />
+            </div>
+          </div>
+        </fieldset>
 
-        <button type="submit" className="submit-button" disabled={isLoading}>
-          {isLoading ? 'A Salvar...' : 'Salvar Lançamentos'}
-        </button>
-        {message && <p className="message-feedback">{message}</p>}
+        {/* --- Linha 3: Total e Botão --- */}
+        <div className="form-footer">
+          <div className="total-display">
+            <h3>Total:</h3>
+            {/* Adicionado fallback (total || 0) para robustez extra */}
+            <span>{(total || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+          </div>
+          <button type="submit" className="submit-button" disabled={isLoading || total <= 0}>
+            {isLoading ? 'A Salvar...' : 'Salvar Receita'}
+          </button>
+        </div>
+        
       </form>
     </div>
   );
 }
-
-// Helper fora do componente (para evitar recriação)
-const calcularSomaTotal = (din, px, cr, db, ot) => {
-    const valores = [din, px, cr, db, ot];
-    let soma = 0;
-    valores.forEach(valorStr => {
-      const valorNum = parseFloat(valorStr || '0');
-      if (!isNaN(valorNum)) { soma += valorNum; }
-    });
-    return soma;
-};
-
 
 export default EntradaRapidaForm;
