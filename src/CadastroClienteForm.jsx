@@ -6,10 +6,14 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
   const [cidades, setCidades] = useState([]);
   const [loadingCidades, setLoadingCidades] = useState(false);
 
+  // Puxa a data atual no formato YYYY-MM-DD
+  const dataHoje = new Date().toISOString().split('T')[0];
+
   const [formData, setFormData] = useState({
-    nome: '', whatsapp: '', data_nascimento: '', cpf: '',
-    email: '', endereco: '', numero: '', complemento: '', 
-    bairro: '', cidade: '', estado: '', atividade: '', cep: ''
+    data_cadastro: dataHoje,
+    nome: '', whatsapp: '', email: '', cpf: '', data_nascimento: '',
+    cep: '', endereco: '', numero: '', complemento: '', 
+    bairro: '', cidade: '', estado: '', atividade: ''
   });
 
   const unidadeAtual = unidades.find(u => u.id === unidadeId);
@@ -23,11 +27,9 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
     { sigla: 'SE' }, { sigla: 'TO' }
   ];
 
-  // BUSCA CEP (ViaCEP)
   const handleCEPBlur = async (e) => {
     const cep = e.target.value.replace(/\D/g, '');
     if (cep.length === 8) {
-      setLoading(true);
       try {
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
         const data = await response.json();
@@ -39,18 +41,11 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
             estado: data.uf,
             cidade: data.localidade
           }));
-        } else {
-          alert("CEP não encontrado.");
         }
-      } catch (err) {
-        console.error("Erro ao buscar CEP");
-      } finally {
-        setLoading(false);
-      }
+      } catch (err) { console.error("Erro CEP"); }
     }
   };
 
-  // BUSCA CIDADES (IBGE) - Mantida para preencher o dropdown caso o usuário mude o estado
   useEffect(() => {
     if (formData.estado) {
       setLoadingCidades(true);
@@ -74,7 +69,7 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      if (response.ok) { alert('Cliente Cadastrado!'); onBack(); }
+      if (response.ok) { alert('Cliente Cadastrado com Sucesso!'); onBack(); }
     } catch (err) { alert('Erro na conexão'); }
     finally { setLoading(false); }
   };
@@ -85,6 +80,20 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
       <h3>Ficha Cadastral do Cliente</h3>
       
       <form onSubmit={handleSubmit} className="entrada-form">
+        
+        {/* Data Cadastro e Unidade */}
+        <div className="form-row">
+          <div className="form-group">
+            <label>Data de Cadastro</label>
+            <input type="date" value={formData.data_cadastro} onChange={(e) => setFormData({...formData, data_cadastro: e.target.value})} />
+          </div>
+          <div className="form-group">
+            <label>Unidade</label>
+            <input type="text" value={unidadeAtual?.nome || ''} disabled />
+          </div>
+        </div>
+
+        {/* Nome e WhatsApp */}
         <div className="form-row">
           <div className="form-group">
             <label>Nome Completo</label>
@@ -92,18 +101,43 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
           </div>
           <div className="form-group">
             <label>WhatsApp</label>
-            <input type="text" value={formData.whatsapp} onChange={(e) => setFormData({...formData, whatsapp: e.target.value})} />
+            <input type="text" required value={formData.whatsapp} onChange={(e) => setFormData({...formData, whatsapp: e.target.value})} />
           </div>
         </div>
 
-        <div className="form-row" style={{ gridTemplateColumns: '1fr 2fr 1.5fr' }}>
+        {/* Email e CPF */}
+        <div className="form-row">
           <div className="form-group">
-            <label>CEP</label>
-            <input type="text" placeholder="00000-000" onBlur={handleCEPBlur} onChange={(e) => setFormData({...formData, cep: e.target.value})} />
+            <label>E-mail</label>
+            <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
+          </div>
+          <div className="form-group">
+            <label>CPF</label>
+            <input type="text" value={formData.cpf} onChange={(e) => setFormData({...formData, cpf: e.target.value})} />
+          </div>
+        </div>
+
+        {/* CEP, Endereço e Nº */}
+        <div className="form-row" style={{ gridTemplateColumns: '1fr 2fr 0.5fr' }}>
+          <div className="form-group">
+            <label>CEP (Busca Automática)</label>
+            <input type="text" onBlur={handleCEPBlur} onChange={(e) => setFormData({...formData, cep: e.target.value})} />
           </div>
           <div className="form-group">
             <label>Endereço</label>
             <input type="text" value={formData.endereco} onChange={(e) => setFormData({...formData, endereco: e.target.value})} />
+          </div>
+          <div className="form-group">
+            <label>Nº</label>
+            <input type="text" value={formData.numero} onChange={(e) => setFormData({...formData, numero: e.target.value})} />
+          </div>
+        </div>
+
+        {/* Complemento e Bairro */}
+        <div className="form-row">
+          <div className="form-group">
+            <label>Complemento</label>
+            <input type="text" value={formData.complemento} onChange={(e) => setFormData({...formData, complemento: e.target.value})} />
           </div>
           <div className="form-group">
             <label>Bairro</label>
@@ -111,11 +145,8 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
           </div>
         </div>
 
-        <div className="form-row" style={{ gridTemplateColumns: '0.8fr 1.5fr 1fr' }}>
-          <div className="form-group">
-            <label>Nº</label>
-            <input type="text" value={formData.numero} onChange={(e) => setFormData({...formData, numero: e.target.value})} />
-          </div>
+        {/* Estado e Cidade */}
+        <div className="form-row">
           <div className="form-group">
             <label>Estado</label>
             <select value={formData.estado} onChange={(e) => setFormData({...formData, estado: e.target.value, cidade: ''})}>
@@ -133,12 +164,12 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
         </div>
 
         <div className="form-group">
-          <label>Observações / Histórico</label>
+          <label>Observação / Histórico</label>
           <textarea rows="4" value={formData.atividade} onChange={(e) => setFormData({...formData, atividade: e.target.value})} />
         </div>
 
         <button type="submit" disabled={loading} className="submit-button">
-          {loading ? 'Salvando...' : 'Finalizar Cadastro'}
+          {loading ? 'Salvando...' : 'Finalizar Cadastro Profissional'}
         </button>
       </form>
     </div>
