@@ -4,25 +4,23 @@ import './CadastroClienteForm.css';
 function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    nome: '', whatsapp: '', data_nascimento: '', observacoes: ''
+    nome: '',
+    whatsapp: '',
+    data_nascimento: '',
+    observacoes: ''
   });
 
-  // Encontra o nome da unidade atual baseado no ID que veio do App.jsx
   const unidadeAtual = unidades.find(u => u.id === unidadeId);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user?.email) {
-      alert("Erro: Usuário não identificado. Tente fazer login novamente.");
-      return;
-    }
-
     setLoading(true);
+
     const payload = {
       ...formData,
       id: `cli_${crypto.randomUUID().substring(0, 8)}`,
       unidade: unidadeId,
-      cadastrado_por: user.email
+      cadastrado_por: user?.email
     };
 
     try {
@@ -32,16 +30,15 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
-
       if (response.ok) {
         alert('Cliente cadastrado com sucesso!');
         onBack();
       } else {
-        alert('Erro no banco: ' + result.error);
+        const data = await response.json();
+        alert('Erro ao salvar: ' + (data.message || data.error));
       }
-    } catch (error) {
-      alert('Erro de conexão com a API.');
+    } catch (err) {
+      alert('Falha na comunicação com o servidor.');
     } finally {
       setLoading(false);
     }
@@ -49,25 +46,31 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
 
   return (
     <div className="form-container">
-      <button onClick={onBack} className="back-button"> ← Voltar ao Painel</button>
+      <button onClick={onBack} className="back-button">← Voltar ao Painel</button>
       <h3>Novo Cadastro de Cliente</h3>
       
       <form onSubmit={handleSubmit} className="entrada-form">
         <div className="form-row">
           <div className="form-group">
-            <label>Unidade de Atendimento</label>
-            {/* Dropdown desabilitado apenas para exibição do nome da unidade logada */}
-            <select disabled value={unidadeId}>
-               <option value={unidadeId}>{unidadeAtual?.nome || 'Carregando unidade...'}</option>
-            </select>
+            <label>Unidade de Trabalho</label>
+            <input type="text" value={unidadeAtual?.nome || ''} disabled />
+          </div>
+          {/* CAMPO DATA DE NASCIMENTO RESTAURADO ABAIXO */}
+          <div className="form-group">
+            <label>Data de Nascimento</label>
+            <input 
+              type="date" 
+              value={formData.data_nascimento}
+              onChange={(e) => setFormData({...formData, data_nascimento: e.target.value})}
+            />
           </div>
         </div>
 
         <div className="form-row">
           <div className="form-group">
-            <label>Nome Completo</label>
+            <label>Nome do Cliente</label>
             <input 
-              type="text" required
+              type="text" required placeholder="Nome completo"
               value={formData.nome}
               onChange={(e) => setFormData({...formData, nome: e.target.value})}
             />
@@ -83,16 +86,16 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
         </div>
 
         <div className="form-group">
-          <label>Observações de Saúde</label>
+          <label>Observações / Saúde</label>
           <textarea 
-            rows="3"
+            rows="3" placeholder="Alergias ou restrições..."
             value={formData.observacoes}
             onChange={(e) => setFormData({...formData, observacoes: e.target.value})}
           />
         </div>
 
         <button type="submit" disabled={loading} className="submit-button">
-          {loading ? 'Salvando...' : 'Finalizar Cadastro'}
+          {loading ? 'A Salvar...' : 'Salvar Cliente'}
         </button>
       </form>
     </div>
