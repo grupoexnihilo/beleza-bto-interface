@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
 import './CadastroClienteForm.css';
 
-function CadastroClienteForm({ user, unidadeId, onBack }) {
+function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    nome: '',
-    whatsapp: '',
-    data_nascimento: '',
-    observacoes: ''
+    nome: '', whatsapp: '', data_nascimento: '', observacoes: ''
   });
+
+  // Encontra o nome da unidade atual baseado no ID que veio do App.jsx
+  const unidadeAtual = unidades.find(u => u.id === unidadeId);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    if (!user?.email) {
+      alert("Erro: Usuário não identificado. Tente fazer login novamente.");
+      return;
+    }
 
+    setLoading(true);
     const payload = {
       ...formData,
       id: `cli_${crypto.randomUUID().substring(0, 8)}`,
-      unidade: unidadeId, // Pega automaticamente da prop
-      cadastrado_por: user.email // Pega automaticamente do login
+      unidade: unidadeId,
+      cadastrado_por: user.email
     };
 
     try {
@@ -28,15 +32,16 @@ function CadastroClienteForm({ user, unidadeId, onBack }) {
         body: JSON.stringify(payload),
       });
 
+      const result = await response.json();
+
       if (response.ok) {
         alert('Cliente cadastrado com sucesso!');
         onBack();
       } else {
-        const errData = await response.json();
-        alert('Erro ao salvar: ' + errData.error);
+        alert('Erro no banco: ' + result.error);
       }
     } catch (error) {
-      alert('Falha na conexão com o servidor.');
+      alert('Erro de conexão com a API.');
     } finally {
       setLoading(false);
     }
@@ -50,10 +55,19 @@ function CadastroClienteForm({ user, unidadeId, onBack }) {
       <form onSubmit={handleSubmit} className="entrada-form">
         <div className="form-row">
           <div className="form-group">
+            <label>Unidade de Atendimento</label>
+            {/* Dropdown desabilitado apenas para exibição do nome da unidade logada */}
+            <select disabled value={unidadeId}>
+               <option value={unidadeId}>{unidadeAtual?.nome || 'Carregando unidade...'}</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
             <label>Nome Completo</label>
             <input 
-              type="text" 
-              required
+              type="text" required
               value={formData.nome}
               onChange={(e) => setFormData({...formData, nome: e.target.value})}
             />
@@ -61,21 +75,9 @@ function CadastroClienteForm({ user, unidadeId, onBack }) {
           <div className="form-group">
             <label>WhatsApp</label>
             <input 
-              type="text" 
-              placeholder="(00) 00000-0000"
+              type="text" placeholder="(00) 00000-0000"
               value={formData.whatsapp}
               onChange={(e) => setFormData({...formData, whatsapp: e.target.value})}
-            />
-          </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>Data de Nascimento</label>
-            <input 
-              type="date"
-              value={formData.data_nascimento}
-              onChange={(e) => setFormData({...formData, data_nascimento: e.target.value})}
             />
           </div>
         </div>
@@ -83,14 +85,14 @@ function CadastroClienteForm({ user, unidadeId, onBack }) {
         <div className="form-group">
           <label>Observações de Saúde</label>
           <textarea 
-            rows="4"
+            rows="3"
             value={formData.observacoes}
             onChange={(e) => setFormData({...formData, observacoes: e.target.value})}
           />
         </div>
 
         <button type="submit" disabled={loading} className="submit-button">
-          {loading ? 'A Salvar...' : 'Salvar Cliente'}
+          {loading ? 'Salvando...' : 'Finalizar Cadastro'}
         </button>
       </form>
     </div>
