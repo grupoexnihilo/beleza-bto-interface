@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
   const { 
     id, nome, whatsapp, data_nascimento, unidade, cadastrado_por,
-    cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade 
+    cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade, cep 
   } = req.body;
   
   let client;
@@ -21,14 +21,14 @@ export default async function handler(req, res) {
     const insertQuery = `
       INSERT INTO clientes (
         id, nome, whatsapp, data_nascimento, unidade, cadastrado_por,
-        cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade
+        cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade, cep
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
     `;
     
     const valores = [
       id, nome, whatsapp, data_nascimento || null, unidade, cadastrado_por,
-      cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade
+      cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade, cep
     ];
 
     await client.query(insertQuery, valores);
