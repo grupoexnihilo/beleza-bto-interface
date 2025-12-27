@@ -6,14 +6,23 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
   const [cidades, setCidades] = useState([]);
   const [loadingCidades, setLoadingCidades] = useState(false);
 
-  // Puxa a data atual no formato YYYY-MM-DD
   const dataHoje = new Date().toISOString().split('T')[0];
 
   const [formData, setFormData] = useState({
     data_cadastro: dataHoje,
-    nome: '', whatsapp: '', email: '', cpf: '', data_nascimento: '',
-    cep: '', endereco: '', numero: '', complemento: '', 
-    bairro: '', cidade: '', estado: '', atividade: ''
+    nome: '',
+    data_nascimento: '',
+    whatsapp: '',
+    email: '',
+    cpf: '',
+    cep: '',
+    endereco: '',
+    numero: '',
+    complemento: '',
+    bairro: '',
+    cidade: '',
+    estado: '',
+    atividade: ''
   });
 
   const unidadeAtual = unidades.find(u => u.id === unidadeId);
@@ -69,8 +78,8 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      if (response.ok) { alert('Cliente Cadastrado com Sucesso!'); onBack(); }
-    } catch (err) { alert('Erro na conexão'); }
+      if (response.ok) { alert('Ficha salva com sucesso!'); onBack(); }
+    } catch (err) { alert('Erro de conexão'); }
     finally { setLoading(false); }
   };
 
@@ -93,36 +102,44 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
           </div>
         </div>
 
-        {/* Nome e WhatsApp */}
+        {/* Nome Completo e Data de Nascimento */}
         <div className="form-row">
           <div className="form-group">
             <label>Nome Completo</label>
             <input type="text" required value={formData.nome} onChange={(e) => setFormData({...formData, nome: e.target.value})} />
           </div>
           <div className="form-group">
-            <label>WhatsApp</label>
-            <input type="text" required value={formData.whatsapp} onChange={(e) => setFormData({...formData, whatsapp: e.target.value})} />
+            <label>Data de Nascimento</label>
+            <input type="date" value={formData.data_nascimento} onChange={(e) => setFormData({...formData, data_nascimento: e.target.value})} />
           </div>
         </div>
 
-        {/* Email e CPF */}
+        {/* Whatsapp e Email */}
         <div className="form-row">
+          <div className="form-group">
+            <label>Telefone / WhatsApp</label>
+            <input type="text" required value={formData.whatsapp} onChange={(e) => setFormData({...formData, whatsapp: e.target.value})} />
+          </div>
           <div className="form-group">
             <label>E-mail</label>
             <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
           </div>
+        </div>
+
+        {/* CPF e CEP */}
+        <div className="form-row">
           <div className="form-group">
             <label>CPF</label>
             <input type="text" value={formData.cpf} onChange={(e) => setFormData({...formData, cpf: e.target.value})} />
           </div>
-        </div>
-
-        {/* CEP, Endereço e Nº */}
-        <div className="form-row" style={{ gridTemplateColumns: '1fr 2fr 0.5fr' }}>
           <div className="form-group">
             <label>CEP (Busca Automática)</label>
             <input type="text" onBlur={handleCEPBlur} onChange={(e) => setFormData({...formData, cep: e.target.value})} />
           </div>
+        </div>
+
+        {/* Endereço, Nº e Complemento */}
+        <div className="form-row" style={{ gridTemplateColumns: '2fr 0.5fr 1fr' }}>
           <div className="form-group">
             <label>Endereço</label>
             <input type="text" value={formData.endereco} onChange={(e) => setFormData({...formData, endereco: e.target.value})} />
@@ -131,22 +148,18 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
             <label>Nº</label>
             <input type="text" value={formData.numero} onChange={(e) => setFormData({...formData, numero: e.target.value})} />
           </div>
-        </div>
-
-        {/* Complemento e Bairro */}
-        <div className="form-row">
           <div className="form-group">
             <label>Complemento</label>
             <input type="text" value={formData.complemento} onChange={(e) => setFormData({...formData, complemento: e.target.value})} />
           </div>
+        </div>
+
+        {/* Bairro, Estado e Cidade */}
+        <div className="form-row" style={{ gridTemplateColumns: '1.5fr 0.5fr 1.5fr' }}>
           <div className="form-group">
             <label>Bairro</label>
             <input type="text" value={formData.bairro} onChange={(e) => setFormData({...formData, bairro: e.target.value})} />
           </div>
-        </div>
-
-        {/* Estado e Cidade */}
-        <div className="form-row">
           <div className="form-group">
             <label>Estado</label>
             <select value={formData.estado} onChange={(e) => setFormData({...formData, estado: e.target.value, cidade: ''})}>
@@ -157,7 +170,7 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
           <div className="form-group">
             <label>Cidade</label>
             <select value={formData.cidade} onChange={(e) => setFormData({...formData, cidade: e.target.value})} disabled={!formData.estado}>
-              <option value="">{loadingCidades ? '...' : formData.cidade || 'Selecione'}</option>
+              <option value="">{formData.cidade || 'Selecione'}</option>
               {cidades.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
@@ -169,7 +182,7 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
         </div>
 
         <button type="submit" disabled={loading} className="submit-button">
-          {loading ? 'Salvando...' : 'Finalizar Cadastro Profissional'}
+          {loading ? 'Salvando...' : 'Finalizar Cadastro'}
         </button>
       </form>
     </div>

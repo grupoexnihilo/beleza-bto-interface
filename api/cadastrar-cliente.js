@@ -26,11 +26,9 @@ export default async function handler(req, res) {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
     `;
     
-    // Garantimos que se data_cadastro não vier do front, o banco use a data atual
     const valores = [
       id, nome, whatsapp, data_nascimento || null, unidade, cadastrado_por,
-      cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade, cep, 
-      data_cadastro || new Date().toISOString().split('T')[0]
+      cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade, cep, data_cadastro
     ];
 
     await client.query(insertQuery, valores);
