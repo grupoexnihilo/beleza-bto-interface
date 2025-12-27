@@ -10,8 +10,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ message: 'Método não permitido' });
 
   const { 
-    id, nome, whatsapp, data_nascimento, observacoes, unidade, cadastrado_por,
-    cpf, email, endereco, numero, complemento, atividade 
+    id, nome, whatsapp, data_nascimento, unidade, cadastrado_por,
+    cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade 
   } = req.body;
   
   let client;
@@ -20,22 +20,22 @@ export default async function handler(req, res) {
     client = await pool.connect();
     const insertQuery = `
       INSERT INTO clientes (
-        id, nome, whatsapp, data_nascimento, observacoes, unidade, cadastrado_por,
-        cpf, email, endereco, numero, complemento, atividade
+        id, nome, whatsapp, data_nascimento, unidade, cadastrado_por,
+        cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
     `;
     
     const valores = [
-      id, nome, whatsapp, data_nascimento || null, observacoes, unidade, cadastrado_por,
-      cpf, email, endereco, numero, complemento, atividade
+      id, nome, whatsapp, data_nascimento || null, unidade, cadastrado_por,
+      cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade
     ];
 
     await client.query(insertQuery, valores);
-    res.status(201).json({ message: 'Cliente salvo com sucesso!' });
+    res.status(201).json({ message: 'Cliente cadastrado com sucesso!' });
   } catch (error) {
-    console.error('[ERROR] Cadastro Cliente:', error);
-    res.status(500).json({ message: 'Erro ao salvar cliente.', error: error.message });
+    console.error('[ERROR] API Cadastro:', error);
+    res.status(500).json({ message: 'Erro no servidor.', error: error.message });
   } finally {
     if (client) client.release();
   }
