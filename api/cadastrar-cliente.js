@@ -1,45 +1,30 @@
 import pg from 'pg';
-
 const { Pool } = pg;
 
-// Configuração da conexão com o Neon
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // Usaremos variável de ambiente por segurança
-  ssl: {
-    rejectUnauthorized: false // Necessário para conexões seguras com o Neon
-  }
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
 });
 
 export default async function handler(req, res) {
-  // Só permitimos o método POST (para enviar dados)
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Método não permitido' });
-  }
-
-  const { id, nome, whatsapp, data_nascimento, observacoes } = req.body;
+  if (req.method !== 'POST') return res.status(405).end();
 
   try {
-    const client = await pool.connect();
-    
-    // Comando SQL para inserir o cliente
+    const { id, nome, whatsapp, data_nascimento, observacoes, unidade, cadastrado_por } = req.body;
+
+    // A query agora inclui unidade e cadastrado_por
     const query = `
-      INSERT INTO clientes (id, nome, whatsapp, data_nascimento, observacoes)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO clientes (id, nome, whatsapp, data_nascimento, observacoes, unidade, cadastrado_por)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *;
     `;
     
-    const values = [id, nome, whatsapp, data_nascimento, observacoes];
-    const result = await client.query(query, values);
-    
-    client.release();
+    const values = [id, nome, whatsapp, data_nascimento, observacoes, unidade, cadastrado_por];
+    const result = await pool.query(query, values);
 
-    return res.status(200).json({ 
-      message: 'Cliente cadastrado com sucesso!', 
-      cliente: result.rows[0] 
-    });
-
+    return res.status(200).json({ message: 'Cliente salvo com sucesso!', cliente: result.rows[0] });
   } catch (error) {
-    console.error('Erro ao salvar no Neon:', error);
-    return res.status(500).json({ error: 'Erro interno no servidor ao salvar cliente.' });
+    console.error("Erro na API de Clientes:", error);
+    return res.status(500).json({ error: error.message });
   }
 }

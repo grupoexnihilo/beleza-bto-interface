@@ -1,36 +1,42 @@
 import React, { useState } from 'react';
 import './CadastroClienteForm.css';
 
-const CadastroClienteForm = ({ onBack }) => {
+function CadastroClienteForm({ user, unidadeId, onBack }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    nome: '', whatsapp: '', data_nascimento: '', observacoes: ''
+    nome: '',
+    whatsapp: '',
+    data_nascimento: '',
+    observacoes: ''
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const clienteData = {
+    const payload = {
       ...formData,
-      id: `cli_${crypto.randomUUID().substring(0, 8)}`
+      id: `cli_${crypto.randomUUID().substring(0, 8)}`,
+      unidade: unidadeId, // Pega automaticamente da prop
+      cadastrado_por: user.email // Pega automaticamente do login
     };
 
     try {
       const response = await fetch('/api/cadastrar-cliente', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(clienteData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         alert('Cliente cadastrado com sucesso!');
         onBack();
       } else {
-        alert('Erro ao salvar no banco.');
+        const errData = await response.json();
+        alert('Erro ao salvar: ' + errData.error);
       }
     } catch (error) {
-      alert('Erro de conexão.');
+      alert('Falha na conexão com o servidor.');
     } finally {
       setLoading(false);
     }
@@ -38,7 +44,7 @@ const CadastroClienteForm = ({ onBack }) => {
 
   return (
     <div className="form-container">
-      <button onClick={onBack} className="back-button"> ← Voltar</button>
+      <button onClick={onBack} className="back-button"> ← Voltar ao Painel</button>
       <h3>Novo Cadastro de Cliente</h3>
       
       <form onSubmit={handleSubmit} className="entrada-form">
@@ -47,7 +53,6 @@ const CadastroClienteForm = ({ onBack }) => {
             <label>Nome Completo</label>
             <input 
               type="text" 
-              placeholder="Digite o nome..." 
               required
               value={formData.nome}
               onChange={(e) => setFormData({...formData, nome: e.target.value})}
@@ -76,28 +81,20 @@ const CadastroClienteForm = ({ onBack }) => {
         </div>
 
         <div className="form-group">
-          <label>Observações / Histórico de Saúde</label>
+          <label>Observações de Saúde</label>
           <textarea 
-            placeholder="Alergias, restrições ou preferências..."
             rows="4"
-            style={{ 
-              backgroundColor: 'var(--input-bg)', 
-              color: 'var(--text-color-primary)', 
-              border: '1px solid var(--input-border)',
-              borderRadius: '6px',
-              padding: '12px'
-            }}
             value={formData.observacoes}
             onChange={(e) => setFormData({...formData, observacoes: e.target.value})}
           />
         </div>
 
         <button type="submit" disabled={loading} className="submit-button">
-          {loading ? 'Cadastrando...' : 'Finalizar Cadastro'}
+          {loading ? 'A Salvar...' : 'Salvar Cliente'}
         </button>
       </form>
     </div>
   );
-};
+}
 
 export default CadastroClienteForm;
