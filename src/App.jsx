@@ -1,15 +1,16 @@
-// --- VERSÃO COMPLETA E CORRIGIDA DE App.jsx ---
+// --- VERSÃO COMPLETA E CORRIGIDA DE App.jsx - ATUALIZADA FASE 3 ---
 import React, { useState, useEffect } from 'react'; // <-- IMPORT CORRETO
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import app from './firebaseConfig.js'; // Configuração do Firebase Auth
-import LoginForm from './LoginForm.jsx'; // Corrigido para L maiúsculo
+import LoginForm from './LoginForm.jsx'; 
 import EntradaRapidaForm from './EntradaRapidaForm.jsx';
 import AdicionarDespesaForm from './AdicionarDespesaForm.jsx';
 import HistoricoLancamentos from './HistoricoLancamentos.jsx';
+import CadastroClienteForm from './CadastroClienteForm.jsx'; // <-- NOVO COMPONENTE
 import logoBelezaBTO from './logo-beleza-bto.png';
 
 function App() {
-  console.log("--- EXECUTANDO A VERSÃO MAIS RECENTE DO App.jsx (Build do Vercel) ---");
+  console.log("--- EXECUTANDO A VERSÃO MAIS RECENTE DO App.jsx (Build do Vercel com Clientes) ---");
 
   // --- Estados do Componente ---
   const [user, setUser] = useState(null);
@@ -26,12 +27,10 @@ function App() {
     console.log("[APP useEffect onAuthStateChanged] INICIANDO LISTENER");
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       console.log("[APP onAuthStateChanged] Callback executado. currentUser:", currentUser ? currentUser.email : null);
-      setUser(currentUser); // Atualiza o estado 'user'
+      setUser(currentUser); 
       console.log("[APP onAuthStateChanged] Estado 'user' DEFINIDO para:", currentUser ? currentUser.email : null);
 
       if (currentUser) {
-        // Se há utilizador, busca os dados dele na nossa API
-        // setLoading(true); // Não precisa redefinir loading aqui, já começou true
         try {
           console.log(`[APP onAuthStateChanged] Chamando API getOperadorData para email: ${currentUser.email}`);
 
@@ -43,7 +42,7 @@ function App() {
             try {
               const errorData = await response.json();
               errorMsg = errorData.message || errorMsg;
-            } catch (parseError) { /* Ignora se não for JSON */ }
+            } catch (parseError) { /* Ignora */ }
             console.error("[APP onAuthStateChanged] Erro na RESPOSTA da API:", errorMsg);
             throw new Error(errorMsg);
           }
@@ -60,35 +59,32 @@ function App() {
             console.log("[APP onAuthStateChanged] Unidade Selecionada definida para:", primeiraUnidadeId);
           } else {
             setUnidadeSelecionada('');
-            console.log("[APP onAuthStateChanged] Nenhuma unidade encontrada. Unidade Selecionada definida para ''");
+            console.log("[APP onAuthStateChanged] Nenhuma unidade encontrada.");
           }
 
         } catch (error) {
            console.error("[APP onAuthStateChanged] Erro no bloco try/catch ao buscar dados:", error);
-           setUserName(currentUser.email); // Fallback
+           setUserName(currentUser.email); 
            setUnidades([]);
            setUnidadeSelecionada('');
         } finally {
-          setLoading(false); // Esconde o loading após a busca (sucesso ou erro)
+          setLoading(false); 
         }
       } else {
-        // Se não há utilizador (logout ou inicialização)
-        console.log("[APP onAuthStateChanged] User é NULL (Logout?). Limpando estados.");
+        console.log("[APP onAuthStateChanged] User é NULL. Limpando estados.");
         setUser(null);
         setUserName('');
         setUnidades([]);
         setUnidadeSelecionada('');
-        setLoading(false); // Garante que o loading para se começar deslogado
+        setLoading(false);
       }
-    }); // FIM DO CALLBACK onAuthStateChanged
+    });
 
-    // Função de limpeza
     return () => {
         console.log("[APP useEffect onAuthStateChanged] DESMONTANDO LISTENER");
         unsubscribe();
     }
-  }, [auth]); // Dependência: auth
-  // --- FIM DO useEffect ---
+  }, [auth]);
 
   // --- Funções Handler ---
   const handleLogout = async () => {
@@ -108,11 +104,11 @@ function App() {
   };
 
   // --- Lógica de Renderização ---
-  if (loading) { // Mostra loading enquanto o estado inicial do Auth está a ser verificado
+  if (loading) {
     return <div className="loading-container">A carregar autenticação...</div>;
   }
 
-  if (!user) { // Se não está loading E não há user, mostra Login
+  if (!user) {
     return (
        <div className="app-container">
           <LoginForm />
@@ -122,18 +118,20 @@ function App() {
 
   // Se chegou aqui, está logado. Renderiza a vista principal.
   const renderLoggedInView = () => {
-    console.log(`[APP renderLoggedInView] Renderizando visão '${currentView}'. Passando user: ${user ? user.email : null}, unidadeSelecionada: ${unidadeSelecionada}`);
+    console.log(`[APP renderLoggedInView] Renderizando visão '${currentView}'.`);
     switch (currentView) {
       case 'receitas':
         return <EntradaRapidaForm user={user} unidadeId={unidadeSelecionada} onBack={() => setCurrentView('dashboard')} />;
       case 'despesas':
         return <AdicionarDespesaForm user={user} unidadeId={unidadeSelecionada} onBack={() => setCurrentView('dashboard')} />;
+      case 'clientes': // <-- NOVA VISÃO DE CADASTRO DE CLIENTES
+        return <CadastroClienteForm onBack={() => setCurrentView('dashboard')} />;
       default: // 'dashboard'
         return (
           <div className="dashboard-container">
-            <h2>Painel de Ações</h2> {/* Mantemos o H2 de teste */}
+            <h2>Painel de Ações</h2>
 
-            {/* Seletor de Unidades (Lógica corrigida) */}
+            {/* Seletor de Unidades */}
             {unidades.length > 0 && (
               <div className="unidade-selector">
                 <label htmlFor="unidade-select">Unidade de Trabalho:</label>
@@ -146,7 +144,7 @@ function App() {
                 </select>
               </div>
             )}
-            {!loading && unidades.length === 0 && ( // Mensagem se não houver unidades
+            {!loading && unidades.length === 0 && (
                  <p>Nenhuma unidade associada a este utilizador.</p>
             )}
 
@@ -157,6 +155,14 @@ function App() {
               </button>
               <button onClick={() => setCurrentView('despesas')} className="action-button" disabled={!unidadeSelecionada}>
                 Adicionar Despesa
+              </button>
+              {/* NOVO BOTÃO DE CLIENTES */}
+              <button 
+                onClick={() => setCurrentView('clientes')} 
+                className="action-button" 
+                style={{ backgroundColor: '#4f46e5' }} // Cor roxa para destacar
+              >
+                Cadastrar Cliente
               </button>
             </div>
 
@@ -171,12 +177,10 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-  {/* --- ADICIONAR LOGO AQUI --- */}
-        <div style={{ display: 'flex', alignItems: 'center' }}> {/* Wrapper para alinhar logo e texto */}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <img src={logoBelezaBTO} alt="Beleza BTO Logo" className="app-logo" />
           <span>Bem-vindo, {userName || (user ? user.email : '')}!</span>
         </div>
-        {/* --- FIM LOGO --- */}
         <button onClick={handleLogout} className="logout-button">Sair</button>
       </header>
       <main>
@@ -184,6 +188,6 @@ function App() {
       </main>
     </div>
   );
-} // --- FIM DA FUNÇÃO App ---
+}
 
-export default App; // <<<----- LINHA ESSENCIAL NO FINAL
+export default App;

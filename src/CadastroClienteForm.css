@@ -1,0 +1,25 @@
+/* Layout adaptado do seu EntradaRapidaForm.css */
+
+.form-container {
+  max-width: 900px;
+  margin: 20px auto;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
