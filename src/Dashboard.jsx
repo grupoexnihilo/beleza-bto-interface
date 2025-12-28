@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react'; // Adicionado useEffect aqui
-import React, { useState } from 'react';
 import './Dashboard.css';
-import { useEffect } from 'react'; // Certifique-se de que o useEffect está no topo nos imports
 
 // Importações
 import logoBelezaBTO from './logo-beleza-bto.png';
