@@ -10,6 +10,7 @@ import CadastroClienteForm from './CadastroClienteForm';
 import EntradaRapidaForm from './EntradaRapidaForm';
 import AdicionarDespesaForm from './AdicionarDespesaForm';
 import HistoricoLancamentos from './HistoricoLancamentos';
+import Agendamento from './Agendamento';
 
 function Dashboard({ user, unidadeId, unidades, onLogout }) {
   // --- ESTADO PARA CONTROLAR O FILTRO ---
@@ -174,6 +175,8 @@ const selecionarTela = (tela) => {
 
       case 'clientes':
         return <BaseClientes unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />;
+        case 'agendamentos':
+      return <Agendamento />;
       case 'cadastros':
         return <CadastroClienteForm user={user} unidadeId={unidadeId} unidades={unidades} onBack={() => setTelaAtiva('resumo')} />;
       case 'financeiro':
