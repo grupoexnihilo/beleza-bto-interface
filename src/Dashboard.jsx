@@ -11,6 +11,16 @@ import HistoricoLancamentos from './HistoricoLancamentos';
 
 function Dashboard({ user, unidadeId, unidades, onLogout }) {
   const [telaAtiva, setTelaAtiva] = useState('resumo');
+  // --- TRECHO 1: NOVO ESTADO DO MENU ---
+const [menuExpandido, setMenuExpandido] = useState(false);
+
+const toggleMenu = () => setMenuExpandido(!menuExpandido);
+
+// Função para mudar de tela e fechar o menu automaticamente
+const selecionarTela = (tela) => {
+  setTelaAtiva(tela);
+  setMenuExpandido(false);
+};
   const unidadeAtual = unidades.find(u => u.id === unidadeId);
 
   const renderConteudo = () => {
@@ -121,15 +131,35 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
           </div>
         </div>
 
-        <nav className="nav-bottom-row">
-          <button className={`nav-item-fluido ${telaAtiva === 'resumo' ? 'active' : ''}`} onClick={() => setTelaAtiva('resumo')}>📊 Resumo</button>
-          <button className={`nav-item-fluido ${telaAtiva === 'agendamentos' ? 'active' : ''}`} onClick={() => setTelaAtiva('agendamentos')}>📅 Agendamentos</button>
-          <button className={`nav-item-fluido ${telaAtiva === 'clientes' ? 'active' : ''}`} onClick={() => setTelaAtiva('clientes')}>👥 Clientes</button>
-          <button className={`nav-item-fluido ${telaAtiva === 'financeiro' ? 'active' : ''}`} onClick={() => setTelaAtiva('financeiro')}>💰 Financeiro</button>
-          <button className={`nav-item-fluido ${telaAtiva === 'servicos' ? 'active' : ''}`} onClick={() => setTelaAtiva('servicos')}>✂️ Serviços</button>
-          <button className={`nav-item-fluido ${telaAtiva === 'cadastros' ? 'active' : ''}`} onClick={() => setTelaAtiva('cadastros')}>📝 Cadastros</button>
-          <button className={`nav-item-fluido ${telaAtiva === 'config' ? 'active' : ''}`} onClick={() => setTelaAtiva('config')}>⚙️ Configurações</button>
-        </nav>
+        {/* --- TRECHO 2: ESTRUTURA DO MENU DINÂMICO --- */}
+<nav className={`nav-bottom-row ${menuExpandido ? 'expandido' : 'recolhido'}`}>
+  
+  {/* Botão de Controle (+ / -) */}
+  <button className="btn-menu-control" onClick={toggleMenu}>
+    {menuExpandido ? '−' : '+'}
+  </button>
+
+  <div className="nav-scroll-wrapper">
+    {/* Lista de Botões */}
+    {[
+      { id: 'resumo', label: '📊 Resumo' },
+      { id: 'agendamentos', label: '📅 Agendamentos' },
+      { id: 'clientes', label: '👥 Clientes' },
+      { id: 'financeiro', label: '💰 Financeiro' },
+      { id: 'servicos', label: '✂️ Serviços' },
+      { id: 'cadastros', label: '📝 Cadastros' },
+      { id: 'config', label: '⚙️ Configurações' }
+    ].map((item) => (
+      <button
+        key={item.id}
+        className={`nav-item-fluido ${telaAtiva === item.id ? 'active' : ''} ${!menuExpandido && telaAtiva !== item.id ? 'hidden' : ''}`}
+        onClick={() => selecionarTela(item.id)}
+      >
+        {item.label}
+      </button>
+    ))}
+  </div>
+</nav>
       </header>
 
       <main className="content-container-fixo">
