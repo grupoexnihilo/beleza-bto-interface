@@ -1,50 +1,34 @@
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.search-input-fix {
+  width: 100%;
+  padding: 15px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 8px;
   margin-bottom: 20px;
-  border-bottom: 1px solid #333;
-  padding-bottom: 10px;
 }
 
-.close-modal {
-  background: none;
-  border: none;
-  color: #666;
-  font-size: 2rem;
-  cursor: pointer;
+.ficha-body {
+  margin-top: 20px;
+  color: #eee;
 }
 
-.modal-form {
-  max-height: 70vh;
-  overflow-y: auto;
-  padding-right: 10px;
+.dados-extras {
+  background: #222;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  font-size: 0.9rem;
 }
 
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-  margin-top: 25px;
-  padding-top: 15px;
-  border-top: 1px solid #333;
+.dados-extras p {
+  margin-bottom: 5px;
 }
 
-.btn-cancelar {
-  background: #333;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn-salvar {
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
+/* Garante que o input desabilitado ainda seja legível */
+input:disabled, textarea:disabled {
+  background: transparent !important;
+  border-color: #444 !important;
+  color: #aaa !important;
+  cursor: not-allowed;
 }
