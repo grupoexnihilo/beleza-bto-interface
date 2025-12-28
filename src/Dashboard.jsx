@@ -114,22 +114,43 @@ const selecionarTela = (tela) => {
         return <div className="em-desenvolvimento"><h3>Módulo {telaAtiva.toUpperCase()}</h3><p>Em breve...</p></div>;
     }
   };
+// --- TRECHO 1: LÓGICA DE DATA E VERSÍCULO ---
+const dataAtual = new Intl.DateTimeFormat('pt-BR', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric'
+}).format(new Date());
 
+// Exemplo de versículo (depois podemos conectar a uma API de versículos)
+const versiculoDoDia = {
+  texto: "Tudo o que fizerem, façam de todo o coração, como para o Senhor",
+  referencia: "Colossenses 3:23"
+};
   return (
     <div className="dashboard-main-wrapper">
-      <header className="navbar-superior">
-        <div className="nav-top-row">
-          <div className="nav-logo-area">
-            <img src={logoBelezaBTO} alt="Logo" className="nav-logo-img" />
-          </div>
-          <div className="nav-user-actions">
-            <div className="user-greeting">
-              <span>Olá, <strong>{user?.nome || 'Usuário'}</strong> 👋</span>
-              <small>{unidadeAtual?.nome}</small>
-            </div>
-            <button className="btn-sair-pill" onClick={onLogout}>Sair do Sistema</button>
-          </div>
+{/* --- TRECHO 2: HEADER COM LOGO, VERSÍCULO E DATA --- */}
+<header className="navbar-superior">
+  <div className="nav-top-row">
+    <div className="nav-logo-area">
+      <img src={logoBelezaBTO} alt="Logo" className="nav-logo-img" />
+      <div className="versiculo-container">
+        <span className="versiculo-texto">"{versiculoDoDia.texto}"</span>
+        <span className="versiculo-ref">{versiculoDoDia.referencia}</span>
+      </div>
+    </div>
+    
+    <div className="nav-user-actions">
+      <div className="user-info-group">
+        <div className="user-greeting">
+          <span>Olá, <strong>{user?.nome || 'Usuário'}</strong> 👋</span>
+          <small>{unidadeAtual?.nome}</small>
         </div>
+        <span className="data-header">{dataAtual.charAt(0).toUpperCase() + dataAtual.slice(1)}</span>
+      </div>
+      <button className="btn-sair-pill" onClick={onLogout}>Sair</button>
+    </div>
+  </div>
 
         {/* --- TRECHO 2: ESTRUTURA DO MENU DINÂMICO --- */}
 <nav className={`nav-bottom-row ${menuExpandido ? 'expandido' : 'recolhido'}`}>

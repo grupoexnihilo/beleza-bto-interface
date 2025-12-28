@@ -234,3 +234,48 @@
   border-radius: 20px;
   border: 1px solid #1a1a1a;
 }
+/* --- TRECHO 3: DESIGN DO VERSÍCULO E DATA --- */
+.versiculo-container {
+  margin-left: 25px;
+  padding-left: 20px;
+  border-left: 1px solid #222;
+  display: flex;
+  flex-direction: column;
+}
+
+.versiculo-texto {
+  color: #888;
+  font-size: 0.85rem;
+  font-style: italic;
+  font-weight: 400;
+  max-width: 400px; /* Limita para não empurrar o resto */
+}
+
+.versiculo-ref {
+  color: #0ea5e9;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.user-info-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.data-header {
+  color: #555;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Pequeno ajuste no logo area para alinhar o versiculo */
+.nav-logo-area {
+  display: flex;
+  align-items: center;
+}
