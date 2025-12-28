@@ -455,3 +455,10 @@
 .status-badge.verde { background: rgba(16, 185, 129, 0.1); color: #10b981; }
 .status-badge.amarelo { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
 .status-badge.vermelho { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+/* Opcional: Adiciona uma leve sombra ao botão quando o filtro está ativo para dar contexto */
+.btn-filtro-icon.active {
+  background: rgba(14, 165, 233, 0.2);
+  border-color: #0ea5e9;
+  color: #fff;
+}

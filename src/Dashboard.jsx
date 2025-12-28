@@ -1,5 +1,7 @@
+import React, { useState, useEffect } from 'react'; // Adicionado useEffect aqui
 import React, { useState } from 'react';
 import './Dashboard.css';
+import { useEffect } from 'react'; // Certifique-se de que o useEffect está no topo nos imports
 
 // Importações
 import logoBelezaBTO from './logo-beleza-bto.png';
@@ -12,6 +14,20 @@ import HistoricoLancamentos from './HistoricoLancamentos';
 function Dashboard({ user, unidadeId, unidades, onLogout }) {
   // --- ESTADO PARA CONTROLAR O FILTRO ---
 const [filtroAberto, setFiltroAberto] = useState(false);
+useEffect(() => {
+  const fecharComEsc = (e) => {
+    if (e.key === 'Escape') {
+      setFiltroAberto(false);
+    }
+  };
+
+  if (filtroAberto) {
+    window.addEventListener('keydown', fecharComEsc);
+  }
+
+  // Limpa o "ouvinte" quando o componente desmonta ou o filtro fecha
+  return () => window.removeEventListener('keydown', fecharComEsc);
+}, [filtroAberto]);
 
 // --- FUNÇÃO PARA FORMATAÇÃO DE DATA INTELIGENTE ---
 const formatarDataInteligente = (dataInput) => {
@@ -89,9 +105,13 @@ const selecionarTela = (tela) => {
 
     <div className="dropdown-filtro-container">
       {/* Botão que agora alterna o estado */}
-      <button className="btn-filtro-icon" onClick={() => setFiltroAberto(!filtroAberto)}>
-        <span className="icon-filtro">⏳</span> Filtrar
-      </button>
+     {/* Localize este botão e substitua pela linha abaixo */}
+<button 
+  className={`btn-filtro-icon ${filtroAberto ? 'active' : ''}`} 
+  onClick={() => setFiltroAberto(!filtroAberto)}
+>
+  <span className="icon-filtro">⏳</span> Filtrar
+</button>
       
       {/* EXIBIÇÃO CONDICIONAL DO DROPDOWN */}
       {filtroAberto && (
@@ -106,6 +126,7 @@ const selecionarTela = (tela) => {
     </div>
   </div>
 </div>
+
 
   <div className="table-wrapper-fluido">
     <table className="agenda-table">
