@@ -1,45 +1,61 @@
-/* src/BaseClientes.css */
-.row-clicavel {
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.row-clicavel:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-}
-
-.text-small { font-size: 0.85rem; color: #aaa; }
-.text-bold { font-weight: 600; color: var(--primary-color); }
-
-/* Limita a observação a uma linha com reticências (...) */
-.obs-preview {
-  max-width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 0.85rem;
-  color: #ccc;
-  font-style: italic;
-}
-
-.actions-cell {
+.header-base {
   display: flex;
-  justify-content: center;
-  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
 }
 
-.btn-icon {
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-direction: row-reverse; /* Coloca a lupa à esquerda do título se preferir */
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 30px;
+  padding: 5px;
+  transition: all 0.4s ease;
+  border: 1px solid transparent;
+}
+
+.search-wrapper.active {
+  background: #1a1a1a;
+  border-color: var(--primary-color);
+  padding-left: 15px;
+}
+
+.search-input-hidden {
+  width: 0;
+  border: none;
+  background: transparent;
+  color: white;
+  transition: width 0.4s ease;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.search-wrapper.active .search-input-hidden {
+  width: 250px; /* Largura que o campo assume ao abrir */
+  margin-right: 10px;
+}
+
+.btn-lupa {
   background: none;
   border: none;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   cursor: pointer;
-  padding: 5px;
-  border-radius: 4px;
-  transition: 0.2s;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.3s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.btn-icon.edit:hover { background: rgba(255, 255, 0, 0.1); transform: scale(1.2); }
-.btn-icon.delete:hover { background: rgba(255, 0, 0, 0.1); transform: scale(1.2); }
+.btn-lupa:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
