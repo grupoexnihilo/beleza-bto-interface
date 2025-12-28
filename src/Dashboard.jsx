@@ -3,6 +3,7 @@ import './Dashboard.css';
 import BaseClientes from './BaseClientes';
 import CadastroClienteForm from './CadastroClienteForm';
 
+
 function Dashboard({ user, unidadeId, unidades, onLogout }) {
   const [menuAberto, setMenuAberto] = useState(true);
   const [telaAtiva, setTelaAtiva] = useState('resumo');
