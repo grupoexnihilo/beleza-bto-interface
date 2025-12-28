@@ -14,33 +14,71 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
 
   const unidadeAtual = unidades.find(u => u.id === unidadeId);
 
-  // --- RENDERIZAÇÃO DE CONTEÚDO ---
+  // --- FUNÇÃO PARA RENDERIZAR O CONTEÚDO CENTRAL ---
   const renderConteudo = () => {
     switch (telaAtiva) {
       case 'resumo':
         return (
           <div className="resumo-dashboard">
+            {/* CARDS DE RESUMO FLUIDOS */}
             <div className="cards-grid">
-              <div className="card-kpi"><span>Agendamentos Hoje</span><strong>0</strong></div>
-              <div className="card-kpi"><span>Faturamento (Dia)</span><strong>R$ 0,00</strong></div>
-              <div className="card-kpi"><span>Novos Clientes</span><strong>0</strong></div>
-              <div className="card-kpi"><span>Status do Caixa</span><strong className="status-aberto">ABERTO</strong></div>
+              <div className="card-kpi">
+                <span>Agendamentos Hoje</span>
+                <strong>0</strong>
+              </div>
+              <div className="card-kpi">
+                <span>Faturamento (Dia)</span>
+                <strong>R$ 0,00</strong>
+              </div>
+              <div className="card-kpi">
+                <span>Novos Clientes</span>
+                <strong>0</strong>
+              </div>
+              <div className="card-kpi">
+                <span>Status do Caixa</span>
+                <strong style={{ color: '#10b981' }}>ABERTO</strong>
+              </div>
             </div>
             
             <div className="dashboard-detalhes">
+              {/* TABELA DE PRÓXIMOS AGENDAMENTOS NO PADRÃO PROFISSIONAL */}
               <div className="painel-lista">
                 <h4>Próximos Agendamentos</h4>
-                <p className="vazio">Nenhum agendamento para as próximas horas.</p>
-                {/* O histórico de lançamentos pode aparecer aqui no resumo também */}
-                <div style={{marginTop: '20px'}}>
-                   <HistoricoLancamentos user={user} unidadeId={unidadeId} />
+                <div className="table-wrapper" style={{ marginTop: '15px' }}>
+                  <table className="clientes-table">
+                    <thead>
+                      <tr>
+                        <th>Horário</th>
+                        <th>Cliente</th>
+                        <th>Serviço</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                          Nenhum agendamento para hoje.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
-              <div className="painel-lista">
+
+              {/* PAINEL DE AÇÕES RÁPIDAS COM BOTÕES ARREDONDADOS */}
+              <div className="painel-lista-acoes">
                 <h4>Ações Rápidas</h4>
-                <button className="btn-atalho" onClick={() => setTelaAtiva('cadastros')}>+ Novo Cliente</button>
-                <button className="btn-atalho" onClick={() => setTelaAtiva('agendamentos')}>+ Novo Agendamento</button>
-                <button className="btn-atalho" onClick={() => setTelaAtiva('financeiro')}>+ Lançar Valor</button>
+                <div className="painel-acoes-rapidas">
+                  <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('cadastros')}>
+                    + Novo Cliente
+                  </button>
+                  <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('agendamentos')}>
+                    + Novo Agendamento
+                  </button>
+                  <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('financeiro')}>
+                    + Lançar Valor
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -55,11 +93,12 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
       case 'financeiro':
         return (
           <div className="modulo-financeiro">
-            <h3 style={{marginBottom: '20px'}}>Gestão Financeira</h3>
-            <div style={{display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
+            <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>Gestão Financeira e Histórico</h3>
+            <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '30px' }}>
                <EntradaRapidaForm user={user} unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />
                <AdicionarDespesaForm user={user} unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />
             </div>
+            <HistoricoLancamentos user={user} unidadeId={unidadeId} />
           </div>
         );
 
@@ -69,22 +108,22 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
         return (
           <div className="em-desenvolvimento">
             <h3>Módulo {telaAtiva.toUpperCase()}</h3>
-            <p>Estamos trabalhando nesta funcionalidade...</p>
+            <p>Estamos preparando as ferramentas desta seção...</p>
           </div>
         );
 
       default:
-        return <div>Selecione uma opção no menu.</div>;
+        return <div>Selecione uma opção no menu lateral.</div>;
     }
   };
 
   return (
     <div className={`dashboard-layout ${menuAberto ? 'menu-on' : 'menu-off'}`}>
       
-      {/* SIDEBAR FIXA */}
+      {/* SIDEBAR */}
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <h2>Beleza BTO</h2>
+          <h2 style={{ letterSpacing: '1px' }}>Beleza BTO</h2>
         </div>
         
         <nav className="sidebar-nav">
@@ -98,23 +137,29 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
         </nav>
 
         <div className="sidebar-footer">
-          <button onClick={onLogout} className="btn-logout-sidebar">Sair do Sistema</button>
+          <p style={{ fontSize: '10px', color: '#444', textAlign: 'center', marginBottom: '10px' }}>v3.0.1 PRO</p>
         </div>
       </aside>
 
-      {/* ÁREA PRINCIPAL COM SCROLL INDEPENDENTE */}
+      {/* ÁREA PRINCIPAL */}
       <main className="main-content">
         <header className="main-header">
           <button className="toggle-menu" onClick={() => setMenuAberto(!menuAberto)}>
-            {menuAberto ? '✕' : '☰'}
+            ☰
           </button>
-          <div className="user-info">
-            <span>Olá, <strong>{user?.nome || 'Usuário'}</strong> 👋</span>
-            <small>{unidadeAtual?.nome || 'Selecione uma unidade'}</small>
+          
+          <div className="header-right">
+            <div className="user-info">
+              <span>Olá, <strong>{user?.nome || 'Usuário'}</strong> 👋</span>
+              <small>{unidadeAtual?.nome || 'Unidade não selecionada'}</small>
+            </div>
+            <button className="btn-sair-header" onClick={onLogout}>
+              Sair do Sistema
+            </button>
           </div>
         </header>
 
-        {/* Única área que rola na tela */}
+        {/* ÁREA DE CONTEÚDO COM SCROLL */}
         <section className="content-body">
           {renderConteudo()}
         </section>
