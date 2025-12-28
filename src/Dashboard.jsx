@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
+
+// Importando seus componentes existentes
 import BaseClientes from './BaseClientes';
 import CadastroClienteForm from './CadastroClienteForm';
-
+import EntradaRapidaForm from './EntradaRapidaForm';
+import AdicionarDespesaForm from './AdicionarDespesaForm';
+import HistoricoLancamentos from './HistoricoLancamentos';
 
 function Dashboard({ user, unidadeId, unidades, onLogout }) {
   const [menuAberto, setMenuAberto] = useState(true);
@@ -10,7 +14,7 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
 
   const unidadeAtual = unidades.find(u => u.id === unidadeId);
 
-  // Função para renderizar o conteúdo central baseado no menu selecionado
+  // --- RENDERIZAÇÃO DE CONTEÚDO ---
   const renderConteudo = () => {
     switch (telaAtiva) {
       case 'resumo':
@@ -27,29 +31,57 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
               <div className="painel-lista">
                 <h4>Próximos Agendamentos</h4>
                 <p className="vazio">Nenhum agendamento para as próximas horas.</p>
+                {/* O histórico de lançamentos pode aparecer aqui no resumo também */}
+                <div style={{marginTop: '20px'}}>
+                   <HistoricoLancamentos user={user} unidadeId={unidadeId} />
+                </div>
               </div>
               <div className="painel-lista">
                 <h4>Ações Rápidas</h4>
-                <button className="btn-atalho" onClick={() => setTelaAtiva('cadastro-cliente')}>+ Novo Cliente</button>
-                <button className="btn-atalho">+ Novo Agendamento</button>
-                <button className="btn-atalho">+ Lançar Despesa</button>
+                <button className="btn-atalho" onClick={() => setTelaAtiva('cadastros')}>+ Novo Cliente</button>
+                <button className="btn-atalho" onClick={() => setTelaAtiva('agendamentos')}>+ Novo Agendamento</button>
+                <button className="btn-atalho" onClick={() => setTelaAtiva('financeiro')}>+ Lançar Valor</button>
               </div>
             </div>
           </div>
         );
+
       case 'clientes':
         return <BaseClientes unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />;
-      case 'cadastro-cliente':
-        return <CadastroClienteForm user={user} unidadeId={unidadeId} unidades={unidades} onBack={() => setTelaAtiva('clientes')} />;
+
+      case 'cadastros':
+        return <CadastroClienteForm user={user} unidadeId={unidadeId} unidades={unidades} onBack={() => setTelaAtiva('resumo')} />;
+
+      case 'financeiro':
+        return (
+          <div className="modulo-financeiro">
+            <h3 style={{marginBottom: '20px'}}>Gestão Financeira</h3>
+            <div style={{display: 'flex', gap: '20px', flexWrap: 'wrap'}}>
+               <EntradaRapidaForm user={user} unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />
+               <AdicionarDespesaForm user={user} unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />
+            </div>
+          </div>
+        );
+
+      case 'agendamentos':
+      case 'servicos':
+      case 'config':
+        return (
+          <div className="em-desenvolvimento">
+            <h3>Módulo {telaAtiva.toUpperCase()}</h3>
+            <p>Estamos trabalhando nesta funcionalidade...</p>
+          </div>
+        );
+
       default:
-        return <div className="em-desenvolvimento"><h3>Módulo {telaAtiva} em desenvolvimento...</h3></div>;
+        return <div>Selecione uma opção no menu.</div>;
     }
   };
 
   return (
     <div className={`dashboard-layout ${menuAberto ? 'menu-on' : 'menu-off'}`}>
       
-      {/* SIDEBAR */}
+      {/* SIDEBAR FIXA */}
       <aside className="sidebar">
         <div className="sidebar-logo">
           <h2>Beleza BTO</h2>
@@ -66,20 +98,23 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
         </nav>
 
         <div className="sidebar-footer">
-          <button onClick={onLogout}>Sair</button>
+          <button onClick={onLogout} className="btn-logout-sidebar">Sair do Sistema</button>
         </div>
       </aside>
 
-      {/* ÁREA PRINCIPAL */}
+      {/* ÁREA PRINCIPAL COM SCROLL INDEPENDENTE */}
       <main className="main-content">
         <header className="main-header">
-          <button className="toggle-menu" onClick={() => setMenuAberto(!menuAberto)}>☰</button>
+          <button className="toggle-menu" onClick={() => setMenuAberto(!menuAberto)}>
+            {menuAberto ? '✕' : '☰'}
+          </button>
           <div className="user-info">
             <span>Olá, <strong>{user?.nome || 'Usuário'}</strong> 👋</span>
-            <small>{unidadeAtual?.nome}</small>
+            <small>{unidadeAtual?.nome || 'Selecione uma unidade'}</small>
           </div>
         </header>
 
+        {/* Única área que rola na tela */}
         <section className="content-body">
           {renderConteudo()}
         </section>
