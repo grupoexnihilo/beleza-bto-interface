@@ -1,14 +1,45 @@
-.search-input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 6px;
-    background-color: var(--input-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-color-primary);
-    margin-bottom: 15px;
+/* src/BaseClientes.css */
+.row-clicavel {
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-.search-input:focus {
-    border-color: var(--primary-color);
-    outline: none;
+.row-clicavel:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
 }
+
+.text-small { font-size: 0.85rem; color: #aaa; }
+.text-bold { font-weight: 600; color: var(--primary-color); }
+
+/* Limita a observação a uma linha com reticências (...) */
+.obs-preview {
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.85rem;
+  color: #ccc;
+  font-style: italic;
+}
+
+.actions-cell {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon.edit:hover { background: rgba(255, 255, 0, 0.1); transform: scale(1.2); }
+.btn-icon.delete:hover { background: rgba(255, 0, 0, 0.1); transform: scale(1.2); }

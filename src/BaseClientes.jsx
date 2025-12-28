@@ -11,11 +11,10 @@ function BaseClientes({ unidadeId, onBack }) {
       if (!unidadeId) return;
       try {
         const response = await fetch(`/api/get-clientes?unidadeId=${unidadeId}`);
-        if (!response.ok) throw new Error('Erro ao buscar clientes');
         const data = await response.json();
         setClientes(data);
       } catch (err) {
-        console.error(err);
+        console.error("Erro ao buscar clientes:", err);
       } finally {
         setLoading(false);
       }
@@ -23,51 +22,68 @@ function BaseClientes({ unidadeId, onBack }) {
     fetchClientes();
   }, [unidadeId]);
 
-  const clientesFiltrados = clientes.filter(c => 
+  const handleEdit = (e, cliente) => {
+    e.stopPropagation(); // Impede que o clique na linha seja acionado
+    alert(`Editar: ${cliente.nome}`);
+  };
+
+  const handleDelete = (e, id) => {
+    e.stopPropagation(); // Impede que o clique na linha seja acionado
+    if(window.confirm("Tem certeza que deseja excluir este cliente?")) {
+      alert(`Excluir ID: ${id}`);
+      // Lógica de delete virá na sequência
+    }
+  };
+
+  const handleVerDetalhes = (cliente) => {
+    alert(`Ficha Completa:\nNome: ${cliente.nome}\nCPF: ${cliente.cpf}\nEmail: ${cliente.email}\nEndereço: ${cliente.endereco}, ${cliente.numero}\nBairro: ${cliente.bairro}\nCidade: ${cliente.cidade}`);
+  };
+
+  const filtrados = clientes.filter(c => 
     c.nome?.toLowerCase().includes(busca.toLowerCase()) || 
     c.whatsapp?.includes(busca)
   );
 
   return (
-    <div className="form-container">
-      <button onClick={onBack} className="back-button">← Voltar ao Painel</button>
-      <h3>Base de Clientes</h3>
+    <div className="base-clientes-container">
+      <button onClick={onBack} className="back-button">← Voltar</button>
+      <h2>Base de Clientes</h2>
 
-      <div className="search-container" style={{marginBottom: '20px'}}>
+      <div className="search-bar">
         <input 
-          type="text" 
-          placeholder="Buscar por nome ou WhatsApp..." 
+          className="search-input"
+          placeholder="Filtrar por nome ou celular..." 
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
-          className="search-input"
         />
       </div>
 
-      <div className="table-container" style={{overflowX: 'auto'}}>
-        <table className="historico-table"> {/* Usando sua classe global de tabelas */}
+      <div className="table-wrapper">
+        <table className="clientes-table">
           <thead>
             <tr>
+              <th>Data</th>
               <th>Nome</th>
-              <th>WhatsApp</th>
-              <th>Nascimento</th>
-              <th>Obs. Saúde</th>
+              <th>Telefone</th>
+              <th>Última Obs.</th>
+              <th style={{textAlign: 'center'}}>Ações</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan="4">Carregando...</td></tr>
-            ) : clientesFiltrados.length > 0 ? (
-              clientesFiltrados.map(cliente => (
-                <tr key={cliente.id}>
-                  <td>{cliente.nome}</td>
-                  <td>{cliente.whatsapp}</td>
-                  <td>{cliente.data_nascimento ? new Date(cliente.data_nascimento).toLocaleDateString() : '-'}</td>
-                  <td>{cliente.observacoes}</td>
-                </tr>
-              ))
-            ) : (
-              <tr><td colSpan="4">Nenhum cliente cadastrado nesta unidade.</td></tr>
-            )}
+              <tr><td colSpan="5">Buscando dados...</td></tr>
+            ) : filtrados.map(c => (
+              <tr key={c.id} onClick={() => handleVerDetalhes(c)} className="row-clicavel">
+                <td className="text-small">{c.data_cadastro ? new Date(c.data_cadastro).toLocaleDateString('pt-BR') : '-'}</td>
+                <td className="text-bold">{c.nome}</td>
+                <td>{c.whatsapp}</td>
+                <td className="obs-preview">{c.atividade || 'Sem observações'}</td>
+                <td className="actions-cell">
+                  <button className="btn-icon edit" onClick={(e) => handleEdit(e, c)} title="Editar">✏️</button>
+                  <button className="btn-icon delete" onClick={(e) => handleDelete(e, c.id)} title="Excluir">🗑️</button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
