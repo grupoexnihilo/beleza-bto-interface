@@ -10,6 +10,29 @@ import AdicionarDespesaForm from './AdicionarDespesaForm';
 import HistoricoLancamentos from './HistoricoLancamentos';
 
 function Dashboard({ user, unidadeId, unidades, onLogout }) {
+  // --- ESTADO PARA CONTROLAR O FILTRO ---
+const [filtroAberto, setFiltroAberto] = useState(false);
+
+// --- FUNÇÃO PARA FORMATAÇÃO DE DATA INTELIGENTE ---
+const formatarDataInteligente = (dataInput) => {
+  const hoje = new Date();
+  const data = new Date(dataInput);
+  
+  const diffTempo = data - hoje;
+  const diffDias = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
+
+  if (diffDias === 0) return `Hoje às ${data.getHours()}:${data.getMinutes().toString().padStart(2, '0')}`;
+  if (diffDias === 1) return `Amanhã às ${data.getHours()}:${data.getMinutes().toString().padStart(2, '0')}`;
+  
+  // Se for dentro da mesma semana (até 7 dias)
+  if (diffDias > 1 && diffDias < 7) {
+    const diaSemana = new Intl.DateTimeFormat('pt-BR', { weekday: 'long' }).format(data);
+    return `${diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1)} às ${data.getHours()}:${data.getMinutes().toString().padStart(2, '0')}`;
+  }
+
+  // Se for mais de uma semana
+  return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit' }).format(data) + ` às ${data.getHours()}:${data.getMinutes().toString().padStart(2, '0')}`;
+};
   const [telaAtiva, setTelaAtiva] = useState('resumo');
   // --- TRECHO 1: NOVO ESTADO DO MENU ---
 const [menuExpandido, setMenuExpandido] = useState(false);
@@ -56,31 +79,33 @@ const selecionarTela = (tela) => {
               {/* --- TRECHO: TABELA DE AGENDAMENTOS COM FILTROS --- */}
 {/* --- TRECHO ATUALIZADO: TABELA COM DATA RELATIVA E FILTRO SUSPENSO --- */}
 <div className="painel-lista">
-  <div className="header-lista-agendamentos">
-    <h4>Próximos Agendamentos</h4>
-    
-    <div className="acoes-lista">
-      <div className="busca-box">
-        <input type="text" placeholder="Pesquisar..." />
-        {/* Lupa removida conforme solicitado */}
-      </div>
+<div className="header-lista-agendamentos">
+  <h4>Próximos Agendamentos</h4>
+  
+  <div className="acoes-lista">
+    <div className="busca-box">
+      <input type="text" placeholder="Pesquisar..." />
+    </div>
 
-      <div className="dropdown-filtro-container">
-        <button className="btn-filtro-icon" onClick={() => {/* Lógica para abrir dropdown */}}>
-          <span className="icon-filtro">⏳</span> Filtrar
-        </button>
-        
-        {/* 3 - Exemplo Visual do Dropdown de Filtro (pode ser controlado por um estado) */}
+    <div className="dropdown-filtro-container">
+      {/* Botão que agora alterna o estado */}
+      <button className="btn-filtro-icon" onClick={() => setFiltroAberto(!filtroAberto)}>
+        <span className="icon-filtro">⏳</span> Filtrar
+      </button>
+      
+      {/* EXIBIÇÃO CONDICIONAL DO DROPDOWN */}
+      {filtroAberto && (
         <div className="filtro-dropdown">
           <label><input type="checkbox" /> Por Data</label>
           <label><input type="checkbox" /> Por Profissional</label>
           <label><input type="checkbox" /> Por Cliente</label>
           <label><input type="checkbox" /> Por Status</label>
-          <button className="btn-aplicar-filtro">Aplicar Filtros</button>
+          <button className="btn-aplicar-filtro" onClick={() => setFiltroAberto(false)}>Aplicar</button>
         </div>
-      </div>
+      )}
     </div>
   </div>
+</div>
 
   <div className="table-wrapper-fluido">
     <table className="agenda-table">
@@ -93,22 +118,16 @@ const selecionarTela = (tela) => {
           <th>Status</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><strong className="data-destaque">Hoje às 14:30</strong></td>
-          <td>David Emunaar</td>
-          <td>Corte Degradê</td>
-          <td>Marcos Silva</td>
-          <td><span className="status-badge verde">Confirmado</span></td>
-        </tr>
-        <tr>
-          <td><strong className="data-destaque">Amanhã às 09:00</strong></td>
-          <td>João Pereira</td>
-          <td>Barba Terapia</td>
-          <td>Felipe Araújo</td>
-          <td><span className="status-badge amarelo">Pendente</span></td>
-        </tr>
-      </tbody>
+      {/* Exemplo no corpo da tabela usando a nova lógica */}
+<tbody>
+  <tr>
+    <td><strong className="data-destaque">{formatarDataInteligente(new Date())}</strong></td>
+    <td>David Emunaar</td>
+    <td>Corte Degradê</td>
+    <td>Marcos Silva</td>
+    <td><span className="status-badge verde">Confirmado</span></td>
+  </tr>
+</tbody>
     </table>
   </div>
 </div>
