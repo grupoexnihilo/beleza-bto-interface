@@ -279,3 +279,113 @@
   display: flex;
   align-items: center;
 }
+/* --- ESTILO DA AGENDA NO RESUMO --- */
+.header-lista-agendamentos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.acoes-lista {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Busca com Lupa */
+.busca-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.busca-box input {
+  background: #111;
+  border: 1px solid #222;
+  color: #fff;
+  padding: 8px 15px 8px 35px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  width: 180px;
+  transition: 0.3s;
+}
+
+.busca-box input:focus {
+  border-color: #0ea5e9;
+  width: 220px;
+  outline: none;
+}
+
+.icon-lupa {
+  position: absolute;
+  left: 12px;
+  font-size: 0.9rem;
+  opacity: 0.5;
+}
+
+/* Botão Filtro Suave */
+.btn-filtro-icon {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #222;
+  color: #888;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.3s;
+}
+
+.btn-filtro-icon:hover {
+  background: rgba(14, 165, 233, 0.1);
+  border-color: #0ea5e9;
+  color: #0ea5e9;
+}
+
+/* Tabela Agenda */
+.table-wrapper-fluido {
+  overflow-x: auto;
+}
+
+.agenda-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.agenda-table th {
+  padding: 12px;
+  color: #444;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.agenda-table td {
+  padding: 15px 12px;
+  color: #aaa;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #111;
+}
+
+.agenda-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+  color: #fff;
+}
+
+/* Status Badges Arredondados */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-badge.verde { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.status-badge.amarelo { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.status-badge.vermelho { background: rgba(239, 68, 68, 0.1); color: #ef4444; }

@@ -53,28 +53,60 @@ const selecionarTela = (tela) => {
             </div>
             
             <div className="dashboard-detalhes">
-              <div className="painel-lista">
-                <h4>Próximos Agendamentos</h4>
-                <div className="table-wrapper" style={{ marginTop: '20px' }}>
-                  <table className="clientes-table">
-                    <thead>
-                      <tr>
-                        <th>Horário</th>
-                        <th>Cliente</th>
-                        <th>Serviço</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td colSpan="4" style={{ textAlign: 'center', padding: '50px', color: '#555' }}>
-                          Nenhum agendamento para hoje.
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              {/* --- TRECHO: TABELA DE AGENDAMENTOS COM FILTROS --- */}
+<div className="painel-lista">
+  <div className="header-lista-agendamentos">
+    <h4>Próximos Agendamentos</h4>
+    
+    <div className="acoes-lista">
+      <div className="busca-box">
+        <input type="text" placeholder="Pesquisar..." />
+        <span className="icon-lupa">🔍</span>
+      </div>
+      <button className="btn-filtro-icon" title="Filtrar">
+        <span className="icon-filtro">⏳</span> Filtrar
+      </button>
+    </div>
+  </div>
+
+  <div className="table-wrapper-fluido">
+    <table className="agenda-table">
+      <thead>
+        <tr>
+          <th>Data / Hora</th>
+          <th>Cliente</th>
+          <th>Serviço</th>
+          <th>Profissional</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {/* Exemplo de como os dados aparecerão */}
+        <tr>
+          <td><strong>28/12 - 14:30</strong></td>
+          <td>David Emunaar</td>
+          <td>Corte Degradê</td>
+          <td>Marcos Silva</td>
+          <td><span className="status-badge verde">Confirmado</span></td>
+        </tr>
+        <tr>
+          <td><strong>28/12 - 15:15</strong></td>
+          <td>João Pereira</td>
+          <td>Barba Terapia</td>
+          <td>Felipe Araújo</td>
+          <td><span className="status-badge amarelo">Pendente</span></td>
+        </tr>
+        <tr>
+          <td><strong>28/12 - 16:00</strong></td>
+          <td>Lucas Souza</td>
+          <td>Corte + Barba</td>
+          <td>Marcos Silva</td>
+          <td><span className="status-badge vermelho">Cancelado</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
               {/* 2 - BOTÕES DE AÇÃO RÁPIDA (CLASSES ATUALIZADAS) */}
               <div className="painel-lista-acoes">
