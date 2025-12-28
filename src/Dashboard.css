@@ -1,63 +1,110 @@
-/* Cards de Resumo Modernos */
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  padding: 20px 0;
-}
-
-.card-kpi {
-  background: #111;
-  padding: 24px;
-  border-radius: 16px; /* Bordas bem fluidas */
-  border: 1px solid #222;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
-}
-
-.card-kpi:hover { transform: translateY(-5px); }
-.card-kpi span { font-size: 0.75rem; color: #666; font-weight: 700; text-transform: uppercase; }
-.card-kpi strong { display: block; font-size: 1.8rem; margin-top: 8px; color: #fff; }
-
-/* Botões de Ação Rápida Fluidos */
-.painel-acoes-rapidas {
+/* 3 - Estabilização Geral */
+.dashboard-main-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  height: 100vh;
+  width: 100vw;
+  background-color: #050505;
+  overflow: hidden;
 }
 
-.btn-atalho-fluido {
-  background: #1a1a1a;
-  border: 1px solid #333;
+/* 2 & 4 - Cabeçalho Fixo */
+.navbar-superior {
+  background: #0a0a0a;
+  border-bottom: 1px solid #1a1a1a;
+  padding: 10px 30px;
+  flex-shrink: 0;
+  z-index: 1000;
+}
+
+.nav-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.nav-logo-img {
+  height: 45px; /* Ajuste conforme necessário */
+  object-fit: contain;
+}
+
+/* 5 - Grupo da Direita */
+.nav-user-actions {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.user-greeting {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
   color: #fff;
-  padding: 14px 20px;
-  border-radius: 12px; /* Arredondado moderno */
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-  text-align: center;
 }
 
-.btn-atalho-fluido:hover {
-  background: var(--primary-color);
-  border-color: var(--primary-color);
-  box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
-}
-
-/* Botão Sair Vermelho Arredondado */
-.btn-sair-header {
+.btn-sair-pill {
   background: rgba(239, 68, 68, 0.1);
   color: #ef4444;
   border: 1px solid #ef4444;
-  padding: 8px 20px;
-  border-radius: 20px; /* Estilo pílula */
-  font-size: 0.85rem;
+  padding: 8px 18px;
+  border-radius: 20px;
   font-weight: 700;
   cursor: pointer;
   transition: 0.3s;
 }
 
-.btn-sair-header:hover {
+.btn-sair-pill:hover {
   background: #ef4444;
-  color: white;
+  color: #fff;
+}
+
+/* 1 - Botões de Navegação Fluidos */
+.nav-bottom-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto; /* Para celulares */
+  padding-bottom: 5px;
+}
+
+.nav-item-fluido {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #222;
+  color: #888;
+  padding: 10px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item-fluido:hover {
+  background: rgba(14, 165, 233, 0.1);
+  border-color: #0ea5e9;
+  color: #0ea5e9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+}
+
+.nav-item-fluido.active {
+  background: #0ea5e9;
+  border-color: #0ea5e9;
+  color: #fff;
+}
+
+/* 3 - Garantia de Alinhamento das Páginas */
+.content-container-fixo {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px; /* Mantém tudo centralizado e do mesmo tamanho */
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.content-body-scroll {
+  height: 100%;
+  width: 100%;
+  padding: 30px;
+  overflow-y: auto;
 }

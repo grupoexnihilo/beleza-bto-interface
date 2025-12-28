@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
 
-// Importando seus componentes existentes
+// Importação da sua Logo e Componentes
+import logoBelezaBTO from './logo-beleza-bto.png';
 import BaseClientes from './BaseClientes';
 import CadastroClienteForm from './CadastroClienteForm';
 import EntradaRapidaForm from './EntradaRapidaForm';
@@ -9,39 +10,25 @@ import AdicionarDespesaForm from './AdicionarDespesaForm';
 import HistoricoLancamentos from './HistoricoLancamentos';
 
 function Dashboard({ user, unidadeId, unidades, onLogout }) {
-  const [menuAberto, setMenuAberto] = useState(true);
   const [telaAtiva, setTelaAtiva] = useState('resumo');
 
+  // Localiza o nome da unidade atual para exibição
   const unidadeAtual = unidades.find(u => u.id === unidadeId);
 
-  // --- FUNÇÃO PARA RENDERIZAR O CONTEÚDO CENTRAL ---
+  // --- RENDERIZAÇÃO DE CONTEÚDO (ESTABILIZADA) ---
   const renderConteudo = () => {
     switch (telaAtiva) {
       case 'resumo':
         return (
           <div className="resumo-dashboard">
-            {/* CARDS DE RESUMO FLUIDOS */}
             <div className="cards-grid">
-              <div className="card-kpi">
-                <span>Agendamentos Hoje</span>
-                <strong>0</strong>
-              </div>
-              <div className="card-kpi">
-                <span>Faturamento (Dia)</span>
-                <strong>R$ 0,00</strong>
-              </div>
-              <div className="card-kpi">
-                <span>Novos Clientes</span>
-                <strong>0</strong>
-              </div>
-              <div className="card-kpi">
-                <span>Status do Caixa</span>
-                <strong style={{ color: '#10b981' }}>ABERTO</strong>
-              </div>
+              <div className="card-kpi"><span>Agendamentos Hoje</span><strong>0</strong></div>
+              <div className="card-kpi"><span>Faturamento (Dia)</span><strong>R$ 0,00</strong></div>
+              <div className="card-kpi"><span>Novos Clientes</span><strong>0</strong></div>
+              <div className="card-kpi"><span>Status do Caixa</span><strong style={{ color: '#10b981' }}>ABERTO</strong></div>
             </div>
             
             <div className="dashboard-detalhes">
-              {/* TABELA DE PRÓXIMOS AGENDAMENTOS NO PADRÃO PROFISSIONAL */}
               <div className="painel-lista">
                 <h4>Próximos Agendamentos</h4>
                 <div className="table-wrapper" style={{ marginTop: '15px' }}>
@@ -65,19 +52,12 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
                 </div>
               </div>
 
-              {/* PAINEL DE AÇÕES RÁPIDAS COM BOTÕES ARREDONDADOS */}
               <div className="painel-lista-acoes">
                 <h4>Ações Rápidas</h4>
                 <div className="painel-acoes-rapidas">
-                  <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('cadastros')}>
-                    + Novo Cliente
-                  </button>
-                  <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('agendamentos')}>
-                    + Novo Agendamento
-                  </button>
-                  <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('financeiro')}>
-                    + Lançar Valor
-                  </button>
+                  <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('cadastros')}>+ Novo Cliente</button>
+                  <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('agendamentos')}>+ Novo Agendamento</button>
+                  <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('financeiro')}>+ Lançar Valor</button>
                 </div>
               </div>
             </div>
@@ -93,7 +73,7 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
       case 'financeiro':
         return (
           <div className="modulo-financeiro">
-            <h3 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>Gestão Financeira e Histórico</h3>
+            <h3 style={{ marginBottom: '20px', color: '#0ea5e9' }}>Gestão Financeira e Histórico</h3>
             <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '30px' }}>
                <EntradaRapidaForm user={user} unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />
                <AdicionarDespesaForm user={user} unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />
@@ -108,59 +88,51 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
         return (
           <div className="em-desenvolvimento">
             <h3>Módulo {telaAtiva.toUpperCase()}</h3>
-            <p>Estamos preparando as ferramentas desta seção...</p>
+            <p>Esta funcionalidade está sendo preparada para o seu fluxo de trabalho.</p>
           </div>
         );
 
       default:
-        return <div>Selecione uma opção no menu lateral.</div>;
+        return <div className="em-desenvolvimento">Selecione uma opção no menu superior.</div>;
     }
   };
 
   return (
-    <div className={`dashboard-layout ${menuAberto ? 'menu-on' : 'menu-off'}`}>
+    <div className="dashboard-main-wrapper">
       
-      {/* SIDEBAR */}
-      <aside className="sidebar">
-        <div className="sidebar-logo">
-          <h2 style={{ letterSpacing: '1px' }}>Beleza BTO</h2>
-        </div>
-        
-        <nav className="sidebar-nav">
-          <button className={telaAtiva === 'resumo' ? 'active' : ''} onClick={() => setTelaAtiva('resumo')}>📊 Resumo</button>
-          <button className={telaAtiva === 'agendamentos' ? 'active' : ''} onClick={() => setTelaAtiva('agendamentos')}>📅 Agendamentos</button>
-          <button className={telaAtiva === 'clientes' ? 'active' : ''} onClick={() => setTelaAtiva('clientes')}>👥 Clientes</button>
-          <button className={telaAtiva === 'financeiro' ? 'active' : ''} onClick={() => setTelaAtiva('financeiro')}>💰 Financeiro</button>
-          <button className={telaAtiva === 'servicos' ? 'active' : ''} onClick={() => setTelaAtiva('servicos')}>✂️ Serviços</button>
-          <button className={telaAtiva === 'cadastros' ? 'active' : ''} onClick={() => setTelaAtiva('cadastros')}>📝 Cadastros</button>
-          <button className={telaAtiva === 'config' ? 'active' : ''} onClick={() => setTelaAtiva('config')}>⚙️ Configurações</button>
-        </nav>
-
-        <div className="sidebar-footer">
-          <p style={{ fontSize: '10px', color: '#444', textAlign: 'center', marginBottom: '10px' }}>v3.0.1 PRO</p>
-        </div>
-      </aside>
-
-      {/* ÁREA PRINCIPAL */}
-      <main className="main-content">
-        <header className="main-header">
-          <button className="toggle-menu" onClick={() => setMenuAberto(!menuAberto)}>
-            ☰
-          </button>
-          
-          <div className="header-right">
-            <div className="user-info">
-              <span>Olá, <strong>{user?.nome || 'Usuário'}</strong> 👋</span>
-              <small>{unidadeAtual?.nome || 'Unidade não selecionada'}</small>
-            </div>
-            <button className="btn-sair-header" onClick={onLogout}>
-              Sair do Sistema
-            </button>
+      {/* HEADER SUPERIOR FIXO */}
+      <header className="navbar-superior">
+        <div className="nav-top-row">
+          <div className="nav-logo-area">
+            {/* LOGO DO SISTEMA */}
+            <img src={logoBelezaBTO} alt="Beleza BTO" className="nav-logo-img" />
           </div>
-        </header>
+          
+          <div className="nav-user-actions">
+            <div className="user-greeting">
+              <span>Olá, <strong>{user?.nome || 'Usuário'}</strong> 👋</span>
+              <small>{unidadeAtual?.nome || 'Carregando unidade...'}</small>
+            </div>
+            {/* BOTÃO SAIR ALINHADO À DIREITA */}
+            <button className="btn-sair-pill" onClick={onLogout}>Sair do Sistema</button>
+          </div>
+        </div>
 
-        {/* ÁREA DE CONTEÚDO COM SCROLL */}
-        <section className="content-body">
+        {/* MENU DE NAVEGAÇÃO COM BOTÕES FLUIDOS */}
+        <nav className="nav-bottom-row">
+          <button className={`nav-item-fluido ${telaAtiva === 'resumo' ? 'active' : ''}`} onClick={() => setTelaAtiva('resumo')}>📊 Resumo</button>
+          <button className={`nav-item-fluido ${telaAtiva === 'agendamentos' ? 'active' : ''}`} onClick={() => setTelaAtiva('agendamentos')}>📅 Agendamentos</button>
+          <button className={`nav-item-fluido ${telaAtiva === 'clientes' ? 'active' : ''}`} onClick={() => setTelaAtiva('clientes')}>👥 Clientes</button>
+          <button className={`nav-item-fluido ${telaAtiva === 'financeiro' ? 'active' : ''}`} onClick={() => setTelaAtiva('financeiro')}>💰 Financeiro</button>
+          <button className={`nav-item-fluido ${telaAtiva === 'servicos' ? 'active' : ''}`} onClick={() => setTelaAtiva('servicos')}>✂️ Serviços</button>
+          <button className={`nav-item-fluido ${telaAtiva === 'cadastros' ? 'active' : ''}`} onClick={() => setTelaAtiva('cadastros')}>📝 Cadastros</button>
+          <button className={`nav-item-fluido ${telaAtiva === 'config' ? 'active' : ''}`} onClick={() => setTelaAtiva('config')}>⚙️ Configurações</button>
+        </nav>
+      </header>
+
+      {/* ÁREA DE CONTEÚDO ESTABILIZADA */}
+      <main className="content-container-fixo">
+        <section className="content-body-scroll">
           {renderConteudo()}
         </section>
       </main>
