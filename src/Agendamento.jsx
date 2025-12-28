@@ -1,4 +1,5 @@
 import React from 'react';
+import './Agendamento.css'
 
 const Agendamento = () => {
   return (
