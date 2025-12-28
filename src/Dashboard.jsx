@@ -100,7 +100,7 @@ const selecionarTela = (tela) => {
           <label><input type="checkbox" /> Por Profissional</label>
           <label><input type="checkbox" /> Por Cliente</label>
           <label><input type="checkbox" /> Por Status</label>
-          <button className="btn-aplicar-filtro" onClick={() => setFiltroAberto(false)}>Aplicar</button>
+          <button className="btn-aplicar-filtro" onClick={() => setFiltroAberto(false)}>Aplicar/Fechar</button>
         </div>
       )}
     </div>
