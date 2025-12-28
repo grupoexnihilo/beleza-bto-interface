@@ -1,107 +1,88 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import './BaseClientes.css';
+// ... (imports e estados permanecem iguais)
 
-function BaseClientes({ unidadeId, onBack }) {
-  const [clientes, setClientes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [busca, setBusca] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
-  const [clienteSelecionado, setClienteSelecionado] = useState(null);
-
-  const carregarClientes = useCallback(async () => {
-    if (!unidadeId) return;
-    setLoading(true);
+  const handleSalvarEdicao = async (e) => {
+    e.preventDefault();
     try {
-      // Seguindo o padrão de URL das suas APIs funcionais
-      const response = await fetch(`/api/get-clientes?unidadeId=${unidadeId}`);
-      if (!response.ok) throw new Error('Falha na resposta da API');
-      const data = await response.json();
-      
-      // Se data for um array (padrão das suas APIs), salva no estado
-      setClientes(Array.isArray(data) ? data : []);
+      const response = await fetch('/api/editar-cliente', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(clienteSelecionado),
+      });
+      if (response.ok) {
+        alert('Ficha atualizada!');
+        setClienteSelecionado(null);
+        carregarClientes();
+      }
     } catch (err) {
-      console.error("Erro ao carregar clientes:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [unidadeId]);
-
-  useEffect(() => {
-    carregarClientes();
-  }, [carregarClientes]);
-
-  const handleDelete = async (e, id) => {
-    e.stopPropagation();
-    if (window.confirm("Deseja realmente excluir este cliente?")) {
-      try {
-        const res = await fetch(`/api/deletar-cliente?id=${id}`, { method: 'DELETE' });
-        if (res.ok) carregarClientes();
-      } catch (err) { alert("Erro ao deletar"); }
+      alert('Erro ao salvar edições.');
     }
   };
 
-  const filtrados = clientes.filter(c => 
-    c.nome?.toLowerCase().includes(busca.toLowerCase()) || 
-    c.whatsapp?.includes(busca) ||
-    c.cpf?.includes(busca)
-  );
-
   return (
     <div className="base-clientes-container">
-      <div className="header-base">
-        <button onClick={onBack} className="back-button">← Voltar</button>
-        <div className="header-actions">
-           <div className={`search-wrapper ${showSearch ? 'active' : ''}`}>
-            <input 
-              type="text" 
-              placeholder="Nome, Tel ou CPF..." 
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              className="search-input-hidden"
-            />
-            <button className="btn-lupa" onClick={() => setShowSearch(!showSearch)}>🔍</button>
+      {/* ... (Header e Tabela permanecem iguais) */}
+
+      {/* MODAL: PÁGINA/FICHA DO CLIENTE */}
+      {clienteSelecionado && (
+        <div className="modal-overlay" onClick={() => setClienteSelecionado(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Ficha do Cliente</h3>
+              <button className="close-modal" onClick={() => setClienteSelecionado(null)}>×</button>
+            </div>
+            
+            <form onSubmit={handleSalvarEdicao} className="entrada-form modal-form">
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Nome Completo</label>
+                  <input type="text" value={clienteSelecionado.nome || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, nome: e.target.value})} />
+                </div>
+                <div className="form-group">
+                  <label>Data de Nascimento</label>
+                  <input type="date" value={clienteSelecionado.data_nascimento?.split('T')[0] || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, data_nascimento: e.target.value})} />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>WhatsApp</label>
+                  <input type="text" value={clienteSelecionado.whatsapp || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, whatsapp: e.target.value})} />
+                </div>
+                <div className="form-group">
+                  <label>CPF</label>
+                  <input type="text" value={clienteSelecionado.cpf || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, cpf: e.target.value})} />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>E-mail</label>
+                  <input type="email" value={clienteSelecionado.email || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, email: e.target.value})} />
+                </div>
+                <div className="form-group">
+                  <label>CEP</label>
+                  <input type="text" value={clienteSelecionado.cep || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, cep: e.target.value})} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Endereço</label>
+                <input type="text" value={`${clienteSelecionado.endereco || ''}, ${clienteSelecionado.numero || ''} - ${clienteSelecionado.bairro || ''}`} disabled />
+                <small>(Edição completa de endereço disponível na fase de expansão)</small>
+              </div>
+
+              <div className="form-group">
+                <label>Observação / Histórico</label>
+                <textarea rows="4" value={clienteSelecionado.atividade || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, atividade: e.target.value})} />
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" className="btn-cancelar" onClick={() => setClienteSelecionado(null)}>Fechar</button>
+                <button type="submit" className="btn-salvar">Salvar Alterações</button>
+              </div>
+            </form>
           </div>
-          <h2>Base de Clientes ({filtrados.length})</h2>
         </div>
-      </div>
-
-      <div className="table-wrapper">
-        <table className="clientes-table">
-          <thead>
-            <tr>
-              <th style={{width: '120px'}}>Cadastro</th>
-              <th className="col-nome">Nome do Cliente</th>
-              <th style={{width: '160px'}}>WhatsApp</th>
-              <th>Última Observação</th>
-              <th style={{width: '100px', textAlign: 'center'}}>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr><td colSpan="5" style={{textAlign: 'center', padding: '40px'}}>Buscando dados no servidor...</td></tr>
-            ) : filtrados.length > 0 ? (
-              filtrados.map(c => (
-                <tr key={c.id} onClick={() => setClienteSelecionado(c)} className="row-clicavel">
-                  <td style={{color: '#888'}}>{c.data_cadastro ? new Date(c.data_cadastro).toLocaleDateString('pt-BR') : '-'}</td>
-                  <td className="col-nome">{c.nome}</td>
-                  <td>{c.whatsapp}</td>
-                  <td className="obs-preview">{c.atividade || <em style={{color: '#444'}}>Sem notas</em>}</td>
-                  <td className="actions-cell">
-                    <button className="btn-icon" onClick={(e) => {e.stopPropagation(); setClienteSelecionado(c)}}>✏️</button>
-                    <button className="btn-icon" onClick={(e) => handleDelete(e, c.id)}>🗑️</button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr><td colSpan="5" style={{textAlign: 'center', padding: '40px'}}>Nenhum cliente encontrado para esta unidade.</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* MODAL DE EDIÇÃO PERMANECE O MESMO */}
+      )}
     </div>
   );
-}
-
-export default BaseClientes;
