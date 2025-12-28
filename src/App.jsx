@@ -66,7 +66,7 @@ function App() {
   // --- Tela de Carregamento Inicial ---
   if (loading) {
     return (
-      <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}>
+      <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white', background: '#111111)' }}>
         Iniciando sistema Beleza BTO...
       </div>
     );
