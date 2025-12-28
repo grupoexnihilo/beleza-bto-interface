@@ -54,6 +54,7 @@ const selecionarTela = (tela) => {
             
             <div className="dashboard-detalhes">
               {/* --- TRECHO: TABELA DE AGENDAMENTOS COM FILTROS --- */}
+{/* --- TRECHO ATUALIZADO: TABELA COM DATA RELATIVA E FILTRO SUSPENSO --- */}
 <div className="painel-lista">
   <div className="header-lista-agendamentos">
     <h4>Próximos Agendamentos</h4>
@@ -61,11 +62,23 @@ const selecionarTela = (tela) => {
     <div className="acoes-lista">
       <div className="busca-box">
         <input type="text" placeholder="Pesquisar..." />
-        <span className="icon-lupa">🔍</span>
+        {/* Lupa removida conforme solicitado */}
       </div>
-      <button className="btn-filtro-icon" title="Filtrar">
-        <span className="icon-filtro">⏳</span> Filtrar
-      </button>
+
+      <div className="dropdown-filtro-container">
+        <button className="btn-filtro-icon" onClick={() => {/* Lógica para abrir dropdown */}}>
+          <span className="icon-filtro">⏳</span> Filtrar
+        </button>
+        
+        {/* 3 - Exemplo Visual do Dropdown de Filtro (pode ser controlado por um estado) */}
+        <div className="filtro-dropdown">
+          <label><input type="checkbox" /> Por Data</label>
+          <label><input type="checkbox" /> Por Profissional</label>
+          <label><input type="checkbox" /> Por Cliente</label>
+          <label><input type="checkbox" /> Por Status</label>
+          <button className="btn-aplicar-filtro">Aplicar Filtros</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -73,7 +86,7 @@ const selecionarTela = (tela) => {
     <table className="agenda-table">
       <thead>
         <tr>
-          <th>Data / Hora</th>
+          <th>Horário</th>
           <th>Cliente</th>
           <th>Serviço</th>
           <th>Profissional</th>
@@ -81,27 +94,19 @@ const selecionarTela = (tela) => {
         </tr>
       </thead>
       <tbody>
-        {/* Exemplo de como os dados aparecerão */}
         <tr>
-          <td><strong>28/12 - 14:30</strong></td>
+          <td><strong className="data-destaque">Hoje às 14:30</strong></td>
           <td>David Emunaar</td>
           <td>Corte Degradê</td>
           <td>Marcos Silva</td>
           <td><span className="status-badge verde">Confirmado</span></td>
         </tr>
         <tr>
-          <td><strong>28/12 - 15:15</strong></td>
+          <td><strong className="data-destaque">Amanhã às 09:00</strong></td>
           <td>João Pereira</td>
           <td>Barba Terapia</td>
           <td>Felipe Araújo</td>
           <td><span className="status-badge amarelo">Pendente</span></td>
-        </tr>
-        <tr>
-          <td><strong>28/12 - 16:00</strong></td>
-          <td>Lucas Souza</td>
-          <td>Corte + Barba</td>
-          <td>Marcos Silva</td>
-          <td><span className="status-badge vermelho">Cancelado</span></td>
         </tr>
       </tbody>
     </table>

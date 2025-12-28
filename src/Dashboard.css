@@ -304,11 +304,58 @@
   background: #111;
   border: 1px solid #222;
   color: #fff;
-  padding: 8px 15px 8px 35px;
+  padding: 8px 15px; /* Padding ajustado sem lupa */
   border-radius: 20px;
   font-size: 0.85rem;
   width: 180px;
-  transition: 0.3s;
+}
+
+/* 2 - Destaque para Datas Relativas */
+.data-destaque {
+  color: #0ea5e9; /* Um azul suave para destacar o "Hoje" */
+  font-weight: 700;
+}
+
+/* 3 - Estilo do Dropdown de Filtro */
+.dropdown-filtro-container {
+  position: relative;
+}
+
+.filtro-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: #111;
+  border: 1px solid #222;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+  min-width: 180px;
+  /* display: none;  Ative conforme o estado do React */
+}
+
+.filtro-dropdown label {
+  color: #aaa;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.btn-aplicar-filtro {
+  background: #0ea5e9;
+  border: none;
+  color: white;
+  padding: 5px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  margin-top: 5px;
 }
 
 .busca-box input:focus {
