@@ -51,6 +51,16 @@ const formatarDataInteligente = (dataInput) => {
   const [telaAtiva, setTelaAtiva] = useState('resumo');
 // --- ESTADOS PARA O MENU DE CONTEXTO (BOTÃO DIREITO) ---
 const [menuContexto, setMenuContexto] = useState({ visivel: false, x: 0, y: 0, agendamentoId: null });
+// --- ESTADO PARA O MODAL DE DETALHES ---
+const [modalDetalhes, setModalDetalhes] = useState({ visivel: false, dados: null });
+
+// Função para excluir agendamento
+const excluirAgendamento = (id) => {
+  if (window.confirm("Tem certeza que deseja excluir este agendamento?")) {
+    setListaGlobalAgendamentos(prev => prev.filter(item => item.id !== id));
+    setMenuContexto({ ...menuContexto, visivel: false });
+  }
+};
 
 // Função para abrir o menu com o botão direito
 const handleContextMenu = (e, id) => {
@@ -343,30 +353,66 @@ const versiculoDoDia = {
             flexDirection: 'column'
           }}
         >
-          <button 
-            style={{ 
-              background: 'none', border: 'none', color: '#ccc', padding: '10px', 
-              textAlign: 'left', cursor: 'pointer', borderRadius: '4px' 
-            }}
-            onClick={() => {
-               alert('Ver Detalhes do ID: ' + menuContexto.agendamentoId);
-               setMenuContexto({ ...menuContexto, visivel: false });
-            }}
-          >
-            🔍 Ver Detalhes
-          </button>
-          
-          <button 
-            style={{ 
-              background: 'none', border: 'none', color: '#ef4444', padding: '10px', 
-              textAlign: 'left', cursor: 'pointer', borderRadius: '4px' 
-            }}
-            onClick={() => {
-               alert('Excluir ID: ' + menuContexto.agendamentoId);
-               setMenuContexto({ ...menuContexto, visivel: false });
-            }}
-          >
-            🗑️ Excluir Agendamento
+          {/* Substitua os botões dentro do Menu de Contexto por estes */}
+<button 
+  className="btn-contexto" 
+  onClick={() => {
+    const agend = listaGlobalAgendamentos.find(a => a.id === menuContexto.agendamentoId);
+    setModalDetalhes({ visivel: true, dados: agend });
+    setMenuContexto({ ...menuContexto, visivel: false });
+  }}
+>
+  🔍 Ver Detalhes
+</button>
+
+<button 
+  className="btn-contexto delete" 
+  style={{ color: '#ef4444' }} 
+  onClick={() => excluirAgendamento(menuContexto.agendamentoId)}
+>
+  🗑️ Excluir Agendamento
+            {/* MODAL DE DETALHES DO AGENDAMENTO */}
+{modalDetalhes.visivel && modalDetalhes.dados && (
+  <div className="modal-overlay" onClick={() => setModalDetalhes({ visivel: false, dados: null })}>
+    <div className="modal-detalhes-content" onClick={e => e.stopPropagation()}>
+      <div className="modal-header-detalhes">
+        <h3>Detalhes do Agendamento</h3>
+        <button className="btn-close-modal" onClick={() => setModalDetalhes({ visivel: false, dados: null })}>✕</button>
+      </div>
+      
+      <div className="modal-body-detalhes">
+        <div className="detalhe-item">
+          <label>Cliente</label>
+          <p>{modalDetalhes.dados.cliente}</p>
+        </div>
+        <div className="detalhe-item">
+          <label>Serviço</label>
+          <p>{modalDetalhes.dados.servico}</p>
+        </div>
+        <div className="detalhe-item">
+          <label>Profissional</label>
+          <p>{modalDetalhes.dados.profissional}</p>
+        </div>
+        <div className="detalhe-item">
+          <label>Data e Horário</label>
+          <p>{formatarDataInteligente(modalDetalhes.dados.data)}</p>
+        </div>
+        <div className="detalhe-item">
+          <label>Status Atual</label>
+          <span className={`status-badge-fixo ${modalDetalhes.dados.status}`}>
+            {modalDetalhes.dados.status.toUpperCase()}
+          </span>
+        </div>
+      </div>
+
+      <div className="modal-footer-detalhes">
+        <button className="btn-modal-acao secundario" onClick={() => alert('Função Reagendar em breve...')}>📅 Reagendar</button>
+        <button className="btn-modal-acao primario" onClick={() => setModalDetalhes({ visivel: false, dados: null })}>Concluído</button>
+      </div>
+    </div>
+  </div>
+)}
+
           </button>
         </div>
       )}

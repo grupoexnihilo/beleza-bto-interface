@@ -527,3 +527,86 @@
   background-color: #18181b;
   color: #fff;
 }
+/* MODAL OVERLAY */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 11000;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-detalhes-content {
+  background: #111;
+  border: 1px solid #222;
+  width: 100%;
+  max-width: 450px;
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+.modal-header-detalhes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header-detalhes h3 { color: #fff; margin: 0; }
+
+.btn-close-modal {
+  background: none; border: none; color: #555; cursor: pointer; font-size: 1.2rem;
+}
+
+.modal-body-detalhes {
+  display: grid;
+  gap: 15px;
+}
+
+.detalhe-item label {
+  display: block;
+  color: #555;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.detalhe-item p {
+  color: #eee;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.modal-footer-detalhes {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-modal-acao {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-modal-acao.primario { background: #0ea5e9; color: #fff; }
+.btn-modal-acao.secundario { background: #222; color: #eee; }
+
+/* Badge de status dentro do modal */
+.status-badge-fixo {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+/* Reutilize as cores do tom sobre tom aqui */
+.status-badge-fixo.confirmado { background: rgba(16, 185, 129, 0.2); color: #10b981; }
