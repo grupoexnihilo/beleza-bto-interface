@@ -49,6 +49,39 @@ const formatarDataInteligente = (dataInput) => {
   return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit' }).format(data) + ` às ${data.getHours()}:${data.getMinutes().toString().padStart(2, '0')}`;
 };
   const [telaAtiva, setTelaAtiva] = useState('resumo');
+// --- ESTADOS PARA O MENU DE CONTEXTO (BOTÃO DIREITO) ---
+const [menuContexto, setMenuContexto] = useState({ visivel: false, x: 0, y: 0, agendamentoId: null });
+
+// Função para abrir o menu com o botão direito
+const handleContextMenu = (e, id) => {
+  e.preventDefault();
+  setMenuContexto({
+    visivel: true,
+    x: e.pageX,
+    y: e.pageY,
+    agendamentoId: id
+  });
+};
+
+// Efeito para fechar o menu ao clicar fora ou apertar ESC
+useEffect(() => {
+  const fecharMenu = () => setMenuContexto({ ...menuContexto, visivel: false });
+  const fecharComEsc = (e) => { if (e.key === 'Escape') fecharMenu(); };
+
+  if (menuContexto.visivel) {
+    window.addEventListener('click', fecharMenu);
+    window.addEventListener('keydown', fecharComEsc);
+  }
+  return () => {
+    window.removeEventListener('click', fecharMenu);
+    window.removeEventListener('keydown', fecharComEsc);
+  };
+}, [menuContexto.visivel]);
+// --- FONTE DE DADOS ÚNICA (Temporária para sincronizar Resumo e Agenda) ---
+const [listaGlobalAgendamentos, setListaGlobalAgendamentos] = useState([
+  { id: 1, data: new Date(), cliente: "David Emunaar", servico: "Corte Degradê", profissional: "Marcos Silva", status: "confirmado" },
+  { id: 2, data: new Date(new Date().setDate(new Date().getDate() + 1)), cliente: "João Pereira", servico: "Barba Terapia", profissional: "Felipe Araújo", status: "pendente" }
+]);
   // --- TRECHO 1: NOVO ESTADO DO MENU ---
 const [menuExpandido, setMenuExpandido] = useState(false);
 
@@ -119,7 +152,7 @@ const selecionarTela = (tela) => {
           <label><input type="checkbox" /> Por Profissional</label>
           <label><input type="checkbox" /> Por Cliente</label>
           <label><input type="checkbox" /> Por Status</label>
-          <button className="btn-aplicar-filtro" onClick={() => setFiltroAberto(false)}>Aplicar/Fechar</button>
+          <button className="btn-aplicar-filtro" onClick={() => setFiltroAberto(false)}>Aplicar</button>
         </div>
       )}
     </div>
@@ -140,13 +173,30 @@ const selecionarTela = (tela) => {
       </thead>
       {/* Exemplo no corpo da tabela usando a nova lógica */}
 <tbody>
-  <tr>
-    <td><strong className="data-destaque">{formatarDataInteligente(new Date())}</strong></td>
-    <td>David Emunaar</td>
-    <td>Corte Degradê</td>
-    <td>Marcos Silva</td>
-    <td><span className="status-badge verde">Confirmado</span></td>
-  </tr>
+  {listaGlobalAgendamentos.map((agendamento) => (
+    <tr 
+      key={agendamento.id} 
+      onContextMenu={(e) => handleContextMenu(e, agendamento.id)}
+      style={{ cursor: 'context-menu' }}
+    >
+      <td><strong className="data-destaque">{formatarDataInteligente(agendamento.data)}</strong></td>
+      <td>{agendamento.cliente}</td>
+      <td>{agendamento.servico}</td>
+      <td>{agendamento.profissional}</td>
+      <td>
+        <select 
+          className="select-status-inline" 
+          defaultValue={agendamento.status}
+          onChange={(e) => console.log(`Alterar ID ${agendamento.id} para ${e.target.value}`)}
+        >
+          <option value="pendente">Pendente</option>
+          <option value="confirmado">Confirmado</option>
+          <option value="cancelado">Cancelado</option>
+          <option value="reagendado">Reagendado</option>
+        </select>
+      </td>
+    </tr>
+  ))}
 </tbody>
     </table>
   </div>
@@ -266,6 +316,52 @@ const versiculoDoDia = {
           {renderConteudo()}
         </section>
       </main>
+      {/* MENU DE CONTEXTO FLUTUANTE */}
+      {menuContexto.visivel && (
+        <div 
+          className="menu-contexto-agendamento" 
+          style={{ 
+            position: 'fixed',
+            top: menuContexto.y, 
+            left: menuContexto.x,
+            backgroundColor: '#18181b',
+            border: '1px solid #333',
+            borderRadius: '8px',
+            zIndex: 10000,
+            padding: '5px',
+            minWidth: '180px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+          <button 
+            style={{ 
+              background: 'none', border: 'none', color: '#ccc', padding: '10px', 
+              textAlign: 'left', cursor: 'pointer', borderRadius: '4px' 
+            }}
+            onClick={() => {
+               alert('Ver Detalhes do ID: ' + menuContexto.agendamentoId);
+               setMenuContexto({ ...menuContexto, visivel: false });
+            }}
+          >
+            🔍 Ver Detalhes
+          </button>
+          
+          <button 
+            style={{ 
+              background: 'none', border: 'none', color: '#ef4444', padding: '10px', 
+              textAlign: 'left', cursor: 'pointer', borderRadius: '4px' 
+            }}
+            onClick={() => {
+               alert('Excluir ID: ' + menuContexto.agendamentoId);
+               setMenuContexto({ ...menuContexto, visivel: false });
+            }}
+          >
+            🗑️ Excluir Agendamento
+          </button>
+        </div>
+      )}
     </div>
   );
 }
