@@ -372,45 +372,13 @@ const versiculoDoDia = {
 >
   🗑️ Excluir Agendamento
             {/* MODAL DE DETALHES DO AGENDAMENTO */}
-{modalDetalhes.visivel && modalDetalhes.dados && (
-  <div className="modal-overlay" onClick={() => setModalDetalhes({ visivel: false, dados: null })}>
-    <div className="modal-detalhes-content" onClick={e => e.stopPropagation()}>
-      <div className="modal-header-detalhes">
-        <h3>Detalhes do Agendamento</h3>
-        <button className="btn-close-modal" onClick={() => setModalDetalhes({ visivel: false, dados: null })}>✕</button>
-      </div>
-      
-      <div className="modal-body-detalhes">
-        <div className="detalhe-item">
-          <label>Cliente</label>
-          <p>{modalDetalhes.dados.cliente}</p>
-        </div>
-        <div className="detalhe-item">
-          <label>Serviço</label>
-          <p>{modalDetalhes.dados.servico}</p>
-        </div>
-        <div className="detalhe-item">
-          <label>Profissional</label>
-          <p>{modalDetalhes.dados.profissional}</p>
-        </div>
-        <div className="detalhe-item">
-          <label>Data e Horário</label>
-          <p>{formatarDataInteligente(modalDetalhes.dados.data)}</p>
-        </div>
-        <div className="detalhe-item">
-          <label>Status Atual</label>
-          <span className={`status-badge-fixo ${modalDetalhes.dados.status}`}>
-            {modalDetalhes.dados.status.toUpperCase()}
-          </span>
-        </div>
-      </div>
-
-      <div className="modal-footer-detalhes">
-        <button className="btn-modal-acao secundario" onClick={() => alert('Função Reagendar em breve...')}>📅 Reagendar</button>
-        <button className="btn-modal-acao primario" onClick={() => setModalDetalhes({ visivel: false, dados: null })}>Concluído</button>
-      </div>
-    </div>
-  </div>
+{modalDetalhes.visivel && (
+  <ModalComanda 
+    agendamento={modalDetalhes.dados} 
+    aoFechar={() => setModalDetalhes({ visivel: false, dados: null })}
+    aoExcluir={excluirAgendamento}
+    formatarData={formatarDataInteligente}
+  />
 )}
 
           </button>
