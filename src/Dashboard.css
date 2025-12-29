@@ -462,3 +462,57 @@
   border-color: #0ea5e9;
   color: #fff;
 }
+/* Estilo Base do Select de Status */
+.select-status-inline {
+  appearance: none; /* Remove a seta padrão feia */
+  -webkit-appearance: none;
+  padding: 6px 28px 6px 12px;
+  border-radius: 20px; /* Borda bem arredondada */
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+  /* Ícone da setinha customizada (SVG branco discreto) */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.5)' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  transition: all 0.2s ease;
+}
+
+/* Cores Tom sobre Tom */
+
+/* CONFIRMADO (Verde) */
+.select-status-inline.confirmado {
+  background-color: rgba(16, 185, 129, 0.2); /* Fundo Verde Claro */
+  color: #10b981; /* Texto Verde Escuro/Vivo */
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* PENDENTE (Amarelo/Laranja) */
+.select-status-inline.pendente {
+  background-color: rgba(245, 158, 11, 0.2); 
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+/* CANCELADO (Vermelho) */
+.select-status-inline.cancelado {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* REAGENDADO (Azul/Roxo) */
+.select-status-inline.reagendado {
+  background-color: rgba(14, 165, 233, 0.2);
+  color: #0ea5e9;
+  border-color: rgba(14, 165, 233, 0.3);
+}
+
+/* Hover para dar feedback */
+.select-status-inline:hover {
+  filter: brightness(1.2);
+  transform: scale(1.02);
+}

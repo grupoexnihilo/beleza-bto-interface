@@ -185,15 +185,19 @@ const selecionarTela = (tela) => {
       <td>{agendamento.profissional}</td>
       <td>
         <select 
-          className="select-status-inline" 
-          defaultValue={agendamento.status}
-          onChange={(e) => console.log(`Alterar ID ${agendamento.id} para ${e.target.value}`)}
-        >
-          <option value="pendente">Pendente</option>
-          <option value="confirmado">Confirmado</option>
-          <option value="cancelado">Cancelado</option>
-          <option value="reagendado">Reagendado</option>
-        </select>
+  className={`select-status-inline ${agendamento.status}`} 
+  defaultValue={agendamento.status}
+  onChange={(e) => {
+    // Aqui no futuro faremos o update no banco
+    console.log(`Alterar ID ${agendamento.id} para ${e.target.value}`);
+    // Dica: Para a cor mudar na hora sem refresh, precisaríamos atualizar o estado local
+  }}
+>
+  <option value="pendente">Pendente</option>
+  <option value="confirmado">Confirmado</option>
+  <option value="cancelado">Cancelado</option>
+  <option value="reagendado">Reagendado</option>
+</select>
       </td>
     </tr>
   ))}
