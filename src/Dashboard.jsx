@@ -3,13 +3,17 @@ import './Dashboard.css';
 import ModalComanda from './ModalComanda'; // Removi o /components/
 
 // Importações
-import logoBelezaBTO from './logo-beleza-bto.png';
-import BaseClientes from './BaseClientes';
-import CadastroClienteForm from './CadastroClienteForm';
-import EntradaRapidaForm from './EntradaRapidaForm';
-import AdicionarDespesaForm from './AdicionarDespesaForm';
-import HistoricoLancamentos from './HistoricoLancamentos';
-import Agendamento from './Agendamento';
+// --- IMPORTAÇÃO DE MÓDULOS ---
+import Agendamento from './modules/Agendamento';
+import LoginForm from './modules/LoginForm';
+import BaseClientes from './modules/BaseClientes';
+import HistoricoLancamentos from './modules/HistoricoLancamentos';
+
+// --- IMPORTAÇÃO DE COMPONENTES ---
+import ModalComanda from './components/ModalComanda';
+import CadastroClienteForm from './components/CadastroClienteForm';
+import AdicionarDespesaForm from './components/AdicionarDespesaForm';
+import EntradaRapidaForm from './components/EntradaRapidaForm';
 
 function Dashboard({ user, unidadeId, unidades, onLogout }) {
   // --- ESTADO PARA CONTROLAR O FILTRO ---
