@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'; // Adicionado useEffect aqui
 import './Dashboard.css';
+import ModalComanda from './ModalComanda'; // Removi o /components/
 
 // Importações
 import logoBelezaBTO from './logo-beleza-bto.png';
