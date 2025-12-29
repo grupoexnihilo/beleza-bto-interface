@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import app from './firebaseConfig.js'; 
-import LoginForm from './LoginForm.jsx';
+import LoginForm from '.modules/LoginForm.jsx';
 import Dashboard from './Dashboard.jsx';
 
 function App() {
