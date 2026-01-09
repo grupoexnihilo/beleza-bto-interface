@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import app from './firebaseConfig.js'; 
 import LoginForm from '.modules/LoginForm.jsx';
-import Dashboard from './Dashboard.jsx';
+import Dashboard from './Dashboard';
 
 function App() {
   console.log("--- APP BELEZA BTO: DASHBOARD MODE ---");
