@@ -8,11 +8,11 @@
   overflow: hidden;
 }
 
-/* 3 - CABEÇALHO SUPERIOR (CORRIGIDO: MAIOR PADDING PARA NÃO CORTAR ANIMAÇÃO) */
+/* 3 - CABEÇALHO SUPERIOR */
 .navbar-superior {
   background: #0a0a0a;
   border-bottom: 1px solid #1a1a1a;
-  padding: 20px 30px; /* Aumentado para o botão subir sem bater no topo */
+  padding: 20px 30px;
   flex-shrink: 0;
   z-index: 1000;
 }
@@ -43,8 +43,7 @@
 }
 .btn-sair-pill:hover { background: #ef4444; color: #fff; }
 
-/* MENU SUPERIOR FLUIDO */
-/* --- TRECHO 3: ESTILO DO MENU RECOLHÍVEL --- */
+/* --- MENU SUPERIOR COM MOVIMENTAÇÃO SUAVE --- */
 .nav-bottom-row {
   display: flex;
   align-items: center;
@@ -53,7 +52,7 @@
   padding: 5px 0;
 }
 
-/* Botão Redondo + / - */
+/* Botão Redondo + / - (Adicionado Giro e Transição) */
 .btn-menu-control {
   width: 40px;
   height: 40px;
@@ -66,40 +65,42 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.3s ease, background 0.3s;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
   flex-shrink: 0;
   box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);
+  z-index: 10;
 }
 
-.btn-menu-control:hover {
-  transform: scale(1.1);
-  background: #0284c7;
+/* Gira o botão quando expandido */
+.expandido .btn-menu-control {
+  transform: rotate(135deg);
+  background: #1e293b;
 }
 
-/* Container do Scroll */
+/* Container do Scroll (MODIFICADO PARA ROLAGEM SUAVE) */
 .nav-scroll-wrapper {
   display: flex;
   gap: 10px;
-  overflow-x: auto;
   padding: 5px;
-  scrollbar-width: none; /* Esconde scroll no Firefox */
-  transition: all 0.4s ease;
+  scrollbar-width: none;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 0; /* Começa encolhido */
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
 }
 
-.nav-scroll-wrapper::-webkit-scrollbar { display: none; } /* Esconde scroll no Chrome */
+.nav-scroll-wrapper::-webkit-scrollbar { display: none; }
 
-/* Lógica de visibilidade dos botões */
-.nav-item-fluido.hidden {
-  display: none; /* Esconde os outros quando recolhido */
-}
-
-/* Quando expandido, o wrapper permite o "arredar para o lado" */
+/* Estado Expandido */
 .expandido .nav-scroll-wrapper {
-  max-width: 100%;
+  max-width: 1500px; /* Expande suavemente para o lado */
   opacity: 1;
+  pointer-events: auto;
 }
 
-/* Estilo do botão (mantendo a fluidez anterior) */
+/* Estilo do botão do menu */
 .nav-item-fluido {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid #222;
@@ -116,22 +117,7 @@
   background: rgba(14, 165, 233, 0.1);
   border-color: #0ea5e9;
   color: #0ea5e9;
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(14, 165, 233, 0.2);
-}
-
-.nav-item-fluido.active {
-  background: #0ea5e9;
-  border-color: #0ea5e9;
-  color: #fff;
-  display: block !important; /* Sempre mostra o ativo */
-}
-
-.nav-item-fluido:hover {
-  background: rgba(14, 165, 233, 0.1);
-  border-color: #0ea5e9;
-  color: #0ea5e9;
-  transform: translateY(-4px); /* Efeito flutuante de subida */
+  transform: translateY(-4px);
   box-shadow: 0 6px 15px rgba(14, 165, 233, 0.2);
 }
 
@@ -141,7 +127,7 @@
   color: #fff;
 }
 
-/* 1 - CARDS DE RESUMO PROFISSIONAIS */
+/* 1 - CARDS DE RESUMO */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -152,7 +138,7 @@
 .card-kpi-premium {
   background: #111;
   padding: 28px;
-  border-radius: 20px; /* Bem arredondado */
+  border-radius: 20px;
   border: 1px solid #222;
   position: relative;
   overflow: hidden;
@@ -173,7 +159,7 @@
 .card-decorator.blue { background: #0ea5e9; }
 .card-decorator.green { background: #10b981; }
 
-/* 2 - BOTÕES DE AÇÃO RÁPIDA FLUTUANTES */
+/* 2 - BOTÕES DE AÇÃO RÁPIDA */
 .painel-lista-acoes {
     background: #0a0a0a;
     padding: 25px;
@@ -193,7 +179,7 @@
   border: 1px solid #252525;
   color: #eee;
   padding: 18px;
-  border-radius: 15px; /* Arredondamento suave */
+  border-radius: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -204,7 +190,7 @@
   background: #1f1f1f;
   border-color: #0ea5e9;
   color: #0ea5e9;
-  transform: translateY(-5px); /* Realce de realce ao passar o mouse */
+  transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(14, 165, 233, 0.15);
 }
 
@@ -234,7 +220,8 @@
   border-radius: 20px;
   border: 1px solid #1a1a1a;
 }
-/* --- TRECHO 3: DESIGN DO VERSÍCULO E DATA --- */
+
+/* --- VERSÍCULO E DATA --- */
 .versiculo-container {
   margin-left: 25px;
   padding-left: 20px;
@@ -248,7 +235,7 @@
   font-size: 0.85rem;
   font-style: italic;
   font-weight: 400;
-  max-width: 400px; /* Limita para não empurrar o resto */
+  max-width: 400px;
 }
 
 .versiculo-ref {
@@ -274,12 +261,9 @@
   letter-spacing: 0.5px;
 }
 
-/* Pequeno ajuste no logo area para alinhar o versiculo */
-.nav-logo-area {
-  display: flex;
-  align-items: center;
-}
-/* --- ESTILO DA AGENDA NO RESUMO --- */
+.nav-logo-area { display: flex; align-items: center; }
+
+/* AGENDA NO RESUMO */
 .header-lista-agendamentos {
   display: flex;
   justify-content: space-between;
@@ -293,7 +277,6 @@
   align-items: center;
 }
 
-/* Busca com Lupa */
 .busca-box {
   position: relative;
   display: flex;
@@ -304,77 +287,11 @@
   background: #111;
   border: 1px solid #222;
   color: #fff;
-  padding: 8px 15px; /* Padding ajustado sem lupa */
+  padding: 8px 15px;
   border-radius: 20px;
   font-size: 0.85rem;
   width: 180px;
-}
-
-/* 2 - Destaque para Datas Relativas */
-.data-destaque {
-  color: #0ea5e9; /* Um azul suave para destacar o "Hoje" */
-  font-weight: 700;
-}
-
-/* 3 - Estilo do Dropdown de Filtro */
-.dropdown-filtro-container {
-  position: relative;
-}
-
-/* --- AJUSTE DROPDOWN RECOLHÍVEL --- */
-.filtro-dropdown {
-  position: absolute;
-  top: 45px; /* Ajustado para ficar logo abaixo do botão */
-  right: 0;
-  background: #111;
-  border: 1px solid #222;
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  z-index: 1001; /* Garante que fique acima de tudo */
-  min-width: 200px;
-  animation: fadeInDown 0.2s ease-out;
-}
-
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.filtro-dropdown label {
-  color: #eee;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 5px 0;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.filtro-dropdown label:hover {
-  color: #0ea5e9;
-}
-
-/* Checkbox personalizado básico */
-.filtro-dropdown input[type="checkbox"] {
-  accent-color: #0ea5e9;
-  width: 16px;
-  height: 16px;
-}
-
-.btn-aplicar-filtro {
-  background: #0ea5e9;
-  border: none;
-  color: white;
-  padding: 5px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  cursor: pointer;
-  margin-top: 5px;
+  transition: all 0.3s;
 }
 
 .busca-box input:focus {
@@ -383,14 +300,6 @@
   outline: none;
 }
 
-.icon-lupa {
-  position: absolute;
-  left: 12px;
-  font-size: 0.9rem;
-  opacity: 0.5;
-}
-
-/* Botão Filtro Suave */
 .btn-filtro-icon {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid #222;
@@ -406,16 +315,14 @@
   transition: 0.3s;
 }
 
-.btn-filtro-icon:hover {
+.btn-filtro-icon:hover, .btn-filtro-icon.active {
   background: rgba(14, 165, 233, 0.1);
   border-color: #0ea5e9;
   color: #0ea5e9;
 }
 
-/* Tabela Agenda */
-.table-wrapper-fluido {
-  overflow-x: auto;
-}
+/* TABELA AGENDA */
+.table-wrapper-fluido { overflow-x: auto; }
 
 .agenda-table {
   width: 100%;
@@ -438,36 +345,12 @@
   border-bottom: 1px solid #111;
 }
 
-.agenda-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
-  color: #fff;
-}
-
-/* Status Badges Arredondados */
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 15px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.status-badge.verde { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-.status-badge.amarelo { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-.status-badge.vermelho { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-
-/* Opcional: Adiciona uma leve sombra ao botão quando o filtro está ativo para dar contexto */
-.btn-filtro-icon.active {
-  background: rgba(14, 165, 233, 0.2);
-  border-color: #0ea5e9;
-  color: #fff;
-}
-/* Estilo Base do Select de Status */
+/* SELECT STATUS INLINE */
 .select-status-inline {
-  appearance: none; /* Remove a seta padrão feia */
+  appearance: none;
   -webkit-appearance: none;
   padding: 6px 28px 6px 12px;
-  border-radius: 20px; /* Borda bem arredondada */
+  border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -476,58 +359,15 @@
   background-repeat: no-repeat;
   background-position: right 8px center;
   background-size: 12px;
-  /* Ícone da setinha customizada (SVG branco discreto) */
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.5)' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   transition: all 0.2s ease;
 }
 
-/* Cores Tom sobre Tom */
+.select-status-inline.confirmado { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
+.select-status-inline.pendente { background-color: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.select-status-inline.cancelado { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
 
-/* CONFIRMADO (Verde) */
-.select-status-inline.confirmado {
-  background-color: rgba(16, 185, 129, 0.2); /* Fundo Verde Claro */
-  color: #10b981; /* Texto Verde Escuro/Vivo */
-  border-color: rgba(16, 185, 129, 0.3);
-}
-
-/* PENDENTE (Amarelo/Laranja) */
-.select-status-inline.pendente {
-  background-color: rgba(245, 158, 11, 0.2); 
-  color: #f59e0b;
-  border-color: rgba(245, 158, 11, 0.3);
-}
-
-/* CANCELADO (Vermelho) */
-.select-status-inline.cancelado {
-  background-color: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.3);
-}
-
-/* REAGENDADO (Azul/Roxo) */
-.select-status-inline.reagendado {
-  background-color: rgba(14, 165, 233, 0.2);
-  color: #0ea5e9;
-  border-color: rgba(14, 165, 233, 0.3);
-}
-
-/* Hover para dar feedback */
-.select-status-inline:hover {
-  filter: brightness(1.2);
-  transform: scale(1.02);
-}
-
-.select-status-inline:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
-}
-
-/* Garante que o fundo das opções dentro do select não fique transparente */
-.select-status-inline option {
-  background-color: #18181b;
-  color: #fff;
-}
-/* MODAL OVERLAY */
+/* MODAIS */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -540,73 +380,4 @@
   animation: fadeIn 0.2s ease;
 }
 
-.modal-detalhes-content {
-  background: #111;
-  border: 1px solid #222;
-  width: 100%;
-  max-width: 450px;
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-}
-
-.modal-header-detalhes {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.modal-header-detalhes h3 { color: #fff; margin: 0; }
-
-.btn-close-modal {
-  background: none; border: none; color: #555; cursor: pointer; font-size: 1.2rem;
-}
-
-.modal-body-detalhes {
-  display: grid;
-  gap: 15px;
-}
-
-.detalhe-item label {
-  display: block;
-  color: #555;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.detalhe-item p {
-  color: #eee;
-  margin: 0;
-  font-size: 1rem;
-}
-
-.modal-footer-detalhes {
-  margin-top: 30px;
-  display: flex;
-  gap: 10px;
-}
-
-.btn-modal-acao {
-  flex: 1;
-  padding: 12px;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-}
-
-.btn-modal-acao.primario { background: #0ea5e9; color: #fff; }
-.btn-modal-acao.secundario { background: #222; color: #eee; }
-
-/* Badge de status dentro do modal */
-.status-badge-fixo {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 800;
-}
-/* Reutilize as cores do tom sobre tom aqui */
-.status-badge-fixo.confirmado { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
