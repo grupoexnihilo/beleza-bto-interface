@@ -4,7 +4,7 @@ import { auth, db } from '../firebaseConfig';
 import './LoginForm.css';
 
 // Lembre-se de colocar a sua logo na pasta 'src'
-import logoBelezaBTO from './logo-beleza-bto.png';
+import logoBelezaBTO from '../logo-beleza-bto.png';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
