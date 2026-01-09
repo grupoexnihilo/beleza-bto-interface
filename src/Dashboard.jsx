@@ -99,6 +99,11 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
                 <div className="card-decorator green"></div>
               </div>
               <div className="card-kpi-premium">
+                <span className="card-label">Despesas (Dia)</span>
+                <strong className="card-value" style={{ color: '#ef4444' }}>R$ 0,00</strong>
+                <div className="card-decorator" style={{ background: '#ef4444' }}></div>
+                </div>
+              <div className="card-kpi-premium">
                 <span className="card-label">Status do Caixa</span>
                 <strong className="card-value" style={{ color: '#10b981' }}>ABERTO</strong>
                 <div className="card-decorator"></div>
