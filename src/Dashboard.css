@@ -1,34 +1,28 @@
-/* --- 1. ESTRUTURA E ESTABILIDADE (AJUSTADO PARA LIBERAR ROLAGEM) --- */
+/* --- 1. ESTRUTURA E ESTABILIDADE --- */
 .dashboard-main-wrapper {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Permite que o fundo cresça com o conteúdo */
+  min-height: 100vh;
   width: 100vw;
   background-color: #050505;
-  overflow-y: auto; /* Ativa a rolagem principal do sistema */
+  overflow-y: auto;
 }
 
-/* --- 2. BARRA DE ROLAGEM TEMA DARK (ESTILO ELITE) --- */
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  background: #050505;
-}
+/* --- 2. BARRA DE ROLAGEM TEMA DARK --- */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #050505; }
 ::-webkit-scrollbar-thumb {
   background: #1a1a1a;
   border-radius: 10px;
   border: 2px solid #050505;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #0ea5e9;
-}
+::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
 
 /* --- 3. CABEÇALHO SUPERIOR --- */
 .navbar-superior {
   background: #0a0a0a;
   border-bottom: 1px solid #1a1a1a;
-  padding: 15px 30px;
+  padding: 12px 30px; /* Reduzido para compactar */
   flex-shrink: 0;
   z-index: 1000;
 }
@@ -37,19 +31,53 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
-* Garante que a logo não fique gigante atrapalhando o alinhamento */
+/* ÁREA DA LOGO E VERSÍCULO (LADO A LADO) */
+.nav-logo-area {
+  display: flex;
+  flex-direction: row; 
+  align-items: center; 
+  gap: 20px;
+}
+
 .nav-logo-img {
-  height: 40px; 
+  height: 40px !important; /* Trava a altura para não ficar gigante */
   width: auto;
   object-fit: contain;
-  flex-shrink: 0; /* Impede a logo de encolher */
+  flex-shrink: 0;
 }
+
+.versiculo-container {
+  display: flex;
+  flex-direction: column;
+  border-left: 2px solid #222;
+  padding-left: 20px;
+  justify-content: center;
+}
+
+.versiculo-texto {
+  color: #888;
+  font-size: 0.8rem;
+  font-style: italic;
+  max-width: 400px;
+  line-height: 1.2;
+}
+
+.versiculo-ref {
+  color: #0ea5e9;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* INFOS DO USUÁRIO */
 .nav-user-actions { display: flex; align-items: center; gap: 25px; }
 .user-greeting { text-align: right; color: #fff; }
 .user-greeting small { color: #666; font-size: 0.75rem; display: block; }
+.data-header { color: #555; font-size: 0.8rem; font-weight: 500; }
 
 .btn-sair-pill {
   background: rgba(239, 68, 68, 0.1);
@@ -63,7 +91,7 @@
 }
 .btn-sair-pill:hover { background: #ef4444; color: #fff; }
 
-/* --- 4. MENU SUPERIOR COM MOVIMENTAÇÃO SUAVE --- */
+/* --- 4. MENU SUPERIOR E BOTÃO --- */
 .nav-bottom-row {
   display: flex;
   align-items: center;
@@ -72,33 +100,21 @@
   padding: 5px 0;
 }
 
-/* Isso força a Logo e o Versículo a ficarem na mesma linha */
-.nav-logo-area {
-  display: flex;
-  flex-direction: row; /* Força um ao lado do outro */
-  align-items: center; /* Alinha o centro da logo com o centro do texto */
-  gap: 20px;
-}
-
 .btn-menu-control {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: #0ea5e9;
   border: none;
   color: white;
-  font-size: 24px;
+  font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  flex-shrink: 0;
-  box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);
-  z-index: 10;
 }
 
-/* Ajuste do ícone de - para ficar reto (180deg) */
 .expandido .btn-menu-control {
   transform: rotate(180deg);
   background: #1e293b;
@@ -107,42 +123,29 @@
 .nav-scroll-wrapper {
   display: flex;
   gap: 10px;
-  padding: 5px;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   max-width: 0;
   opacity: 0;
   overflow: hidden;
-  white-space: nowrap;
-  pointer-events: none;
+  transition: all 0.5s ease;
 }
 
 .expandido .nav-scroll-wrapper {
   max-width: 1500px;
   opacity: 1;
-  pointer-events: auto;
 }
 
 .nav-item-fluido {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid #222;
   color: #777;
-  padding: 10px 22px;
+  padding: 8px 20px;
   border-radius: 12px;
   cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-item-fluido:hover {
-  background: rgba(14, 165, 233, 0.1);
-  border-color: #0ea5e9;
-  color: #0ea5e9;
-  transform: translateY(-4px);
+  white-space: nowrap;
 }
 
 .nav-item-fluido.active {
   background: #0ea5e9;
-  border-color: #0ea5e9;
   color: #fff;
 }
 
@@ -151,48 +154,34 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
-  padding: 10px 0 35px 0;
+  padding-bottom: 30px;
 }
 
 .card-kpi-premium {
   background: #111;
-  padding: 28px;
+  padding: 25px;
   border-radius: 20px;
   border: 1px solid #222;
   position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 25px rgba(0,0,0,0.4);
-  display: flex;
-  flex-direction: column;
 }
 
-.card-label { font-size: 0.75rem; color: #555; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
-.card-value { font-size: 2.2rem; color: #fff; margin-top: 12px; font-weight: 700; }
+.card-value { font-size: 2rem; color: #fff; font-weight: 700; }
 
 .card-decorator {
   position: absolute;
   bottom: 0; left: 0;
-  width: 100%; height: 5px;
-  background: #333;
+  width: 100%; height: 4px;
 }
 .card-decorator.blue { background: #0ea5e9; }
 .card-decorator.green { background: #10b981; }
 
-/* --- 6. CONTEÚDO E PAINÉIS --- */
+/* --- 6. CONTEÚDO --- */
 .content-container-fixo {
-  flex: 1;
-  width: 100%;
   max-width: 1350px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
 }
 
-.content-body-scroll {
-  padding: 30px;
-  height: auto; /* Deixa o conteúdo ditar a altura */
-  overflow: visible; /* Deixa a rolagem principal cuidar de tudo */
-}
+.content-body-scroll { padding: 30px; }
 
 .dashboard-detalhes {
   display: grid;
@@ -200,92 +189,9 @@
   gap: 30px;
 }
 
-.painel-lista, .painel-lista-acoes {
+.painel-lista {
   background: #0a0a0a;
   padding: 25px;
   border-radius: 20px;
   border: 1px solid #1a1a1a;
 }
-
-.painel-acoes-rapidas {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 25px;
-}
-
-.btn-atalho-fluido {
-  background: #161616;
-  border: 1px solid #252525;
-  color: #eee;
-  padding: 18px;
-  border-radius: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-}
-
-.btn-atalho-fluido:hover {
-  background: #1f1f1f;
-  border-color: #0ea5e9;
-  color: #0ea5e9;
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(14, 165, 233, 0.15);
-}
-
-/* --- 7. TABELA E STATUS --- */
-.agenda-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.agenda-table th {
-  padding: 12px;
-  color: #444;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  border-bottom: 1px solid #1a1a1a;
-}
-
-.agenda-table td {
-  padding: 15px 12px;
-  color: #aaa;
-  font-size: 0.9rem;
-  border-bottom: 1px solid #111;
-}
-
-.select-status-inline {
-  appearance: none;
-  padding: 6px 28px 6px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  border: 1px solid transparent;
-  cursor: pointer;
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 12px;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.5)' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-}
-
-.select-status-inline.confirmado { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
-.select-status-inline.pendente { background-color: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-.select-status-inline.cancelado { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
-
-/* --- 8. VERSÍCULO E DATA --- */
-/* Ajuste fino no container do versículo */
-.versiculo-container {
-  display: flex;
-  flex-direction: column;
-  border-left: 2px solid #222; /* Uma linha vertical divisória entre logo e texto */
-  padding-left: 20px;
-  margin-left: 5px;
-  justify-content: center;
-  min-width: 300px; /* Garante que o texto tenha espaço para respirar ao lado */
-}
-.versiculo-texto { color: #888; font-size: 0.85rem; font-style: italic; max-width: 400px; }
-.versiculo-ref { color: #0ea5e9; font-size: 0.7rem; font-weight: 700; margin-top: 2px; text-transform: uppercase; }
-.data-header { color: #555; font-size: 0.8rem; font-weight: 500; }
