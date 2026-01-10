@@ -43,7 +43,7 @@
 * Garante que a logo não fique gigante atrapalhando o alinhamento */
 .nav-logo-img {
   height: 45px; 
-  width: auto;
+  width: 45px;
   object-fit: contain;
   flex-shrink: 0; /* Impede a logo de encolher */
 }
