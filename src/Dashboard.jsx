@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
-import logoBelezaBTO from './assets/logo.png'; // Verifique se o caminho do seu logo está correto
+import logoBelezaBTO from './logo-beleza-bto.png'; // Verifique se o caminho do seu logo está correto
 
 // --- IMPORTAÇÃO DE MÓDULOS ---
 import Agendamento from './modules/Agendamento';
