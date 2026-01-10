@@ -1,14 +1,30 @@
-/* ESTRUTURA E ESTABILIDADE */
+/* --- 1. ESTRUTURA E ESTABILIDADE (AJUSTADO PARA LIBERAR ROLAGEM) --- */
 .dashboard-main-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh; /* Permite que o fundo cresça com o conteúdo */
   width: 100vw;
   background-color: #050505;
-  overflow: hidden;
+  overflow-y: auto; /* Ativa a rolagem principal do sistema */
 }
 
-/* 3 - CABEÇALHO SUPERIOR */
+/* --- 2. BARRA DE ROLAGEM TEMA DARK (ESTILO ELITE) --- */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+  border-radius: 10px;
+  border: 2px solid #050505;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0ea5e9;
+}
+
+/* --- 3. CABEÇALHO SUPERIOR --- */
 .navbar-superior {
   background: #0a0a0a;
   border-bottom: 1px solid #1a1a1a;
@@ -25,9 +41,7 @@
 }
 
 .nav-logo-img { height: 48px; object-fit: contain; }
-
 .nav-user-actions { display: flex; align-items: center; gap: 20px; }
-
 .user-greeting { text-align: right; color: #fff; }
 .user-greeting small { color: #666; font-size: 0.75rem; display: block; }
 
@@ -43,7 +57,7 @@
 }
 .btn-sair-pill:hover { background: #ef4444; color: #fff; }
 
-/* --- MENU SUPERIOR COM MOVIMENTAÇÃO SUAVE --- */
+/* --- 4. MENU SUPERIOR COM MOVIMENTAÇÃO SUAVE --- */
 .nav-bottom-row {
   display: flex;
   align-items: center;
@@ -52,7 +66,6 @@
   padding: 5px 0;
 }
 
-/* Botão Redondo + / - (Adicionado Giro e Transição) */
 .btn-menu-control {
   width: 40px;
   height: 40px;
@@ -65,42 +78,36 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   flex-shrink: 0;
   box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);
   z-index: 10;
 }
 
-/* Gira o botão quando expandido */
+/* Ajuste do ícone de - para ficar reto (180deg) */
 .expandido .btn-menu-control {
   transform: rotate(180deg);
   background: #1e293b;
 }
 
-/* Container do Scroll (MODIFICADO PARA ROLAGEM SUAVE) */
 .nav-scroll-wrapper {
   display: flex;
   gap: 10px;
   padding: 5px;
-  scrollbar-width: none;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  max-width: 0; /* Começa encolhido */
+  max-width: 0;
   opacity: 0;
   overflow: hidden;
   white-space: nowrap;
   pointer-events: none;
 }
 
-.nav-scroll-wrapper::-webkit-scrollbar { display: none; }
-
-/* Estado Expandido */
 .expandido .nav-scroll-wrapper {
-  max-width: 1500px; /* Expande suavemente para o lado */
+  max-width: 1500px;
   opacity: 1;
   pointer-events: auto;
 }
 
-/* Estilo do botão do menu */
 .nav-item-fluido {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid #222;
@@ -109,7 +116,6 @@
   border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
-  white-space: nowrap;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -118,7 +124,6 @@
   border-color: #0ea5e9;
   color: #0ea5e9;
   transform: translateY(-4px);
-  box-shadow: 0 6px 15px rgba(14, 165, 233, 0.2);
 }
 
 .nav-item-fluido.active {
@@ -127,10 +132,10 @@
   color: #fff;
 }
 
-/* 1 - CARDS DE RESUMO */
+/* --- 5. CARDS DE RESUMO (KPI) --- */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
   padding: 10px 0 35px 0;
 }
@@ -159,12 +164,33 @@
 .card-decorator.blue { background: #0ea5e9; }
 .card-decorator.green { background: #10b981; }
 
-/* 2 - BOTÕES DE AÇÃO RÁPIDA */
-.painel-lista-acoes {
-    background: #0a0a0a;
-    padding: 25px;
-    border-radius: 20px;
-    border: 1px solid #1a1a1a;
+/* --- 6. CONTEÚDO E PAINÉIS --- */
+.content-container-fixo {
+  flex: 1;
+  width: 100%;
+  max-width: 1350px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-body-scroll {
+  padding: 30px;
+  height: auto; /* Deixa o conteúdo ditar a altura */
+  overflow: visible; /* Deixa a rolagem principal cuidar de tudo */
+}
+
+.dashboard-detalhes {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 30px;
+}
+
+.painel-lista, .painel-lista-acoes {
+  background: #0a0a0a;
+  padding: 25px;
+  border-radius: 20px;
+  border: 1px solid #1a1a1a;
 }
 
 .painel-acoes-rapidas {
@@ -194,136 +220,7 @@
   box-shadow: 0 10px 25px rgba(14, 165, 233, 0.15);
 }
 
-/* CONTEÚDO ESTABILIZADO */
-.content-container-fixo {
-  flex: 1;
-  width: 100%;
-  max-width: 1350px;
-  margin: 0 auto;
-}
-
-.content-body-scroll {
-  height: 100%;
-  padding: 30px;
-  overflow-y: auto;
-}
-
-.dashboard-detalhes {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 30px;
-}
-
-.painel-lista {
-  background: #0a0a0a;
-  padding: 25px;
-  border-radius: 20px;
-  border: 1px solid #1a1a1a;
-}
-
-/* --- VERSÍCULO E DATA --- */
-.versiculo-container {
-  margin-left: 25px;
-  padding-left: 20px;
-  border-left: 1px solid #222;
-  display: flex;
-  flex-direction: column;
-}
-
-.versiculo-texto {
-  color: #888;
-  font-size: 0.85rem;
-  font-style: italic;
-  font-weight: 400;
-  max-width: 400px;
-}
-
-.versiculo-ref {
-  color: #0ea5e9;
-  font-size: 0.7rem;
-  font-weight: 700;
-  margin-top: 2px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.user-info-group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-}
-
-.data-header {
-  color: #555;
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
-.nav-logo-area { display: flex; align-items: center; }
-
-/* AGENDA NO RESUMO */
-.header-lista-agendamentos {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.acoes-lista {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.busca-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.busca-box input {
-  background: #111;
-  border: 1px solid #222;
-  color: #fff;
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  width: 180px;
-  transition: all 0.3s;
-}
-
-.busca-box input:focus {
-  border-color: #0ea5e9;
-  width: 220px;
-  outline: none;
-}
-
-.btn-filtro-icon {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid #222;
-  color: #888;
-  padding: 8px 15px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: 0.3s;
-}
-
-.btn-filtro-icon:hover, .btn-filtro-icon.active {
-  background: rgba(14, 165, 233, 0.1);
-  border-color: #0ea5e9;
-  color: #0ea5e9;
-}
-
-/* TABELA AGENDA */
-.table-wrapper-fluido { overflow-x: auto; }
-
+/* --- 7. TABELA E STATUS --- */
 .agenda-table {
   width: 100%;
   border-collapse: collapse;
@@ -345,10 +242,8 @@
   border-bottom: 1px solid #111;
 }
 
-/* SELECT STATUS INLINE */
 .select-status-inline {
   appearance: none;
-  -webkit-appearance: none;
   padding: 6px 28px 6px 12px;
   border-radius: 20px;
   font-size: 0.75rem;
@@ -360,57 +255,20 @@
   background-position: right 8px center;
   background-size: 12px;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(0,0,0,0.5)' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  transition: all 0.2s ease;
 }
 
 .select-status-inline.confirmado { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
 .select-status-inline.pendente { background-color: rgba(245, 158, 11, 0.2); color: #f59e0b; }
 .select-status-inline.cancelado { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
 
-/* MODAIS */
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(4px);
+/* --- 8. VERSÍCULO E DATA --- */
+.versiculo-container {
+  margin-left: 25px;
+  padding-left: 20px;
+  border-left: 1px solid #222;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 11000;
-  animation: fadeIn 0.2s ease;
+  flex-direction: column;
 }
-
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-/* ESTILIZAÇÃO DA BARRA DE ROLAGEM (TEMA ESCURO) */
-
-/* 1. Define a largura da barra */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-/* 2. O fundo da barra (Trilha) - Deixamos transparente para não marcar o layout */
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-/* 3. O "Pegador" (Screwdrive) - Um cinza escuro que só aparece quando passa o mouse */
-::-webkit-scrollbar-thumb {
-  background: #222; 
-  border-radius: 10px;
-  border: 2px solid #050505; /* Cria uma margem para parecer mais fina */
-}
-
-/* 4. Quando o usuário passa o mouse na barra, ela ganha um leve destaque azul (sua marca) */
-::-webkit-scrollbar-thumb:hover {
-  background: #0ea5e9;
-}
-
-/* ATIVAÇÃO DA ROLAGEM NAS TELAS */
-
-/* Garante que o container de conteúdo principal permita rolagem se transbordar */
-.content-body-scroll {
-  height: 100%;
-  overflow-y: auto !important; /* Força a rolagem vertical */
-  overflow-x: hidden; /* Evita rolagem lateral indesejada */
-  padding-right: 10px; /* Espaço para a barra não cobrir o conteúdo */
-}
+.versiculo-texto { color: #888; font-size: 0.85rem; font-style: italic; max-width: 400px; }
+.versiculo-ref { color: #0ea5e9; font-size: 0.7rem; font-weight: 700; margin-top: 2px; text-transform: uppercase; }
+.data-header { color: #555; font-size: 0.8rem; font-weight: 500; }
