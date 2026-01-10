@@ -88,7 +88,10 @@ function BaseClientes({ unidadeId, onBack }) {
             />
             <button className="btn-lupa" onClick={() => setShowSearch(!showSearch)}>🔍</button>
           </div>
-          <h2>Base de Clientes ({filtrados.length})</h2>
+          <button className="btn-novo-cliente" onClick={() => setTelaAtiva('cadastros')}>
+      <span>+</span> Novo Cliente
+    </button>
+           <h2>Base de Clientes ({filtrados.length})</h2>
         </div>
       </div>
 
