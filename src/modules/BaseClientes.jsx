@@ -73,19 +73,22 @@ function BaseClientes({ unidadeId, onBack }) {
     c.cpf?.includes(busca) ||
     c.email?.toLowerCase().includes(busca.toLowerCase())
   );
-// ---LÓGICA DE MOSTRAR FORMULÁRIO ---
+
+  // --- RENDERIZAÇÃO CONDICIONAL ---
+  // Se mostrarFormulario for true, renderiza o formulário e encerra aqui
   if (mostrarFormulario) {
     return (
       <CadastroClienteForm 
         unidadeId={unidadeId} 
         onBack={() => {
           setMostrarFormulario(false);
-          carregarClientes(); // Recarrega a lista ao voltar
+          carregarClientes(); 
         }} 
       />
     );
   }
 
+  // Caso contrário, renderiza a lista normal (Sua tela original)
   return (
     <div className="base-clientes-container">
       {/* HEADER DA LISTA */}
@@ -102,10 +105,12 @@ function BaseClientes({ unidadeId, onBack }) {
             />
             <button className="btn-lupa" onClick={() => setShowSearch(!showSearch)}>🔍</button>
           </div>
+
           <button className="btn-novo-cliente" onClick={() => setMostrarFormulario(true)}>
-  <span>+</span> Novo Cliente
-</button>
-           <h2>Base de Clientes ({filtrados.length})</h2>
+            <span>+</span> Novo Cliente
+          </button>
+
+          <h2 style={{color: 'white'}}>Base de Clientes ({filtrados.length})</h2>
         </div>
       </div>
 
@@ -144,8 +149,6 @@ function BaseClientes({ unidadeId, onBack }) {
       {clienteSelecionado && (
         <div className="full-screen-overlay">
           <div className="ficha-container-premium">
-            
-            {/* Header da Ficha */}
             <div className="ficha-header-sticky">
               <button className="back-button" onClick={() => setClienteSelecionado(null)}>← Voltar para a Lista</button>
               <h3>{editando ? 'Editando Ficha' : 'Ficha Detalhada do Cliente'}</h3>
@@ -158,10 +161,8 @@ function BaseClientes({ unidadeId, onBack }) {
               </div>
             </div>
 
-            {/* Conteúdo com Scroll */}
             <div className="ficha-content-scroll">
               <form onSubmit={handleSalvarEdicao} className="entrada-form">
-                
                 <div className="form-section">
                   <h4>Informações Pessoais</h4>
                   <div className="form-row">
