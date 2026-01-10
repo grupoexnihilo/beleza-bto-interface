@@ -20,7 +20,7 @@ function LoginForm() {
       // O login foi bem-sucedido, o nosso App.jsx irá detetar a mudança
     } catch (err) {
       setError('Email ou senha inválidos. Por favor, tente novamente.');
-      console.error("Erro de autenticação:", err);
+      console.error("Erro de autenticação:", error);
     }
   };
   // FUNÇÃO DE RECUPERAÇÃO DE SENHA
