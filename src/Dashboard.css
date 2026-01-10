@@ -381,3 +381,36 @@
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* ESTILIZAÇÃO DA BARRA DE ROLAGEM (TEMA ESCURO) */
+
+/* 1. Define a largura da barra */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* 2. O fundo da barra (Trilha) - Deixamos transparente para não marcar o layout */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* 3. O "Pegador" (Screwdrive) - Um cinza escuro que só aparece quando passa o mouse */
+::-webkit-scrollbar-thumb {
+  background: #222; 
+  border-radius: 10px;
+  border: 2px solid #050505; /* Cria uma margem para parecer mais fina */
+}
+
+/* 4. Quando o usuário passa o mouse na barra, ela ganha um leve destaque azul (sua marca) */
+::-webkit-scrollbar-thumb:hover {
+  background: #0ea5e9;
+}
+
+/* ATIVAÇÃO DA ROLAGEM NAS TELAS */
+
+/* Garante que o container de conteúdo principal permita rolagem se transbordar */
+.content-body-scroll {
+  height: 100%;
+  overflow-y: auto !important; /* Força a rolagem vertical */
+  overflow-x: hidden; /* Evita rolagem lateral indesejada */
+  padding-right: 10px; /* Espaço para a barra não cobrir o conteúdo */
+}
