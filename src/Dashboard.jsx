@@ -216,25 +216,25 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
     <div className="dashboard-main-wrapper">
       <header className="navbar-superior">
         <div className="nav-top-row">
-          <div className="nav-logo-area">
-            <img src={logoBelezaBTO} alt="Logo" className="nav-logo-img" />
-            <div className="versiculo-container">
-              <span className="versiculo-texto">"{versiculoDoDia.texto}"</span>
-              <span className="versiculo-ref">{versiculoDoDia.referencia}</span>
-            </div>
-          </div>
-          
-          <div className="nav-user-actions">
-            <div className="user-info-group">
-              <div className="user-greeting">
-                <span>Olá, <strong>{user?.nome || 'Usuário'}</strong> 👋</span>
-                <small>{unidadeAtual?.nome}</small>
-              </div>
-              <span className="data-header">{dataAtualFormatada.charAt(0).toUpperCase() + dataAtualFormatada.slice(1)}</span>
-            </div>
-            <button className="btn-sair-pill" onClick={onLogout}>Sair</button>
-          </div>
-        </div>
+  <div className="nav-logo-area">
+    <img src={logoBelezaBTO} alt="Logo" className="nav-logo-img" />
+    <div className="versiculo-container">
+      <span className="versiculo-texto">"{versiculoDoDia.texto}"</span>
+      <span className="versiculo-ref">{versiculoDoDia.referencia}</span>
+    </div>
+  </div>
+  
+  <div className="nav-user-actions">
+    <div className="user-info-group">
+      <div className="user-greeting">
+        <span>Olá, <strong>{user?.nome || 'Usuário'}</strong> 👋</span>
+        <small>{unidadeAtual?.nome}</small>
+      </div>
+      <span className="data-header">{dataAtualFormatada.charAt(0).toUpperCase() + dataAtualFormatada.slice(1)}</span>
+    </div>
+    <button className="btn-sair-pill" onClick={onLogout}>Sair</button>
+  </div>
+</div>
 
         {/* ESTRUTURA DO MENU COM ANIMAÇÃO LATERAL */}
         <nav className={`nav-bottom-row ${menuExpandido ? 'expandido' : 'recolhido'}`}>

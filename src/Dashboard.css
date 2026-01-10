@@ -28,7 +28,7 @@
 .navbar-superior {
   background: #0a0a0a;
   border-bottom: 1px solid #1a1a1a;
-  padding: 20px 30px;
+  padding: 15px 30px;
   flex-shrink: 0;
   z-index: 1000;
 }
@@ -37,11 +37,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
 }
 
 .nav-logo-img { height: 48px; object-fit: contain; }
-.nav-user-actions { display: flex; align-items: center; gap: 20px; }
+.nav-user-actions { display: flex; align-items: center; gap: 25px; }
 .user-greeting { text-align: right; color: #fff; }
 .user-greeting small { color: #666; font-size: 0.75rem; display: block; }
 
@@ -263,7 +263,7 @@
 
 /* --- 8. VERSÍCULO E DATA --- */
 .versiculo-container {
-  margin-left: 25px;
+  justify-content: center;
   padding-left: 20px;
   border-left: 1px solid #222;
   display: flex;
