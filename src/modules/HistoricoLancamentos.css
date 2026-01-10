@@ -44,7 +44,7 @@
   padding: 8px 15px; /* Altura consistente com inputs */
   cursor: pointer;
   background-color: var(--primary-color);
-  color: rgb(0, 0, 0);
+  color: white;
   border: none;
   border-radius: 6px; /* Consistente */
   transition: background-color 0.2s ease;
