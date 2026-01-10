@@ -73,7 +73,7 @@
 
 /* Gira o botão quando expandido */
 .expandido .btn-menu-control {
-  transform: rotate(135deg);
+  transform: rotate(180deg);
   background: #1e293b;
 }
 
