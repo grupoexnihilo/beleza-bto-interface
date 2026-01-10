@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './BaseClientes.css';
+import CadastroClienteForm from '../components/CadastroClienteForm';
 
 function BaseClientes({ unidadeId, onBack }) {
   const [clientes, setClientes] = useState([]);
@@ -8,6 +9,7 @@ function BaseClientes({ unidadeId, onBack }) {
   const [showSearch, setShowSearch] = useState(false);
   const [clienteSelecionado, setClienteSelecionado] = useState(null);
   const [editando, setEditando] = useState(false);
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
   // --- LÓGICA DE CARREGAMENTO ---
   const carregarClientes = useCallback(async () => {
@@ -71,6 +73,18 @@ function BaseClientes({ unidadeId, onBack }) {
     c.cpf?.includes(busca) ||
     c.email?.toLowerCase().includes(busca.toLowerCase())
   );
+// ---LÓGICA DE MOSTRAR FORMULÁRIO ---
+  if (mostrarFormulario) {
+    return (
+      <CadastroClienteForm 
+        unidadeId={unidadeId} 
+        onBack={() => {
+          setMostrarFormulario(false);
+          carregarClientes(); // Recarrega a lista ao voltar
+        }} 
+      />
+    );
+  }
 
   return (
     <div className="base-clientes-container">
@@ -88,9 +102,9 @@ function BaseClientes({ unidadeId, onBack }) {
             />
             <button className="btn-lupa" onClick={() => setShowSearch(!showSearch)}>🔍</button>
           </div>
-          <button className="btn-novo-cliente" onClick={() => setTelaAtiva('cadastros')}>
-      <span>+</span> Novo Cliente
-    </button>
+          <button className="btn-novo-cliente" onClick={() => setMostrarFormulario(true)}>
+  <span>+</span> Novo Cliente
+</button>
            <h2>Base de Clientes ({filtrados.length})</h2>
         </div>
       </div>
