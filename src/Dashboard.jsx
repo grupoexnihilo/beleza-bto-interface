@@ -217,12 +217,12 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
       <header className="navbar-superior">
         <div className="nav-top-row">
   <div className="nav-logo-area">
-    <img src={logoBelezaBTO} alt="Logo" className="nav-logo-img" />
-    <div className="versiculo-container">
-      <span className="versiculo-texto">"{versiculoDoDia.texto}"</span>
-      <span className="versiculo-ref">{versiculoDoDia.referencia}</span>
-    </div>
+  <img src={logoBelezaBTO} alt="Logo" className="nav-logo-img" />
+  <div className="versiculo-container">
+    <span className="versiculo-texto">"{versiculoDoDia.texto}"</span>
+    <span className="versiculo-ref">{versiculoDoDia.referencia}</span>
   </div>
+</div>
   
   <div className="nav-user-actions">
     <div className="user-info-group">
