@@ -5,6 +5,7 @@ function Caixa({ unidadeId, onBack }) {
   const [caixaAberto, setCaixaAberto] = useState(false);
   const [loading, setLoading] = useState(false);
   const [valorInput, setValorInput] = useState("0,00");
+  
 
   // Estados fictícios para o Layout
   const [dadosCaixa, setDadosCaixa] = useState({
@@ -16,10 +17,14 @@ function Caixa({ unidadeId, onBack }) {
       { id: 2, tipo: 'DESPESA', descricao: 'Compra Material Limpeza', valor: 50.00, hora: '11:15' },
       { id: 3, tipo: 'RECEITA', descricao: 'Comanda #103 - Maria Oliveira', valor: 300.00, hora: '14:00' },
       { id: 4, tipo: 'DESPESA', descricao: 'Reposição de estoque', valor: 70.00, hora: '15:20' },
+      { id: 1, tipo: 'RECEITA', descricao: 'Comanda #102', valor: 150.00, hora: '10:30', formaPagamento: 'Pix' },
+      { id: 2, tipo: 'SANGRIA', descricao: 'Retirada para Cofre', valor: 200.00, hora: '11:00', formaPagamento: 'Dinheiro' },
     ]
   });
 
-  const saldoAtual = (dadosCaixa.valorAbertura + dadosCaixa.receitas) - dadosCaixa.despesas;
+  const totalSangrias = dadosCaixa.sangrias || 0; 
+  const saldoAtual = (dadosCaixa.valorAbertura + dadosCaixa.receitas) - dadosCaixa.despesas - totalSangrias;
+
 
   // Função para formatar moeda em tempo real
   const formatarMoedaInput = (valor) => {
@@ -81,6 +86,10 @@ function Caixa({ unidadeId, onBack }) {
               <span>Despesas (-)</span>
               <p>R$ {dadosCaixa.despesas.toFixed(2)}</p>
             </div>
+            <div className="resumo-card sangria">
+             <span>Sangrias (out)</span>
+             <p>R$ {totalSangrias.toFixed(2)}</p>
+             </div>
             <div className="resumo-card saldo">
               <span>Caixa Atual</span>
               <p>R$ {saldoAtual.toFixed(2)}</p>
@@ -99,25 +108,27 @@ function Caixa({ unidadeId, onBack }) {
                   <th>Hora</th>
                   <th>Descrição</th>
                   <th>Tipo</th>
-                  <th style={{textAlign: 'right'}}>Valor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dadosCaixa.historico.map(item => (
-                  <tr key={item.id}>
-                    <td style={{color: '#888'}}>{item.hora}</td>
-                    <td>{item.descricao}</td>
-                    <td>
-                        <span className={`badge-tipo ${item.tipo.toLowerCase()}`}>
-                            {item.tipo}
-                        </span>
-                    </td>
-                    <td style={{textAlign: 'right', fontWeight: 'bold'}}>
-                        {item.tipo === 'RECEITA' ? '+ ' : '- '} R$ {item.valor.toFixed(2)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+                  <th>Forma</th> {/* NOVA COLUNA */}
+    <th style={{textAlign: 'right'}}>Valor</th>
+  </tr>
+</thead>
+<tbody>
+  {dadosCaixa.historico.map(item => (
+    <tr key={item.id}>
+      <td style={{color: '#888'}}>{item.hora}</td>
+      <td>{item.descricao}</td>
+      <td>
+          <span className={`badge-tipo ${item.tipo.toLowerCase()}`}>
+              {item.tipo}
+          </span>
+      </td>
+      <td style={{fontSize: '0.85rem', color: '#ccc'}}>{item.formaPagamento || '-'}</td> {/* DADO DA FORMA */}
+      <td style={{textAlign: 'right', fontWeight: 'bold', color: item.tipo === 'RECEITA' ? '#10b981' : '#ef4444'}}>
+          {item.tipo === 'RECEITA' ? '+ ' : '- '} R$ {item.valor.toFixed(2)}
+      </td>
+    </tr>
+  ))}
+</tbody>
             </table>
           </div>
         </>
