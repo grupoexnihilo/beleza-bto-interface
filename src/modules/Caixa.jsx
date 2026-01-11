@@ -4,6 +4,7 @@ import './Caixa.css';
 function Caixa({ unidadeId, onBack }) {
   const [caixaAberto, setCaixaAberto] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [valorInput, setValorInput] = useState("0,00");
 
   // Estados fictícios para o Layout
   const [dadosCaixa, setDadosCaixa] = useState({
@@ -19,6 +20,20 @@ function Caixa({ unidadeId, onBack }) {
   });
 
   const saldoAtual = (dadosCaixa.valorAbertura + dadosCaixa.receitas) - dadosCaixa.despesas;
+
+  // Função para formatar moeda em tempo real
+  const formatarMoedaInput = (valor) => {
+     // Remove tudo que não é dígito
+     const apenasNumeros = valor.replace(/\D/g, "");
+    
+     // Converte para centavos
+       const options = { minimumFractionDigits: 2 };
+    const resultado = Intl.NumberFormat("pt-BR", options).format(
+      parseFloat(apenasNumeros) / 100
+    );
+
+    return resultado === "NaN" ? "0,00" : resultado;
+  };
 
   return (
     <div className="caixa-container">
@@ -39,7 +54,13 @@ function Caixa({ unidadeId, onBack }) {
           <p>Defina o valor em dinheiro disponível para iniciar o dia.</p>
           <div className="form-group">
             <label>Valor de Abertura (R$)</label>
-            <input type="number" placeholder="0,00" />
+            <input 
+    type="text" 
+    placeholder="0,00" 
+    value={valorInput}
+    onChange={(e) => setValorInput(formatarMoedaInput(e.target.value))}
+    style={{ textAlign: 'center', fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary-color)' }}
+  />
           </div>
           <button className="btn-abrir" onClick={() => setCaixaAberto(true)}>Confirmar Abertura</button>
         </div>
