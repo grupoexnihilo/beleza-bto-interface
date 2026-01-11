@@ -7,6 +7,7 @@ import Agendamento from './modules/Agendamento';
 import BaseClientes from './modules/BaseClientes';
 import HistoricoLancamentos from './modules/HistoricoLancamentos';
 import LoginForm from './modules/LoginForm';
+import Caixa from './modules/Caixa';
 
 // --- IMPORTAÇÃO DE COMPONENTES ---
 import ModalComanda from './components/ModalComanda';
@@ -19,6 +20,7 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
   const [telaAtiva, setTelaAtiva] = useState('resumo');
   const [menuExpandido, setMenuExpandido] = useState(false);
   const [filtroAberto, setFiltroAberto] = useState(false);
+  
 
   // --- ESTADOS DE MODAIS E MENUS ---
   const [menuContexto, setMenuContexto] = useState({ visivel: false, x: 0, y: 0, agendamentoId: null });
@@ -188,6 +190,7 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
                   <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('cadastros')}>+ Novo Cliente</button>
                   <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('agendamentos')}>+ Novo Agendamento</button>
                   <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('financeiro')}>+ Lançar Valor</button>
+                  <button className="btn-atalho-fluido" onClick={() => setTelaAtiva('caixa')}>Abrir Caixa</button>
                 </div>
               </div>
             </div>
@@ -247,6 +250,7 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
               { id: 'resumo', label: '📊 Resumo' },
               { id: 'agendamentos', label: '📅 Agendamentos' },
               { id: 'clientes', label: '👥 Clientes' },
+              { id: 'caixa', label: '💰 Caixa' },
               { id: 'financeiro', label: '💰 Financeiro' },
               { id: 'servicos', label: '✂️ Serviços' },
               { id: 'cadastros', label: '📝 Cadastros' },

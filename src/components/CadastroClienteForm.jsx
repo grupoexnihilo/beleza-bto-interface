@@ -107,8 +107,8 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
      value={unidadeAtual?.nome || 'Unidade não identificada'} 
      disabled 
      className="input-disabled-premium"
-   />
-</div>
+    />
+ </div>
 </div>
 
         {/* Nome Completo e Data de Nascimento */}

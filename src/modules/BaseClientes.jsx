@@ -32,6 +32,7 @@ function BaseClientes({ unidadeId, onBack, user, unidades }) {
   useEffect(() => {
     carregarClientes();
   }, [carregarClientes]);
+  
 
   // --- LÓGICA DE EDIÇÃO (EXISTENTE) ---
   const handleSalvarEdicao = async (e) => {
