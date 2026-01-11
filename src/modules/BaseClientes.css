@@ -227,3 +227,26 @@ input:disabled, textarea:disabled {
 .btn-novo-cliente:active {
   transform: translateY(0);
 }
+
+/* --- AJUSTE DE SEGURANÇA PARA O FORMULÁRIO DE CADASTRO --- */
+.container-integracao-cadastro {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #050505; /* Cor sólida para matar a tela azul */
+    z-index: 10000;      /* Fica na frente de tudo */
+    overflow-y: auto;    /* Permite rolar o formulário */
+    padding: 40px 20px;
+}
+
+/* Centraliza o conteúdo do formulário importado */
+.container-integracao-cadastro > div {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #0a0a0a;
+    border: 1px solid #222;
+    border-radius: 20px;
+    padding: 30px;
+}
