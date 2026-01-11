@@ -62,7 +62,8 @@ function Caixa({ unidadeId, onBack }) {
     style={{ textAlign: 'center', fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary-color)' }}
   />
           </div>
-          <button className="btn-abrir" onClick={() => setCaixaAberto(true)}>Confirmar Abertura</button>
+          <button className="btn-abrir" onClick={() => {const valorNumerico = parseFloat(valorInput.replace(/\./g, '').replace(',', '.'));
+    setDadosCaixa(prev => ({ ...prev, valorAbertura: valorNumerico }));setCaixaAberto(true)}}>Confirmar Abertura</button>
         </div>
       ) : (
         /* TELA DE FLUXO ATIVO */
