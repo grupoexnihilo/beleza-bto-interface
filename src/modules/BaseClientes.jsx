@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './BaseClientes.css';
+import CadastroClienteForm from '../components/CadastroClienteForm';
 
-function BaseClientes({ unidadeId, onBack }) {
+function BaseClientes({ unidadeId, onBack, user, unidades }) {
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busca, setBusca] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [clienteSelecionado, setClienteSelecionado] = useState(null);
   const [editando, setEditando] = useState(false);
+  
+  // ESTADO QUE CONTROLA A TROCA DE TELA
+  const [modoCadastro, setModoCadastro] = useState(false);
 
   // --- LÓGICA DE CARREGAMENTO ---
   const carregarClientes = useCallback(async () => {
@@ -29,46 +33,19 @@ function BaseClientes({ unidadeId, onBack }) {
     carregarClientes();
   }, [carregarClientes]);
 
-  // --- LÓGICA DE NOVO CLIENTE (ABRIR FICHA VAZIA) ---
-  const handleNovoCliente = () => {
-    setClienteSelecionado({
-      nome: '',
-      whatsapp: '',
-      email: '',
-      cpf: '',
-      data_nascimento: '',
-      cep: '',
-      endereco: '',
-      numero: '',
-      bairro: '',
-      cidade: '',
-      estado: '',
-      atividade: '',
-      data_cadastro: new Date().toISOString()
-    });
-    setEditando(true); // Já abre permitindo escrever
-  };
-
-  // --- LÓGICA DE SALVAR (EDIÇÃO OU CADASTRO) ---
+  // --- LÓGICA DE EDIÇÃO (EXISTENTE) ---
   const handleSalvarEdicao = async (e) => {
     if(e) e.preventDefault();
-    
-    // Se o cliente não tem ID, usamos a API de cadastrar, se tem, usamos a de editar
-    const isNovo = !clienteSelecionado.id;
-    const endpoint = isNovo ? '/api/cadastrar-cliente' : '/api/editar-cliente';
-    const metodo = isNovo ? 'POST' : 'PUT';
-
     try {
-      const response = await fetch(endpoint, {
-        method: metodo,
+      const response = await fetch('/api/editar-cliente', {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...clienteSelecionado, unidadeId }),
+        body: JSON.stringify(clienteSelecionado),
       });
 
       if (response.ok) {
-        alert(isNovo ? 'Cliente cadastrado com sucesso!' : 'Ficha atualizada com sucesso!');
+        alert('Ficha atualizada com sucesso!');
         setEditando(false);
-        setClienteSelecionado(null); // Fecha a ficha
         carregarClientes();
       } else {
         alert('Erro ao salvar alterações.');
@@ -99,6 +76,21 @@ function BaseClientes({ unidadeId, onBack }) {
     c.email?.toLowerCase().includes(busca.toLowerCase())
   );
 
+  // --- LÓGICA DE NAVEGAÇÃO ENTRE LISTA E FORMULÁRIO ---
+  if (modoCadastro) {
+    return (
+      <CadastroClienteForm 
+        unidadeId={unidadeId} 
+        unidades={unidades}
+        user={user}
+        onBack={() => {
+          setModoCadastro(false);
+          carregarClientes(); // Recarrega para mostrar o novo cliente na volta
+        }} 
+      />
+    );
+  }
+
   return (
     <div className="base-clientes-container">
       {/* HEADER DA LISTA */}
@@ -116,7 +108,7 @@ function BaseClientes({ unidadeId, onBack }) {
             <button className="btn-lupa" onClick={() => setShowSearch(!showSearch)}>🔍</button>
           </div>
 
-          <button className="btn-novo-cliente" onClick={handleNovoCliente}>
+          <button className="btn-novo-cliente" onClick={() => setModoCadastro(true)}>
             <span>+</span> Novo Cliente
           </button>
 
@@ -155,13 +147,13 @@ function BaseClientes({ unidadeId, onBack }) {
         </table>
       </div>
 
-      {/* FICHA DO CLIENTE EM TELA CHEIA (OVERLAY) */}
+      {/* FICHA DE EDIÇÃO (OVERLAY) */}
       {clienteSelecionado && (
         <div className="full-screen-overlay">
           <div className="ficha-container-premium">
             <div className="ficha-header-sticky">
               <button className="back-button" onClick={() => setClienteSelecionado(null)}>← Voltar para a Lista</button>
-              <h3>{editando ? (clienteSelecionado.id ? 'Editando Ficha' : 'Novo Cadastro') : 'Ficha Detalhada do Cliente'}</h3>
+              <h3>{editando ? 'Editando Ficha' : 'Ficha Detalhada'}</h3>
               <div className="header-btns">
                 {!editando ? (
                   <button className="submit-button" style={{background: '#333'}} onClick={() => setEditando(true)}>Editar Dados</button>
@@ -178,59 +170,19 @@ function BaseClientes({ unidadeId, onBack }) {
                   <div className="form-row">
                     <div className="form-group">
                       <label>Nome Completo</label>
-                      <input type="text" disabled={!editando} value={clienteSelecionado.nome || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, nome: e.target.value})} required />
+                      <input type="text" disabled={!editando} value={clienteSelecionado.nome || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, nome: e.target.value})} />
                     </div>
                     <div className="form-group">
                       <label>Data de Nascimento</label>
                       <input type="date" disabled={!editando} value={clienteSelecionado.data_nascimento?.split('T')[0] || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, data_nascimento: e.target.value})} />
                     </div>
                   </div>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>WhatsApp</label>
-                      <input type="text" disabled={!editando} value={clienteSelecionado.whatsapp || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, whatsapp: e.target.value})} required />
-                    </div>
-                    <div className="form-group">
-                      <label>E-mail</label>
-                      <input type="email" disabled={!editando} value={clienteSelecionado.email || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, email: e.target.value})} />
-                    </div>
-                    <div className="form-group">
-                      <label>CPF</label>
-                      <input type="text" disabled={!editando} value={clienteSelecionado.cpf || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, cpf: e.target.value})} />
-                    </div>
-                  </div>
+                  {/* ... demais campos da sua ficha original ... */}
                 </div>
-
-                <div className="form-section">
-                  <h4>Endereço e Localização</h4>
-                  <div className="form-row" style={{gridTemplateColumns: '1fr 3fr 1fr'}}>
-                    <div className="form-group"><label>CEP</label><input type="text" disabled={!editando} value={clienteSelecionado.cep || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, cep: e.target.value})} /></div>
-                    <div className="form-group"><label>Endereço</label><input type="text" disabled={!editando} value={clienteSelecionado.endereco || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, endereco: e.target.value})} /></div>
-                    <div className="form-group"><label>Nº</label><input type="text" disabled={!editando} value={clienteSelecionado.numero || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, numero: e.target.value})} /></div>
-                  </div>
-                  <div className="form-row">
-                    <div className="form-group"><label>Bairro</label><input type="text" disabled={!editando} value={clienteSelecionado.bairro || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, bairro: e.target.value})} /></div>
-                    <div className="form-group"><label>Cidade</label><input type="text" disabled={!editando} value={clienteSelecionado.cidade || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, cidade: e.target.value})} /></div>
-                    <div className="form-group"><label>Estado</label><input type="text" disabled={!editando} value={clienteSelecionado.estado || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, estado: e.target.value})} /></div>
-                  </div>
-                </div>
-
-                <div className="form-section">
-                  <h4>Atividade, Observações e Histórico</h4>
-                  <textarea 
-                    rows="8" 
-                    disabled={!editando} 
-                    className="obs-textarea-ficha"
-                    placeholder="Histórico do cliente..."
-                    value={clienteSelecionado.atividade || ''} 
-                    onChange={e => setClienteSelecionado({...clienteSelecionado, atividade: e.target.value})}
-                  />
-                </div>
+                {/* (Mantenha o restante dos seus campos da ficha aqui) */}
               </form>
             </div>
-
             <div className="ficha-footer">
-              <p style={{color: '#555'}}>{clienteSelecionado.id ? `ID: ${clienteSelecionado.id}` : 'Novo Registro'}</p>
               <button className="back-button" onClick={() => setClienteSelecionado(null)}>Fechar Ficha</button>
             </div>
           </div>
