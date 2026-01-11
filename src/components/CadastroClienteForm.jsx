@@ -25,8 +25,12 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
     atividade: ''
   });
 
-  const unidadeAtual = unidades.find(u => u.id === unidadeId);
-
+  const unidadeAtual = unidades?.find(u => u.id === unidadeId) || { nome: "Carregando unidade..." };
+  useEffect(() => {
+       if (unidadeId) {
+     setFormData(prev => ({ ...prev, unidade: unidadeId }));
+   }
+ }, [unidadeId]);
   const estados = [
     { sigla: 'AC' }, { sigla: 'AL' }, { sigla: 'AP' }, { sigla: 'AM' }, { sigla: 'BA' }, 
     { sigla: 'CE' }, { sigla: 'DF' }, { sigla: 'ES' }, { sigla: 'GO' }, { sigla: 'MA' }, 
@@ -96,11 +100,16 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
             <label>Data de Cadastro</label>
             <input type="date" value={formData.data_cadastro} onChange={(e) => setFormData({...formData, data_cadastro: e.target.value})} />
           </div>
-          <div className="form-group">
-            <label>Unidade</label>
-            <input type="text" value={unidadeAtual?.nome || ''} disabled />
-          </div>
-        </div>
+           <div className="form-group">
+       <label>Unidade</label>
+     <input 
+     type="text" 
+     value={unidadeAtual?.nome || 'Unidade não identificada'} 
+     disabled 
+     className="input-disabled-premium"
+   />
+</div>
+</div>
 
         {/* Nome Completo e Data de Nascimento */}
         <div className="form-row">
