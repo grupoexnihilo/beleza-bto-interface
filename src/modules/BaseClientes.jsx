@@ -77,17 +77,20 @@ function BaseClientes({ unidadeId, onBack, user, unidades }) {
   );
 
   // --- LÓGICA DE NAVEGAÇÃO ENTRE LISTA E FORMULÁRIO ---
+  // --- RENDERIZAÇÃO CONDICIONAL ---
   if (modoCadastro) {
     return (
-      <CadastroClienteForm 
-        unidadeId={unidadeId} 
-        unidades={unidades}
-        user={user}
-        onBack={() => {
-          setModoCadastro(false);
-          carregarClientes(); // Recarrega para mostrar o novo cliente na volta
-        }} 
-      />
+      <div className="container-integracao-cadastro">
+        <CadastroClienteForm 
+          unidadeId={unidadeId} 
+          unidades={unidades || []}
+          user={user}
+          onBack={() => {
+            setModoCadastro(false);
+            carregarClientes(); 
+          }} 
+        />
+      </div>
     );
   }
 
