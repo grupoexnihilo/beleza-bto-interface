@@ -40,6 +40,12 @@ function Caixa({ unidadeId, onBack }) {
     return resultado === "NaN" ? "0,00" : resultado;
   };
 
+  const dataHoje = new Date().toLocaleDateString('pt-BR', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+});
+
   return (
     <div className="caixa-container">
       <div className="header-base">
@@ -101,7 +107,12 @@ function Caixa({ unidadeId, onBack }) {
           </div>
 
           <div className="table-wrapper">
-            <h4 className="table-title">Histórico de Movimentações</h4>
+            <div className="historico-header">
+              <h4 className="table-title">Histórico de Movimentações</h4>
+              <div className="data-caixa-badge">
+              📅 Movimentos de: <strong>{dataHoje}</strong>
+             </div>
+             </div>
             <table className="clientes-table">
               <thead>
                 <tr>

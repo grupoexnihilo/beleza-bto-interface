@@ -101,3 +101,31 @@
     font-style: italic;
     opacity: 0.8;
 }
+
+.historico-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #222;
+}
+
+.data-caixa-badge {
+  background: #1a1a1a;
+  padding: 6px 15px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.data-caixa-badge strong {
+  color: var(--primary-color);
+  margin-left: 5px;
+}
+
+/* Ajuste na tabela para não ficar colada no header */
+.table-wrapper {
+  margin-top: 10px;
+}
