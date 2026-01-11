@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './BaseClientes.css';
-import CadastroClienteForm from '../components/CadastroClienteForm';
 
 function BaseClientes({ unidadeId, onBack }) {
   const [clientes, setClientes] = useState([]);
@@ -9,7 +8,6 @@ function BaseClientes({ unidadeId, onBack }) {
   const [showSearch, setShowSearch] = useState(false);
   const [clienteSelecionado, setClienteSelecionado] = useState(null);
   const [editando, setEditando] = useState(false);
-  const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
   // --- LÓGICA DE CARREGAMENTO ---
   const carregarClientes = useCallback(async () => {
@@ -31,19 +29,46 @@ function BaseClientes({ unidadeId, onBack }) {
     carregarClientes();
   }, [carregarClientes]);
 
-  // --- LÓGICA DE EDIÇÃO ---
+  // --- LÓGICA DE NOVO CLIENTE (ABRIR FICHA VAZIA) ---
+  const handleNovoCliente = () => {
+    setClienteSelecionado({
+      nome: '',
+      whatsapp: '',
+      email: '',
+      cpf: '',
+      data_nascimento: '',
+      cep: '',
+      endereco: '',
+      numero: '',
+      bairro: '',
+      cidade: '',
+      estado: '',
+      atividade: '',
+      data_cadastro: new Date().toISOString()
+    });
+    setEditando(true); // Já abre permitindo escrever
+  };
+
+  // --- LÓGICA DE SALVAR (EDIÇÃO OU CADASTRO) ---
   const handleSalvarEdicao = async (e) => {
     if(e) e.preventDefault();
+    
+    // Se o cliente não tem ID, usamos a API de cadastrar, se tem, usamos a de editar
+    const isNovo = !clienteSelecionado.id;
+    const endpoint = isNovo ? '/api/cadastrar-cliente' : '/api/editar-cliente';
+    const metodo = isNovo ? 'POST' : 'PUT';
+
     try {
-      const response = await fetch('/api/editar-cliente', {
-        method: 'PUT',
+      const response = await fetch(endpoint, {
+        method: metodo,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(clienteSelecionado),
+        body: JSON.stringify({ ...clienteSelecionado, unidadeId }),
       });
 
       if (response.ok) {
-        alert('Ficha atualizada com sucesso!');
+        alert(isNovo ? 'Cliente cadastrado com sucesso!' : 'Ficha atualizada com sucesso!');
         setEditando(false);
+        setClienteSelecionado(null); // Fecha a ficha
         carregarClientes();
       } else {
         alert('Erro ao salvar alterações.');
@@ -74,21 +99,6 @@ function BaseClientes({ unidadeId, onBack }) {
     c.email?.toLowerCase().includes(busca.toLowerCase())
   );
 
-  // --- RENDERIZAÇÃO CONDICIONAL ---
-  // Se mostrarFormulario for true, renderiza o formulário e encerra aqui
-  if (mostrarFormulario) {
-    return (
-      <CadastroClienteForm 
-        unidadeId={unidadeId} 
-        onBack={() => {
-          setMostrarFormulario(false);
-          carregarClientes(); 
-        }} 
-      />
-    );
-  }
-
-  // Caso contrário, renderiza a lista normal (Sua tela original)
   return (
     <div className="base-clientes-container">
       {/* HEADER DA LISTA */}
@@ -106,7 +116,7 @@ function BaseClientes({ unidadeId, onBack }) {
             <button className="btn-lupa" onClick={() => setShowSearch(!showSearch)}>🔍</button>
           </div>
 
-          <button className="btn-novo-cliente" onClick={() => setMostrarFormulario(true)}>
+          <button className="btn-novo-cliente" onClick={handleNovoCliente}>
             <span>+</span> Novo Cliente
           </button>
 
@@ -151,7 +161,7 @@ function BaseClientes({ unidadeId, onBack }) {
           <div className="ficha-container-premium">
             <div className="ficha-header-sticky">
               <button className="back-button" onClick={() => setClienteSelecionado(null)}>← Voltar para a Lista</button>
-              <h3>{editando ? 'Editando Ficha' : 'Ficha Detalhada do Cliente'}</h3>
+              <h3>{editando ? (clienteSelecionado.id ? 'Editando Ficha' : 'Novo Cadastro') : 'Ficha Detalhada do Cliente'}</h3>
               <div className="header-btns">
                 {!editando ? (
                   <button className="submit-button" style={{background: '#333'}} onClick={() => setEditando(true)}>Editar Dados</button>
@@ -168,7 +178,7 @@ function BaseClientes({ unidadeId, onBack }) {
                   <div className="form-row">
                     <div className="form-group">
                       <label>Nome Completo</label>
-                      <input type="text" disabled={!editando} value={clienteSelecionado.nome || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, nome: e.target.value})} />
+                      <input type="text" disabled={!editando} value={clienteSelecionado.nome || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, nome: e.target.value})} required />
                     </div>
                     <div className="form-group">
                       <label>Data de Nascimento</label>
@@ -178,7 +188,7 @@ function BaseClientes({ unidadeId, onBack }) {
                   <div className="form-row">
                     <div className="form-group">
                       <label>WhatsApp</label>
-                      <input type="text" disabled={!editando} value={clienteSelecionado.whatsapp || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, whatsapp: e.target.value})} />
+                      <input type="text" disabled={!editando} value={clienteSelecionado.whatsapp || ''} onChange={e => setClienteSelecionado({...clienteSelecionado, whatsapp: e.target.value})} required />
                     </div>
                     <div className="form-group">
                       <label>E-mail</label>
@@ -220,7 +230,7 @@ function BaseClientes({ unidadeId, onBack }) {
             </div>
 
             <div className="ficha-footer">
-              <p style={{color: '#555'}}>ID: {clienteSelecionado.id}</p>
+              <p style={{color: '#555'}}>{clienteSelecionado.id ? `ID: ${clienteSelecionado.id}` : 'Novo Registro'}</p>
               <button className="back-button" onClick={() => setClienteSelecionado(null)}>Fechar Ficha</button>
             </div>
           </div>
