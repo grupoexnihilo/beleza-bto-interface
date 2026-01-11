@@ -17,8 +17,21 @@
 
 .resumo-card.receita p { color: #10b981; }
 .resumo-card.despesa p { color: #f87171; }
-.resumo-card.saldo { background: var(--primary-color); border: none; }
-.resumo-card.saldo p { color: white; }
+/* AJUSTE CARD CAIXA ATUAL */
+.resumo-card.saldo {
+  background: #003955; /* Azul mais profundo e profissional */
+  border: 1px solid #0ea5e9;
+  box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3); /* Brilho suave no fundo */
+}
+
+.resumo-card.saldo p {
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Melhora o contraste da fonte branca */
+}
+
+.resumo-card.saldo span {
+  color: rgba(255, 255, 255, 0.8); /* Deixa a label "Caixa Atual" levemente transparente para destacar o valor */
+}
 
 .abertura-caixa-card {
   max-width: 400px;
