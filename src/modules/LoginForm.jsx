@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth"
-import { auth, db } from '../firebaseconfig';
+import { auth, db } from '../fb_config';
 import './LoginForm.css';
 
 // Lembre-se de colocar a sua logo na pasta 'src'

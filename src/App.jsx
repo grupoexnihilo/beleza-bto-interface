@@ -1,7 +1,7 @@
 // --- APP.JSX INTEGRADO COM DASHBOARD ---
 import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from './firebaseconfig.js'; // Importação limpa
+import { auth } from './fb_config.js'; // Importação limpa
 import LoginForm from './modules/LoginForm.jsx';
 import Dashboard from './Dashboard';
 
