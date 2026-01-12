@@ -10,7 +10,7 @@ const firebaseConfig = {
   appId: "1:38059564151:web:a3032707b30ee624f23a72"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(FirebaseConfig);
 
 // Exportamos o auth para o formulário de login conseguir usar
 export const auth = getAuth(app); 
