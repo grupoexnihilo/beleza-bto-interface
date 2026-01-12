@@ -1,7 +1,7 @@
 // --- APP.JSX INTEGRADO COM DASHBOARD ---
 import React, { useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import app from './FirebaseConfig'; 
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from './firebaseconfig.js'; // Importação limpa
 import LoginForm from './modules/LoginForm.jsx';
 import Dashboard from './Dashboard';
 
@@ -15,9 +15,7 @@ function App() {
   const [unidades, setUnidades] = useState([]);
   const [unidadeSelecionada, setUnidadeSelecionada] = useState('');
 
-  const auth = getAuth(app);
-
-  // --- Monitor de Autenticação ---
+    // --- Monitor de Autenticação ---
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
