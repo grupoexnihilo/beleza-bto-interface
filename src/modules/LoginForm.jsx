@@ -14,7 +14,7 @@ function LoginForm() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-    const auth = getAuth(app);
+    
     try {
       await signInWithEmailAndPassword(auth, email, password);
       // O login foi bem-sucedido, o nosso App.jsx irá detetar a mudança
