@@ -203,6 +203,7 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
       case 'caixa': 
         return <Caixa unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />;
       case 'cadastros': return <CadastroClienteForm user={user} unidadeId={unidadeId} unidades={unidades} onBack={() => setTelaAtiva('resumo')} />;
+      case 'servicos': return <Servicos />;
       case 'financeiro':
         return (
           <div className="modulo-financeiro">
