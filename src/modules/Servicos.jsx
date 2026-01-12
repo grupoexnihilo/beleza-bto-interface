@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import FormServico from './FormServico'; // Vamos criar este abaixo
+import FormServico from '../components/FormServico';
 import './Servicos.css';
 
 const Servicos = () => {
