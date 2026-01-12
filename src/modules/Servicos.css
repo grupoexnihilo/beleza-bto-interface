@@ -1,0 +1,86 @@
+/* Container Principal do Módulo */
+.modulo-container {
+    padding: 25px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.modulo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.modulo-title {
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.modulo-subtitle {
+    color: #888;
+    font-size: 0.95rem;
+    margin-top: 6px;
+}
+
+/* Tabela de Serviços */
+.modulo-card {
+    background: #111111;
+    border: 1px solid #222222;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+.clientes-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.clientes-table th {
+    background: #181818;
+    padding: 18px 20px;
+    color: #666;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    border-bottom: 1px solid #222;
+}
+
+.clientes-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #1a1a1a;
+    color: #d1d1d1;
+    font-size: 0.95rem;
+}
+
+.clientes-table tr:hover {
+    background: #161616;
+}
+
+/* Estilização dos Status */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-badge.ativo {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-badge.inativo {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

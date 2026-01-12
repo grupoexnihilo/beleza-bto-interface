@@ -8,6 +8,7 @@ import BaseClientes from './modules/BaseClientes';
 import HistoricoLancamentos from './modules/HistoricoLancamentos';
 import LoginForm from './modules/LoginForm';
 import Caixa from './modules/Caixa';
+import Servicos from './modules/Servicos';
 
 // --- IMPORTAÇÃO DE COMPONENTES ---
 import ModalComanda from './components/ModalComanda';
