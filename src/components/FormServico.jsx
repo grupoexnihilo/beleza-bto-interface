@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import './FormServico.css';
 
-const FormServico = ({ onClose, onSave }) => {
+const FormServico = ({ onClose, onSave, servicoExistente }) => {
   const [formData, setFormData] = useState({
     nome: '',
     valor: '',
     profissional: '',
     tipo: 'Individual',
     tempo: '01:00',
-    status: 'Ativo'
+    status: 'Ativo',
+    categoria: 'Serviço'
   });
 
-  // Máscara de Moeda (Igual ao Caixa)
+  // Efeito para carregar dados se for edição
+  useEffect(() => {
+    if (servicoExistente) {
+      setFormData({
+        ...servicoExistente,
+        valor: typeof servicoExistente.valor === 'number' 
+               ? "R$ " + servicoExistente.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) 
+               : servicoExistente.valor
+      });
+    }
+  }, [servicoExistente]);
+
   const handleMoneyChange = (e) => {
     let value = e.target.value.replace(/\D/g, "");
     value = (value / 100).toFixed(2) + "";
@@ -21,87 +34,124 @@ const FormServico = ({ onClose, onSave }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Limpa a máscara para salvar apenas o número
-    const valorNumerico = parseFloat(formData.valor.replace("R$ ", "").replace(".", "").replace(",", "."));
+    const valorNumerico = parseFloat(
+      formData.valor.replace("R$ ", "").replace(/\./g, "").replace(",", ".")
+    );
     onSave({ ...formData, valor: valorNumerico });
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content fade-in">
-        <div className="modal-header">
-          <h3>Novo Serviço</h3>
-          <button className="btn-close" onClick={onClose}>&times;</button>
-        </div>
+    <div className="form-full-screen-overlay fade-in">
+      <div className="form-full-screen-container">
+        
+        <header className="form-full-header">
+          <div className="header-info">
+            <span className="badge-categoria">{formData.categoria}</span>
+            <h2>{servicoExistente ? 'Editar Registro' : 'Novo Serviço ou Produto'}</h2>
+            <p>Preencha os dados abaixo para manter seu catálogo atualizado.</p>
+          </div>
+          <button className="btn-close-full" onClick={onClose}>&times;</button>
+        </header>
 
-        <form onSubmit={handleSubmit} className="form-grid">
-          <div className="form-group full-width">
-            <label>Nome do Serviço</label>
-            <input 
-              type="text" 
-              placeholder="Ex: Corte de Cabelo" 
-              required 
-              onChange={(e) => setFormData({...formData, nome: e.target.value})}
-            />
+        <form onSubmit={handleSubmit} className="form-full-body">
+          <div className="form-section">
+            <h4 className="section-title">Informações Básicas</h4>
+            <div className="full-grid">
+              
+              <div className="input-group span-2">
+                <label>Nome do Item</label>
+                <input 
+                  type="text" 
+                  value={formData.nome}
+                  placeholder="Ex: Corte Degradê ou Shampoo Pós-Química"
+                  onChange={(e) => setFormData({...formData, nome: e.target.value})}
+                  required 
+                />
+              </div>
+
+              <div className="input-group">
+                <label>Categoria</label>
+                <select 
+                  value={formData.categoria}
+                  onChange={(e) => setFormData({...formData, categoria: e.target.value})}
+                >
+                  <option value="Serviço">Serviço</option>
+                  <option value="Produto">Produto</option>
+                </select>
+              </div>
+
+              <div className="input-group">
+                <label>Valor de Venda</label>
+                <input 
+                  type="text" 
+                  value={formData.valor}
+                  placeholder="R$ 0,00"
+                  onChange={handleMoneyChange}
+                  required 
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="form-group">
-            <label>Valor</label>
-            <input 
-              type="text" 
-              placeholder="R$ 0,00" 
-              onChange={handleMoneyChange} 
-              required 
-            />
+          <div className="form-section">
+            <h4 className="section-title">Configurações de Execução</h4>
+            <div className="full-grid">
+              
+              <div className="input-group">
+                <label>Profissional Responsável</label>
+                <select 
+                  value={formData.profissional}
+                  onChange={(e) => setFormData({...formData, profissional: e.target.value})}
+                  required
+                >
+                  <option value="">Selecione um profissional...</option>
+                  <option value="Carlos Silva">Carlos Silva</option>
+                  <option value="Ana Paula">Ana Paula</option>
+                  <option value="Marcos Souza">Marcos Souza</option>
+                </select>
+              </div>
+
+              <div className="input-group">
+                <label>Tipo de Atendimento</label>
+                <select 
+                  value={formData.tipo}
+                  onChange={(e) => setFormData({...formData, tipo: e.target.value})}
+                >
+                  <option value="Individual">Individual</option>
+                  <option value="Em Grupo">Em Grupo</option>
+                </select>
+              </div>
+
+              <div className="input-group">
+                <label>Tempo Estimado</label>
+                <input 
+                  type="time" 
+                  value={formData.tempo}
+                  onChange={(e) => setFormData({...formData, tempo: e.target.value})}
+                  required 
+                />
+              </div>
+
+              <div className="input-group">
+                <label>Status no Sistema</label>
+                <select 
+                  value={formData.status}
+                  onChange={(e) => setFormData({...formData, status: e.target.value})}
+                >
+                  <option value="Ativo">Ativo</option>
+                  <option value="Inativo">Inativo</option>
+                </select>
+              </div>
+
+            </div>
           </div>
 
-          <div className="form-group">
-            <label>Profissional</label>
-            <select onChange={(e) => setFormData({...formData, profissional: e.target.value})} required>
-              <option value="">Selecione...</option>
-              <option value="Carlos Silva">Carlos Silva</option>
-              <option value="Ana Paula">Ana Paula</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Tipo</label>
-            <select onChange={(e) => setFormData({...formData, tipo: e.target.value})}>
-              <option value="Individual">Individual</option>
-              <option value="Em Grupo">Em Grupo</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Tempo Estimado</label>
-            <input 
-              type="time" 
-              value={formData.tempo}
-              onChange={(e) => setFormData({...formData, tempo: e.target.value})}
-              required 
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Status</label>
-            <select onChange={(e) => setFormData({...formData, status: e.target.value})}>
-              <option value="Ativo">Ativo</option>
-              <option value="Inativo">Inativo</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Categoria</label>
-            <select value={formData.categoria} onChange={(e) => setFormData({...formData, categoria: e.target.value})}>
-              <option value="Serviço">Serviço</option>
-              <option value="Produto">Produto</option>
-            </select>
-          </div>
-
-          <div className="modal-actions full-width">
-            <button type="button" className="btn-secondary" onClick={onClose}>Cancelar</button>
-            <button type="submit" className="btn-primary">Salvar Serviço</button>
-          </div>
+          <footer className="form-full-footer">
+            <button type="button" className="btn-cancel" onClick={onClose}>Cancelar</button>
+            <button type="submit" className="btn-save-full">
+              {servicoExistente ? 'Salvar Alterações' : 'Confirmar Cadastro'}
+            </button>
+          </footer>
         </form>
       </div>
     </div>

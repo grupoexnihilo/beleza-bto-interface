@@ -10,6 +10,20 @@ const Servicos = () => {
     { id: 2, nome: 'Coloração', valor: 180.00, profissional: 'Ana Paula', tipo: 'Individual', tempo: '02:00', status: 'Ativo' },
   ]);
 
+
+const [servicoParaEditar, setServicoParaEditar] = useState(null);
+
+// Função para abrir o modo de edição
+  const abrirEdicao = (servico) => {
+  setServicoParaEditar(servico);
+  setExibirForm(true);};
+
+// Modifique a função de fechar o form para resetar o edit
+const fecharForm = () => {
+  setExibirForm(false);
+  setServicoParaEditar(null);};
+
+
   return (
     <div className="modulo-container fade-in">
       <div className="modulo-header">
@@ -57,8 +71,7 @@ const Servicos = () => {
                   </span>
                 </td>
                 <td style={{ textAlign: 'right' }}>
-                  <button className="btn-icon-edit">✏️</button>
-                </td>
+                  <button className="btn-icon-edit" onClick={() => abrirEdicao(s)}>✏️</button>                </td>
               </tr>
             ))}
           </tbody>
@@ -66,14 +79,21 @@ const Servicos = () => {
       </div>
 
       {exibirForm && (
-        <FormServico 
-          onClose={() => setExibirForm(false)} 
-          onSave={(novo) => {
-            setServicos([...servicos, { ...novo, id: Date.now() }]);
-            setExibirForm(false);
-          }}
-        />
-      )}
+       <FormServico 
+       onClose={fecharForm} 
+       servicoExistente={servicoParaEditar} // Passa os dados se houver
+        onSave={(dados) => {
+       if (servicoParaEditar) {
+        // Lógica de Atualizar
+        setServicos(servicos.map(s => s.id === servicoParaEditar.id ? { ...dados, id: s.id } : s));
+       } else {
+        // Lógica de Novo
+        setServicos([...servicos, { ...dados, id: Date.now() }]);
+       }
+       fecharForm();
+       }}
+   />
+ )}
     </div>
   );
 };

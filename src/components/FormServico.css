@@ -1,125 +1,152 @@
-/* Fundo do Modal (Glassmorphism) */
-.modal-overlay {
+.form-full-screen-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(10px);
+    width: 100vw;
+    height: 100vh;
+    background: #000000;
+    z-index: 2000;
     display: flex;
     justify-content: center;
-    align-items: center;
-    z-index: 1100;
 }
 
-.modal-content {
-    background: #0f0f0f;
-    width: 90%;
-    max-width: 650px;
-    border-radius: 20px;
-    border: 1px solid #2a2a2a;
-    padding: 35px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+.form-full-screen-container {
+    width: 100%;
+    max-width: 900px;
+    height: 100%;
+    background: #0a0a0a;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 60px;
+    overflow-y: auto;
 }
 
-.modal-header {
+/* Header Estilo Ficha */
+.form-full-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    border-bottom: 1px solid #222;
-    padding-bottom: 20px;
+    align-items: flex-start;
+    margin-bottom: 50px;
 }
 
-.modal-header h3 {
+.header-info h2 {
+    color: #fff;
+    font-size: 2.2rem;
+    margin: 10px 0;
+}
+
+.header-info p {
+    color: #666;
+    font-size: 1rem;
+}
+
+.badge-categoria {
+    background: rgba(14, 165, 233, 0.1);
+    color: #0ea5e9;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.btn-close-full {
+    background: #1a1a1a;
+    border: none;
     color: #fff;
     font-size: 1.5rem;
-    margin: 0;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-/* Grid e Campos de Entrada */
-.form-grid {
+.btn-close-full:hover { background: #333; }
+
+/* Corpo do Formulário */
+.form-section {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    color: #0ea5e9;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 10px;
+}
+
+.full-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
 }
 
-.full-width {
-    grid-column: span 2;
-}
+.span-2 { grid-column: span 2; }
 
-.form-group {
+.input-group {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.form-group label {
-    color: #777;
-    font-size: 0.85rem;
-    font-weight: 600;
+.input-group label {
+    color: #888;
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
-.form-group input, 
-.form-group select {
-    background: #181818;
-    border: 1px solid #333;
+.input-group input, 
+.input-group select {
+    background: #121212;
+    border: 1px solid #222;
+    padding: 15px;
+    border-radius: 12px;
     color: #fff;
-    padding: 14px;
-    border-radius: 10px;
     font-size: 1rem;
-    transition: all 0.3s ease;
+    transition: 0.3s;
 }
 
-.form-group input:focus, 
-.form-group select:focus {
+.input-group input:focus {
     border-color: #0ea5e9;
-    background: #1c1c1c;
-    box-shadow: 0 0 10px rgba(14, 165, 233, 0.15);
+    background: #161616;
 }
 
-/* Estilo do Input Time para Dark Mode */
-input[type="time"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-    cursor: pointer;
-}
-
-/* Ações Inferiores */
-.modal-actions {
-    margin-top: 25px;
+/* Footer Fixo ou no final */
+.form-full-footer {
+    margin-top: auto;
+    padding-top: 40px;
     display: flex;
     justify-content: flex-end;
-    gap: 15px;
+    gap: 20px;
+    padding-bottom: 40px;
 }
 
-.btn-primary {
+.btn-save-full {
     background: #0ea5e9;
-    color: white;
+    color: #fff;
     border: none;
-    padding: 14px 30px;
-    border-radius: 10px;
+    padding: 16px 40px;
+    border-radius: 12px;
     font-weight: 700;
     cursor: pointer;
     transition: 0.3s;
 }
 
-.btn-primary:hover {
+.btn-save-full:hover {
     background: #0284c7;
-    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
 }
 
-.btn-secondary {
-    background: #252525;
-    color: #999;
+.btn-cancel {
+    background: transparent;
+    color: #555;
     border: none;
-    padding: 14px 30px;
-    border-radius: 10px;
-    font-weight: 600;
     cursor: pointer;
+    font-weight: 600;
 }
 
-.btn-secondary:hover {
-    background: #333;
-    color: #fff;
-}
+.btn-cancel:hover { color: #fff; }
