@@ -163,3 +163,27 @@
 }
 .categoria-tag.blue { background: rgba(14, 165, 233, 0.15); color: #0ea5e9; }
 .categoria-tag.gold { background: rgba(234, 179, 8, 0.15); color: #eab308; }
+
+/* AJUSTE 8: Alinhamento Perfeito da Tabela */
+
+/* 1. Garante que cabeçalho e células tenham o mesmo alinhamento à esquerda */
+.clientes-table th, 
+.clientes-table td {
+    text-align: left;
+    padding: 16px 20px; /* Mantém o espaçamento interno idêntico */
+    vertical-align: middle; /* Centraliza verticalmente o conteúdo */
+}
+
+/* 2. Ajuste específico para a coluna de Ações (última coluna) */
+.clientes-table th:last-child, 
+.clientes-table td:last-child {
+    text-align: right; /* Alinha o ícone de editar à direita */
+    padding-right: 30px;
+}
+
+/* 3. Ajuste para a coluna de Valor e Comissão */
+.clientes-table td div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Garante que o texto da comissão alinhe com o valor */
+}
