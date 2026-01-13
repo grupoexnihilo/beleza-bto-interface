@@ -256,7 +256,7 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
               { id: 'clientes', label: '👥 Clientes' },
               { id: 'caixa', label: '💰 Caixa' },
               { id: 'financeiro', label: '💰 Financeiro' },
-              { id: 'servicos', label: '✂️ Serviços' },
+              { id: 'servicos', label: '✨ Serviços' },
               { id: 'cadastros', label: '📝 Cadastros' },
               { id: 'config', label: '⚙️ Configurações' }
             ].map((item) => (
