@@ -59,6 +59,12 @@ const fecharForm = () => {
                 {s.categoria}
                 </span>
                 </td>
+                <td>
+  <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <span style={{ color: '#10b981', fontWeight: 'bold' }}>R$ {s.valor.toFixed(2)}</span>
+    <small style={{ color: '#555', fontSize: '0.7rem' }}>Comissão: {s.comissao}%</small>
+  </div>
+</td>
                 <td>{s.profissional}</td>
                 <td>{s.tipo}</td>
                 <td>{s.tempo}h</td>

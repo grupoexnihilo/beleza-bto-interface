@@ -94,6 +94,29 @@ const FormServico = ({ onClose, onSave, servicoExistente }) => {
           </div>
 
           <div className="form-section">
+  <h4 className="section-title">Financeiro e Comissionamento</h4>
+  <div className="full-grid">
+    <div className="input-group">
+      <label>Comissão do Profissional (%)</label>
+      <input 
+        type="number" 
+        placeholder="Ex: 30"
+        value={formData.comissao}
+        onChange={(e) => setFormData({...formData, comissao: e.target.value})}
+      />
+    </div>
+    <div className="input-group">
+      <label>Custo Fixo Extra (R$)</label>
+      <input 
+        type="text" 
+        placeholder="R$ 0,00"
+        // Aqui você pode usar a mesma lógica de máscara do valor
+      />
+    </div>
+  </div>
+</div>
+
+          <div className="form-section">
             <h4 className="section-title">Configurações de Execução</h4>
             <div className="full-grid">
               
