@@ -17,7 +17,7 @@
     background: #0a0a0a;
     display: flex;
     flex-direction: column;
-    padding: 40px 60px;
+    padding: 40px 60px 80px 60px;
     overflow-y: auto;
 }
 
@@ -117,12 +117,14 @@
 
 /* Footer Fixo ou no final */
 .form-full-footer {
-    margin-top: auto;
+    margin-top: 40px;
     padding-top: 40px;
     display: flex;
     justify-content: flex-end;
     gap: 20px;
-    padding-bottom: 40px;
+    padding-bottom: 60px;
+    border-top: 1px solid #1a1a1a; /* Uma linha sutil para separar os botões do corpo */
+    
 }
 
 .btn-save-full {
