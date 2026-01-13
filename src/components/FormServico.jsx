@@ -90,6 +90,14 @@ const FormServico = ({ onClose, onSave }) => {
             </select>
           </div>
 
+          <div className="form-group">
+            <label>Categoria</label>
+            <select value={formData.categoria} onChange={(e) => setFormData({...formData, categoria: e.target.value})}>
+              <option value="Serviço">Serviço</option>
+              <option value="Produto">Produto</option>
+            </select>
+          </div>
+
           <div className="modal-actions full-width">
             <button type="button" className="btn-secondary" onClick={onClose}>Cancelar</button>
             <button type="submit" className="btn-primary">Salvar Serviço</button>

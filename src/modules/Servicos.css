@@ -153,3 +153,13 @@
 .btn-icon-edit:active {
     transform: scale(0.9); /* Feedback de clique */
 }
+
+.categoria-tag {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+.categoria-tag.blue { background: rgba(14, 165, 233, 0.15); color: #0ea5e9; }
+.categoria-tag.gold { background: rgba(234, 179, 8, 0.15); color: #eab308; }

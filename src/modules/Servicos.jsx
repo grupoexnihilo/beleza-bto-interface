@@ -27,6 +27,7 @@ const Servicos = () => {
           <thead>
             <tr>
               <th>Serviço</th>
+              <th>Categoria</th>
               <th>Profissional</th>
               <th>Tipo</th>
               <th>Tempo</th>
@@ -39,6 +40,11 @@ const Servicos = () => {
             {servicos.map(s => (
               <tr key={s.id}>
                 <td style={{ fontWeight: '600', color: '#fff' }}>{s.nome}</td>
+                <td style={{ fontSize: '0.8rem', color: '#888' }}>
+                <span className={`categoria-tag ${s.categoria === 'Produto' ? 'gold' : 'blue'}`}>
+                {s.categoria}
+                </span>
+                </td>
                 <td>{s.profissional}</td>
                 <td>{s.tipo}</td>
                 <td>{s.tempo}h</td>
