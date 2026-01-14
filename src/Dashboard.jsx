@@ -87,6 +87,8 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
 
   const renderConteudo = () => {
     switch (telaAtiva) {
+      case 'servicos': 
+       return <Servicos onBack={() => setTelaAtiva('resumo')} />;
       case 'resumo':
         return (
           <div className="resumo-dashboard">
