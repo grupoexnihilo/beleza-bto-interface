@@ -194,23 +194,26 @@
     gap: 20px;
 }
 
+/* AJUSTE 2: Botão Voltar Estilo Clean Azul */
 .btn-voltar-premium {
-    background: #1a1a1a;
-    color: #888;
-    border: 1px solid #333;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 0.85rem;
+    background: transparent; /* Remove o fundo */
+    color: #0ea5e9; /* Azul padrão do sistema */
+    border: none; /* Remove a caixa/borda */
+    padding: 8px 0; /* Remove padding lateral para não ter box visual */
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
     display: flex;
     align-items: center;
+    gap: 5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-voltar-premium:hover {
-    background: #222;
-    color: #fff;
-    border-color: #444;
-    transform: translateX(-5px); /* Sutil movimento para a esquerda no hover */
+    color: #38bdf8; /* Um azul levemente mais claro no hover */
+    transform: scale(1.1); /* Efeito de zoom igual aos outros botões */
+}
+
+.btn-voltar-premium:active {
+    transform: scale(0.95);
 }
