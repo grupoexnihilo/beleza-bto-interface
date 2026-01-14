@@ -46,6 +46,7 @@
     text-transform: uppercase;
     letter-spacing: 1.2px;
     border-bottom: 1px solid #222;
+    text-align: left; /* Adicione explicitamente aqui */
 }
 
 .clientes-table td {
@@ -165,20 +166,18 @@
 .categoria-tag.gold { background: rgba(234, 179, 8, 0.15); color: #eab308; }
 
 /* AJUSTE 8: Alinhamento Perfeito da Tabela */
-
-/* 1. Garante que cabeçalho e células tenham o mesmo alinhamento à esquerda */
 .clientes-table th, 
 .clientes-table td {
-    text-align: left;
-    padding: 16px 20px; /* Mantém o espaçamento interno idêntico */
-    vertical-align: middle; /* Centraliza verticalmente o conteúdo */
+    text-align: left !important; /* O !important garante que nada mude isso */
+    padding: 16px 20px !important; 
+    vertical-align: middle;
 }
 
-/* 2. Ajuste específico para a coluna de Ações (última coluna) */
+/* Coluna de Ações (Lápis) continua na direita */
 .clientes-table th:last-child, 
 .clientes-table td:last-child {
-    text-align: right; /* Alinha o ícone de editar à direita */
-    padding-right: 30px;
+    text-align: right !important;
+    padding-right: 30px !important;
 }
 
 /* 3. Ajuste para a coluna de Valor e Comissão */
