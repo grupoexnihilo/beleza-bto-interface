@@ -2,6 +2,20 @@ import React from 'react';
 import './Agendamento.css'
 
 const Agendamento = () => {
+  const [comandaAberta, setComandaAberta] = useState(null);
+  const abrirNovoAgendamento = () => {
+    setComandaAberta({
+      comanda: "NOVA",
+      cliente: "Novo Cliente",
+      telefone: "---",
+      status: "pendente",
+      data: new Date().toISOString(),
+      profissional: "Selecione...",
+      servico: "Selecione...",
+      valorServico: 0.00,
+      situacaoPagamento: "Pendente"
+    });
+  };
   return (
     <div className="modulo-agendamento">
       {/* HEADER DA AGENDA */}
@@ -15,7 +29,12 @@ const Agendamento = () => {
         <div className="agenda-view-controls">
           <button className="btn-view-toggle active">👥 Por Profissional</button>
           <button className="btn-view-toggle">📅 Grade</button>
-          <button className="btn-adicionar-agendamento">+ Novo Agendamento</button>
+          <button 
+            className="btn-adicionar-agendamento" 
+            onClick={abrirNovoAgendamento}
+          >
+            + Novo Agendamento
+          </button>
         </div>
       </div>
 
@@ -52,6 +71,15 @@ const Agendamento = () => {
                 <span className="slot-servico">Degradê</span>
                 <div className="slot-status-mini">Pendente</div>
               </div>
+              {/* 2. ADICIONE AQUI: No final do elemento pai, antes do último </div> */}
+      {comandaAberta && (
+        <ModalComanda 
+          agendamento={comandaAberta} 
+          aoFechar={() => setComandaAberta(null)} 
+          aoExcluir={(id) => console.log("Excluir", id)}
+          formatarData={(d) => d} 
+        />
+      )}
             </div>
           </div>
         </div>
