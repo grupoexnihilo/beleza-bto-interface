@@ -52,34 +52,51 @@ const fecharForm = () => {
           </thead>
           <tbody>
             {servicos.map(s => (
-              <tr key={s.id}>
-                <td style={{ fontWeight: '600', color: '#fff' }}>{s.nome}</td>
-                <td style={{ fontSize: '0.8rem', color: '#888' }}>
-                <span className={`categoria-tag ${s.categoria === 'Produto' ? 'gold' : 'blue'}`}>
-                {s.categoria}
-                </span>
-                </td>
-                <td>
-  <div style={{ display: 'flex', flexDirection: 'column' }}>
-    <span style={{ color: '#10b981', fontWeight: 'bold' }}>R$ {s.valor.toFixed(2)}</span>
-    <small style={{ color: '#555', fontSize: '0.7rem' }}>Comissão: {s.comissao}%</small>
-  </div>
-</td>
-                <td>{s.profissional}</td>
-                <td>{s.tipo}</td>
-                <td>{s.tempo}h</td>
-                <td style={{ color: '#10b981', fontWeight: 'bold' }}>
-                  R$ {s.valor.toFixed(2)}
-                </td>
-                <td>
-                  <span className={`status-badge ${s.status.toLowerCase()}`}>
-                    {s.status}
-                  </span>
-                </td>
-                <td style={{ textAlign: 'right' }}>
-                  <button className="btn-icon-edit" onClick={() => abrirEdicao(s)}>✏️</button>                </td>
-              </tr>
-            ))}
+  <tr key={s.id}>
+    {/* 1. SERVIÇO */}
+    <td style={{ fontWeight: '600', color: '#fff' }}>{s.nome}</td>
+    
+    {/* 2. CATEGORIA */}
+    <td>
+      <span className={`categoria-tag ${s.categoria === 'Produto' ? 'gold' : 'blue'}`}>
+        {s.categoria || 'Serviço'}
+      </span>
+    </td>
+
+    {/* 3. VALOR (Com a comissão embaixo) */}
+    <td>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <span style={{ color: '#10b981', fontWeight: 'bold' }}>
+          R$ {Number(s.valor).toFixed(2)}
+        </span>
+        <small style={{ color: '#555', fontSize: '0.7rem' }}>
+          Comissão: {s.comissao || 0}%
+        </small>
+      </div>
+    </td>
+
+    {/* 4. PROFISSIONAL */}
+    <td>{s.profissional}</td>
+
+    {/* 5. TIPO */}
+    <td>{s.tipo}</td>
+
+    {/* 6. TEMPO */}
+    <td>{s.tempo}h</td>
+
+    {/* 7. STATUS (Removido o valor duplicado que estava aqui) */}
+    <td>
+      <span className={`status-badge ${s.status.toLowerCase()}`}>
+        {s.status}
+      </span>
+    </td>
+
+    {/* 8. AÇÕES */}
+    <td style={{ textAlign: 'right' }}>
+      <button className="btn-icon-edit" onClick={() => abrirEdicao(s)}>✏️</button>
+    </td>
+  </tr>
+))}
           </tbody>
         </table>
       </div>
