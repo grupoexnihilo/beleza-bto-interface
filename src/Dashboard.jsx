@@ -9,6 +9,7 @@ import HistoricoLancamentos from './modules/HistoricoLancamentos';
 import LoginForm from './modules/LoginForm';
 import Caixa from './modules/Caixa';
 import Servicos from './modules/Servicos';
+import Profissionais from './modules/Profissionais';
 
 // --- IMPORTAÇÃO DE COMPONENTES ---
 import ModalComanda from './components/ModalComanda';
@@ -89,6 +90,7 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
     switch (telaAtiva) {
       case 'servicos': 
        return <Servicos onBack={() => setTelaAtiva('resumo')} />;
+      case 'profissionais': return <Profissionais onBack={() => setTelaAtiva('resumo')} />;
       case 'resumo':
         return (
           <div className="resumo-dashboard">
@@ -259,6 +261,7 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
               { id: 'caixa', label: '💰 Caixa' },
               { id: 'financeiro', label: '💰 Financeiro' },
               { id: 'servicos', label: '✨ Serviços' },
+              { id: 'profissionais', label: '🪪 Profissionais' },
               { id: 'cadastros', label: '📝 Cadastros' },
               { id: 'config', label: '⚙️ Configurações' }
             ].map((item) => (
