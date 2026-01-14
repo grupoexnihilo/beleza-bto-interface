@@ -10,6 +10,8 @@ const FormProfissional = ({ onClose, onSave, profissionalExistente, somenteLeitu
 
   const [novoServico, setNovoServico] = useState('');
 
+  const ESTADOS = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"];
+
   useEffect(() => {
     if (profissionalExistente) setFormData(profissionalExistente);
   }, [profissionalExistente]);
@@ -31,17 +33,101 @@ const FormProfissional = ({ onClose, onSave, profissionalExistente, somenteLeitu
     }
   };
 
-  const handleCEP = async (cep) => {
-    const cleanCEP = cep.replace(/\D/g, "");
-    setFormData(prev => ({ ...prev, cep: cleanCEP }));
-    if (cleanCEP.length === 8) {
-      const res = await fetch(`https://viacep.com.br/ws/${cleanCEP}/json/`);
-      const data = await res.json();
-      if (!data.erro) {
-        setFormData(prev => ({ ...prev, rua: data.logradouro, bairro: data.bairro, cidade: data.localidade, estado: data.uf }));
-      }
+  const handleCEP = async (e) => {
+    const cep = e.target.value.replace(/\D/g, "");
+    setFormData(prev => ({ ...prev, cep: cep }));
+
+    if (cep.length === 8) {
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const data = await response.json();
+            
+            if (!data.erro) {
+                setFormData(prev => ({
+                    ...prev,
+                    rua: data.logradouro,
+                    bairro: data.bairro,
+                    cidade: data.localidade,
+                    estado: data.uf
+                }));
+            }
+        } catch (error) {
+            console.error("Erro ao buscar CEP:", error);
+        }
     }
-  };
+};
+
+<div className="form-section">
+    <h4 className="section-title">Endereço Residencial</h4>
+    <div className="full-grid">
+        
+        <div className="input-group">
+            <label>CEP (Busca Automática)</label>
+            <input 
+                disabled={somenteLeitura}
+                type="text" 
+                maxLength="8"
+                placeholder="00000000"
+                value={formData.cep} 
+                onChange={handleCEP} 
+            />
+        </div>
+
+        <div className="input-group">
+            <label>Logradouro / Rua</label>
+            <input 
+                disabled={somenteLeitura}
+                type="text" 
+                value={formData.rua} 
+                onChange={e => setFormData({...formData, rua: e.target.value})} 
+            />
+        </div>
+
+        <div className="input-group">
+            <label>Bairro</label>
+            <input 
+                disabled={somenteLeitura}
+                type="text" 
+                value={formData.bairro} 
+                onChange={e => setFormData({...formData, bairro: e.target.value})} 
+            />
+        </div>
+
+        <div className="input-group">
+            <label>Cidade</label>
+            <input 
+                disabled={somenteLeitura}
+                type="text" 
+                value={formData.cidade} 
+                onChange={e => setFormData({...formData, cidade: e.target.value})} 
+            />
+        </div>
+
+        <div className="input-group">
+            <label>Estado (UF)</label>
+            <select 
+                disabled={somenteLeitura}
+                value={formData.estado} 
+                onChange={e => setFormData({...formData, estado: e.target.value})}
+            >
+                <option value="">Selecione...</option>
+                {ESTADOS.map(uf => <option key={uf} value={uf}>{uf}</option>)}
+            </select>
+        </div>
+
+        <div className="input-group">
+            <label>Número / Complemento</label>
+            <input 
+                disabled={somenteLeitura}
+                type="text" 
+                placeholder="Ex: 123, Apto 4"
+                value={formData.numero} 
+                onChange={e => setFormData({...formData, numero: e.target.value})} 
+            />
+        </div>
+
+    </div>
+</div>
 
   const addServico = () => {
     if (novoServico.trim() && !formData.servicos.includes(novoServico)) {
@@ -109,6 +195,8 @@ const FormProfissional = ({ onClose, onSave, profissionalExistente, somenteLeitu
               </div>
             </div>
           </div>
+
+          
 
           <div className="form-section">
             <h4 className="section-title">Serviços e Financeiro</h4>
