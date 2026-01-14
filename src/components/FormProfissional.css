@@ -1,4 +1,4 @@
-/* --- ESTRUTURA BASE FULL SCREEN (HERDADA DO ESTILO PREMIUM BTO) --- */
+/* --- OVERLAY PRINCIPAL (TELA CHEIA) --- */
 .form-full-screen-overlay {
     position: fixed;
     top: 0;
@@ -6,34 +6,53 @@
     width: 100vw;
     height: 100vh;
     background: #000000;
-    z-index: 2000;
+    z-index: 5000; /* Garante que fique acima de tudo */
     display: flex;
     justify-content: center;
+    animation: fadeInOverlay 0.3s ease-out;
 }
 
+/* --- CONTAINER COM SCROLL --- */
 .form-full-screen-container {
     width: 100%;
     max-width: 900px;
-    height: 100%;
+    height: 100vh;
     background: #0a0a0a;
     display: flex;
     flex-direction: column;
-    padding: 40px 60px 80px 60px;
-    overflow-y: auto;
+    padding: 40px 60px 100px 60px; /* Padding extra no fundo para os botões respirarem */
+    overflow-y: auto; /* PERMITE VER O ENDEREÇO E RESTO DO FORM */
+    scrollbar-width: thin;
+    scrollbar-color: #222 transparent;
 }
 
-/* --- HEADER --- */
+/* Estilização da barra de rolagem para Chrome/Edge */
+.form-full-screen-container::-webkit-scrollbar {
+    width: 6px;
+}
+.form-full-screen-container::-webkit-scrollbar-thumb {
+    background: #222;
+    border-radius: 10px;
+}
+
+/* --- CABEÇALHO --- */
 .form-full-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 50px;
+    flex-shrink: 0; /* Impede o header de encolher */
 }
 
 .header-info h2 {
     color: #fff;
     font-size: 2.2rem;
     margin: 10px 0;
+}
+
+.header-info p {
+    color: #555;
+    font-size: 0.95rem;
 }
 
 .badge-categoria {
@@ -58,11 +77,18 @@
     transition: 0.3s;
 }
 
-.btn-close-full:hover { background: #333; }
+.btn-close-full:hover { background: #333; transform: rotate(90deg); }
 
-/* --- CORPO E GRIDS --- */
+/* --- CORPO E SEÇÕES --- */
+.form-full-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .form-section {
-    margin-bottom: 45px;
+    margin-bottom: 40px;
+    animation: fadeInUp 0.5s ease-out both;
 }
 
 .section-title {
@@ -75,14 +101,16 @@
     padding-bottom: 10px;
 }
 
+/* GRID SYSTEM */
 .full-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
+    gap: 25px;
 }
 
 .span-2 { grid-column: span 2; }
 
+/* INPUTS E LABELS */
 .input-group {
     display: flex;
     flex-direction: column;
@@ -103,7 +131,7 @@
     border-radius: 12px;
     color: #fff;
     font-size: 1rem;
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
 .input-group input:focus,
@@ -111,19 +139,14 @@
     border-color: #0ea5e9;
     background: #161616;
     outline: none;
+    box-shadow: 0 0 10px rgba(14, 165, 233, 0.1);
 }
 
-/* --- ESTILOS ESPECÍFICOS DE PROFISSIONAIS (TAGS E STATUS) --- */
-
-/* Campo de entrada de serviços */
+/* --- TAGS DE SERVIÇOS --- */
 .tag-input-container {
     display: flex;
     gap: 10px;
     margin-bottom: 12px;
-}
-
-.tag-input-container input {
-    flex: 1;
 }
 
 .tag-input-container button {
@@ -142,7 +165,6 @@
     transform: scale(1.05);
 }
 
-/* Área onde as tags aparecem */
 .tags-display {
     display: flex;
     gap: 10px;
@@ -155,7 +177,7 @@
 }
 
 .tag-item {
-    background: rgba(14, 165, 233, 0.15);
+    background: rgba(14, 165, 233, 0.1);
     color: #0ea5e9;
     padding: 6px 14px;
     border-radius: 8px;
@@ -164,32 +186,32 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    border: 1px solid rgba(14, 165, 233, 0.3);
-    animation: scaleIn 0.2s ease-out;
+    border: 1px solid rgba(14, 165, 233, 0.2);
 }
 
 .tag-item i {
     cursor: pointer;
     font-style: normal;
     font-weight: bold;
-    font-size: 1.1rem;
-    line-height: 1;
     color: #ef4444;
+    transition: 0.2s;
 }
+.tag-item i:hover { transform: scale(1.4); }
 
-/* Border dinâmico no Select de Status */
-select.ativo { border-left: 5px solid #10b981 !important; }
-select.pendente { border-left: 5px solid #eab308 !important; }
-select.inativo { border-left: 5px solid #ef4444 !important; }
+/* --- STATUS COLORS --- */
+select.ativo { border-left: 5px solid #10b981 !important; color: #10b981; }
+select.pendente { border-left: 5px solid #eab308 !important; color: #eab308; }
+select.inativo { border-left: 5px solid #ef4444 !important; color: #ef4444; }
 
-/* --- FOOTER E BOTÕES --- */
+/* --- FOOTER FIXO NO FINAL --- */
 .form-full-footer {
-    margin-top: auto;
+    margin-top: 40px;
     padding-top: 40px;
     display: flex;
     justify-content: flex-end;
     gap: 20px;
     border-top: 1px solid #1a1a1a;
+    padding-bottom: 20px;
 }
 
 .btn-save-full {
@@ -199,7 +221,6 @@ select.inativo { border-left: 5px solid #ef4444 !important; }
     padding: 16px 45px;
     border-radius: 12px;
     font-weight: 700;
-    font-size: 1rem;
     cursor: pointer;
     transition: 0.3s;
     box-shadow: 0 4px 15px rgba(14, 165, 233, 0.2);
@@ -207,8 +228,8 @@ select.inativo { border-left: 5px solid #ef4444 !important; }
 
 .btn-save-full:hover {
     background: #0284c7;
-    transform: scale(1.02);
-    box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
 }
 
 .btn-cancel {
@@ -217,30 +238,23 @@ select.inativo { border-left: 5px solid #ef4444 !important; }
     border: none;
     cursor: pointer;
     font-weight: 600;
-    transition: 0.3s;
 }
-
 .btn-cancel:hover { color: #fff; }
 
 /* --- ANIMAÇÕES --- */
-@keyframes scaleIn {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
-
-.fade-in {
-    animation: fadeInOverlay 0.3s ease-out;
-}
-
 @keyframes fadeInOverlay {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-/* MODO SOMENTE LEITURA */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ESTADO DESABILITADO (VISUALIZAÇÃO) */
 input:disabled, select:disabled {
-    opacity: 0.7;
+    opacity: 0.6;
     cursor: not-allowed;
     background: #0d0d0d !important;
-    border-color: #1a1a1a !important;
 }
