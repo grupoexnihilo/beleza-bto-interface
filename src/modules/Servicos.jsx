@@ -42,12 +42,12 @@ const fecharForm = () => {
             <tr>
               <th>Serviço</th>
               <th>Categoria</th>
+              <th>Valor</th>
               <th>Profissional</th>
               <th>Tipo</th>
               <th>Tempo</th>
-              <th>Valor</th>
               <th>Status</th>
-              <th style={{ textAlign: 'right' }}>Ações</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
