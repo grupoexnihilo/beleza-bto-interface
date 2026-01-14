@@ -99,7 +99,7 @@ function BaseClientes({ unidadeId, onBack, user, unidades }) {
     <div className="base-clientes-container">
       {/* HEADER DA LISTA */}
       <div className="header-base">
-        <button onClick={onBack} className="back-button">← Voltar ao Menu</button>
+        <button onClick={onBack} className="back-button">← Voltar</button>
         <div className="header-actions">
           <div className={`search-wrapper ${showSearch ? 'active' : ''}`}>
             <input 

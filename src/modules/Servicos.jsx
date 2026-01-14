@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import FormServico from '../components/FormServico';
 import './Servicos.css';
 
-const Servicos = () => {
+const Servicos = ({ onBack }) => {
   const [exibirForm, setExibirForm] = useState(false);
   const [servicos, setServicos] = useState([
     // Dados fictícios para teste
@@ -27,6 +27,9 @@ const fecharForm = () => {
   return (
     <div className="modulo-container fade-in">
       <div className="modulo-header">
+        <button className="btn-voltar-premium" onClick={onBack}>
+             ← Voltar
+          </button>
         <div>
           <h2 className="modulo-title">Gestão de Serviços</h2>
           <p className="modulo-subtitle">Cadastre e gerencie os procedimentos oferecidos</p>
