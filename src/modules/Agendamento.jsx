@@ -1,8 +1,12 @@
-import React from 'react';
-import './Agendamento.css'
+import React, { useState } from 'react'; // Ajuste 1: Importando o useState
+import './Agendamento.css';
+import ModalComanda from '../components/ModalComanda'; // Ajuste 2: Importando o Componente do Modal
 
 const Agendamento = () => {
+  // Estado para controlar a abertura da comanda
   const [comandaAberta, setComandaAberta] = useState(null);
+
+  // Função para abrir o modal com dados limpos
   const abrirNovoAgendamento = () => {
     setComandaAberta({
       comanda: "NOVA",
@@ -16,6 +20,12 @@ const Agendamento = () => {
       situacaoPagamento: "Pendente"
     });
   };
+
+  // Função simples para formatar a data dentro do modal
+  const formatarDataModal = (data) => {
+    return new Date(data).toLocaleDateString('pt-BR');
+  };
+
   return (
     <div className="modulo-agendamento">
       {/* HEADER DA AGENDA */}
@@ -48,11 +58,23 @@ const Agendamento = () => {
       {/* ÁREA DA AGENDA (VISÃO POR PROFISSIONAL) */}
       <div className="agenda-container-scroll">
         <div className="agenda-grid-profissionais">
+          
+          {/* COLUNA 1 */}
           <div className="coluna-profissional">
             <div className="prof-header">Marcos Silva</div>
             <div className="horarios-lista">
               <div className="slot-horario">08:00</div>
-              <div className="slot-agendado confirmado">
+              <div className="slot-agendado confirmado" onClick={() => setComandaAberta({
+                  comanda: "5501",
+                  cliente: "David Emunaar",
+                  telefone: "(11) 98888-0000",
+                  status: "confirmado",
+                  data: new Date().toISOString(),
+                  profissional: "Marcos Silva",
+                  servico: "Corte + Barba",
+                  valorServico: 85.00,
+                  situacaoPagamento: "Pago"
+              })}>
                 <span className="slot-cliente">David Emunaar</span>
                 <span className="slot-servico">Corte + Barba</span>
                 <div className="slot-status-mini">Pago</div>
@@ -61,29 +83,42 @@ const Agendamento = () => {
             </div>
           </div>
 
+          {/* COLUNA 2 */}
           <div className="coluna-profissional">
             <div className="prof-header">Felipe Araújo</div>
             <div className="horarios-lista">
               <div className="slot-horario">08:00</div>
               <div className="slot-horario">09:00</div>
-              <div className="slot-agendado pendente">
+              <div className="slot-agendado pendente" onClick={() => setComandaAberta({
+                  comanda: "5502",
+                  cliente: "João Pereira",
+                  telefone: "(11) 97777-1111",
+                  status: "pendente",
+                  data: new Date().toISOString(),
+                  profissional: "Felipe Araújo",
+                  servico: "Degradê",
+                  valorServico: 45.00,
+                  situacaoPagamento: "Pendente"
+              })}>
                 <span className="slot-cliente">João Pereira</span>
                 <span className="slot-servico">Degradê</span>
                 <div className="slot-status-mini">Pendente</div>
               </div>
-              {/* 2. ADICIONE AQUI: No final do elemento pai, antes do último </div> */}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* RENDERIZAÇÃO DO MODAL (Sempre no final do container principal) */}
       {comandaAberta && (
         <ModalComanda 
           agendamento={comandaAberta} 
           aoFechar={() => setComandaAberta(null)} 
           aoExcluir={(id) => console.log("Excluir", id)}
-          formatarData={(d) => d} 
+          formatarData={formatarDataModal} 
         />
       )}
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
