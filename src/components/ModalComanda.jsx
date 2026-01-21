@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react'; // ADICIONE O useEffect AQUI
 import './ModalComanda.css';
 
 const ModalComanda = ({ agendamento, aoFechar, aoExcluir, formatarData }) => {
