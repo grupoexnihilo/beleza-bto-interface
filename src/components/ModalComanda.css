@@ -19,18 +19,68 @@
     background: #0a0a0a;
     border: 1px solid #1a1a1a;
     width: 95%;
-    max-width: 750px;
+    max-width: 650px; /* Reduzi de 750px para 650px */
+    max-height: 95vh; /* Quase a tela toda, mas com respiro */
     
-    /* AJUSTES DE TAMANHO */
-    max-height: 90vh; /* Ocupa no máximo 90% da altura da tela */
     display: flex;
-    flex-direction: column; /* Organiza header, corpo e botões em fila */
-    
-    border-radius: 28px;
-    padding: 40px;
+    flex-direction: column;
+    padding: 25px 30px; /* Reduzi o padding de 40px para 25px/30px */
+    border-radius: 20px; /* Bordas um pouco menores para ganhar espaço */
     box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
     position: relative;
-    overflow: hidden; /* Garante que nada saia das bordas arredondadas */
+    overflow-y: auto; /* Habilita a rolagem no container inteiro se necessário */
+}
+
+/* Reduzindo o Header */
+.ficha-header {
+    padding-bottom: 15px; /* Reduzi de 30px */
+    margin-bottom: 20px; /* Reduzi de 30px */
+}
+
+.ficha-header h2 {
+    font-size: 1.6rem; /* Reduzi de 2.2rem */
+    margin: 5px 0;
+}
+
+/* Reduzindo a Grid de Informações */
+.ficha-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 50/50 para equilibrar */
+    gap: 20px; /* Reduzi de 40px */
+    margin-bottom: 20px;
+}
+
+.info-group {
+    margin-bottom: 12px; /* Espaçamento menor entre blocos */
+}
+
+.info-group p {
+    font-size: 0.95rem; /* Reduzi de 1.1rem */
+}
+
+/* Ajuste no Card Financeiro e Valor Total */
+.financeiro-card {
+    padding: 15px; /* Reduzi de 25px */
+}
+
+.total-comanda-box {
+    padding: 15px; /* Reduzi de 25px */
+    margin-top: 15px;
+}
+
+.valor-total {
+    font-size: 1.5rem; /* Reduzi de 2rem */
+}
+
+/* Botões de Ação mais compactos */
+.btn-acao-outline, .btn-acao-danger {
+    padding: 10px; /* Reduzi de 14px */
+    font-size: 0.75rem; /* Reduzi de 0.85rem */
+}
+
+.btn-fechar-comanda-full {
+    padding: 15px; /* Reduzi de 22px */
+    font-size: 0.95rem;
 }
 
 /* Criamos essa nova regra para o conteúdo interno rolar se necessário */
@@ -66,41 +116,42 @@
 }
 
 .ficha-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 1px solid #161616;
-  padding-bottom: 30px;
-  margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #161616;
+    padding-bottom: 15px; /* Reduzido de 30px */
+    margin-bottom: 20px;  /* Reduzido de 30px */
 }
 
 .n-comanda {
   color: #0ea5e9;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 900;
   letter-spacing: 3px;
   display: block;
+  margin-top: 2px;
 }
 
 .ficha-header h2 {
-  color: #ffffff;
-  margin: 8px 0;
-  font-size: 2.2rem;
-  font-weight: 800;
-  letter-spacing: -1px;
+    color: #ffffff;
+    margin: 4px 0; /* Margem mínima */
+    font-size: 1.4rem; /* Reduzido drasticamente de 2.2rem */
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 .tel-cliente {
   color: #666;
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-family: monospace;
 }
 
 .status-badge-ficha {
-  padding: 8px 20px;
-  border-radius: 30px;
-  font-size: 0.75rem;
-  font-weight: 900;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 700;
   letter-spacing: 1px;
 }
 
@@ -230,9 +281,9 @@
 /* Estilo para o Título superior (Ajuste 1) */
 .nome-tela-superior {
     color: #444;
-    font-size: 0.65rem;
-    font-weight: 900;
-    letter-spacing: 2px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
     display: block;
     margin-bottom: 5px;
@@ -241,12 +292,12 @@
 /* Estilo para o botão X (Ajuste 2) */
 .btn-close-x {
     position: absolute;
-    top: 25px; /* Ajustado um pouco para baixo */
-    right: 30px;
+    top: 15px; /* Ajustado um pouco para baixo */
+    right: 20px;
     background: transparent;
     border: none;
     color: #444;
-    font-size: 2rem;
+    font-size: 1.5rem;
     line-height: 1;
     cursor: pointer;
     transition: 0.3s;
