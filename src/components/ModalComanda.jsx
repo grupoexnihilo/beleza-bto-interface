@@ -4,12 +4,29 @@ import './ModalComanda.css';
 const ModalComanda = ({ agendamento, aoFechar, aoExcluir, formatarData }) => {
   if (!agendamento) return null;
 
+  // No ModalComanda.jsx (antes do return)
+
+useEffect(() => {
+  const handleEsc = (event) => {
+    if (event.key === 'Escape') {
+      aoFechar();
+    }
+  };
+  window.addEventListener('keydown', handleEsc);
+  
+  // Limpa o evento quando o modal fecha
+  return () => window.removeEventListener('keydown', handleEsc);
+}, [aoFechar]);
+
   return (
     <div className="modal-overlay" onClick={aoFechar}>
       <div className="ficha-detalhada-container" onClick={e => e.stopPropagation()}>
         
+      <button className="btn-close-x" onClick={aoFechar}>&times;</button>
+
         <div className="ficha-header">
           <div className="header-info">
+            <span className="nome-tela-superior">COMANDAS</span>
             <span className="n-comanda">COMANDA Nº {agendamento.comanda || '---'}</span>
             <h2>{agendamento.cliente}</h2>
             <span className="tel-cliente">{agendamento.telefone}</span>
