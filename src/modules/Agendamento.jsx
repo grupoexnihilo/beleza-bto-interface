@@ -6,20 +6,33 @@ const Agendamento = () => {
   // Estado para controlar a abertura da comanda
   const [comandaAberta, setComandaAberta] = useState(null);
 
-  // Função para abrir o modal com dados limpos
-  const abrirNovoAgendamento = () => {
-    setComandaAberta({
-      comanda: "NOVA",
-      cliente: "Novo Cliente",
-      telefone: "---",
-      status: "pendente",
-      data: new Date().toISOString(),
-      profissional: "Selecione...",
-      servico: "Selecione...",
-      valorServico: 0.00,
-      situacaoPagamento: "Pendente"
-    });
+  // --- BLOCO NOVO: LÓGICA DO AJUSTE 15 (PRÓXIMO NÚMERO) ---
+  const abrirNovoAgendamento = async () => {
+    try {
+      // 1. Chamada para a API que você criou na pasta /api
+      // O '999' é o ID da unidade de exemplo
+      const resposta = await fetch('/api/get-proxima-comanda?unidadeId=999');
+      const dados = await resposta.json();
+      
+      // 2. Aqui montamos o objeto da comanda com o número vindo do Neon
+      setComandaAberta({
+        comanda: dados.numero.toString().padStart(4, '0'), // Transforma 1 em "0001"
+        cliente: "Novo Cliente",
+        telefone: "---",
+        status: "pendente",
+        data: new Date().toISOString(),
+        profissional: "Selecione...",
+        servico: "Selecione...",
+        valorServico: 0.00,
+        situacaoPagamento: "Pendente"
+      });
+    } catch (error) {
+      console.error("Erro ao buscar próximo número:", error);
+      // Caso a API falhe, abrimos com um padrão para não travar o sistema
+      setComandaAberta({ comanda: "ERRO", cliente: "Novo Cliente" });
+    }
   };
+  // --- FIM DO BLOCO NOVO ---  
 
   // Função simples para formatar a data dentro do modal
   const formatarDataModal = (data) => {
