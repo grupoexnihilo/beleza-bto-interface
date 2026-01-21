@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './ModalComanda.css';
 
-const ModalComanda = ({ agendamento, aoFechar, aoSalvar, profissionaisDisponiveis, produtosDisponiveis }) => {
+const ModalComanda = ({ agendamento, aoFechar, aoSalvar, profissionais, produtos }) => {
   if (!agendamento) return null;
 
-  // Estados para gerenciar as novas funções
+  // Estados para gerenciar a lógica de edição e os 15 ajustes
   const [pago, setPago] = useState(agendamento.situacaoPagamento === 'Pago');
   const [formaPagamento, setFormaPagamento] = useState(agendamento.formaPagamento || '');
-  const [servicosExtras, setServicosExtras] = useState([]);
-  const [produtosExtras, setProdutosExtras] = useState([]);
-  const [exibirAddServico, setExibirAddServico] = useState(false);
-  const [exibirAddProduto, setExibirAddProduto] = useState(false);
+  const [profissionalId, setProfissionalId] = useState('');
+  const [servicoSelecionado, setServicoSelecionado] = useState('');
 
   // Ajuste 3: Fechar com ESC
   useEffect(() => {
@@ -19,34 +17,33 @@ const ModalComanda = ({ agendamento, aoFechar, aoSalvar, profissionaisDisponivei
     return () => window.removeEventListener('keydown', handleEsc);
   }, [aoFechar]);
 
-  // Ajuste 7: Filtra serviços baseados no profissional selecionado
-  const servicosDoProfissional = profissionaisDisponiveis
-    ?.find(p => p.nome === agendamento.profissional)?.servicos || [];
+  // Ajuste 7: Filtro de serviços condicional ao profissional
+  const servicosDisponiveis = profissionais?.find(p => p.nome === profissionalId)?.servicos || [];
 
   return (
     <div className="modal-overlay" onClick={aoFechar}>
       <div className="ficha-detalhada-container" onClick={e => e.stopPropagation()}>
         
         {/* Ajuste 2: "X" no topo direito */}
-        <button className="btn-close-x" onClick={aoFechar}>&times;</button>
+        <button className="btn-close-topo" onClick={aoFechar}>&times;</button>
 
         <div className="ficha-header">
           <div className="header-info">
-            {/* Ajuste 1: Nome da tela no canto superior */}
-            <span className="n-comanda-label">COMANDAS</span>
-            <span className="n-comanda">ORDEM Nº {agendamento.comanda}</span>
+            {/* Ajuste 1: Título da tela */}
+            <span className="label-topo-tela">COMANDAS</span>
+            <span className="n-comanda">ORDEM Nº {agendamento.comanda || '0001'}</span>
             <h2>{agendamento.cliente}</h2>
             <span className="tel-cliente">{agendamento.telefone}</span>
           </div>
-          
-          {/* Ajuste 12: Situação do Pagamento (Switch Lateral) */}
-          <div className="pagamento-switch-container">
-            <label>Situação</label>
-            <div className={`switch-track ${pago ? 'pago' : 'pendente'}`} onClick={() => setPago(!pago)}>
-              <div className="switch-knob"></div>
-              <span className="label-pendente">PENDENTE</span>
-              <span className="label-pago">PAGO</span>
-            </div>
+
+          {/* Ajuste 12: Situação do pagamento em Chave Lateral */}
+          <div className="pagamento-situacao-box">
+             <label>SITUAÇÃO</label>
+             <div className={`chave-pagamento-track ${pago ? 'pago' : 'pendente'}`} onClick={() => setPago(!pago)}>
+                <div className="chave-knob"></div>
+                <span className="txt-pendente">PENDENTE</span>
+                <span className="txt-pago">PAGO</span>
+             </div>
           </div>
         </div>
 
@@ -54,72 +51,70 @@ const ModalComanda = ({ agendamento, aoFechar, aoSalvar, profissionaisDisponivei
           <div className="ficha-col">
             <div className="info-group">
               <label>Data e Horário</label>
-              <p className="p-destaque">{agendamento.data} - {agendamento.horario}</p>
+              <p className="txt-destaque">{agendamento.data} - {agendamento.horario}</p>
             </div>
 
             {/* Ajuste 6 e 8: Serviço com quadro de preço lateral */}
             <div className="info-group">
               <label>Serviço</label>
-              <div className="item-com-preco">
-                <p>{agendamento.servico}</p>
-                <div className="preco-tag">R$ {agendamento.valorServico?.toFixed(2)}</div>
+              <div className="row-item-select">
+                <select 
+                  className="select-elite"
+                  value={servicoSelecionado}
+                  onChange={(e) => setServicoSelecionado(e.target.value)}
+                >
+                  <option value="">Selecione o serviço...</option>
+                  {servicosDisponiveis.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <div className="quadro-preco">R$ {agendamento.valorServico?.toFixed(2) || '0,00'}</div>
               </div>
             </div>
 
             {/* Ajuste 4 e 5: Profissional abaixo do serviço */}
             <div className="info-group">
               <label>Profissional</label>
-              <p>{agendamento.profissional}</p>
+              <select 
+                className="select-elite"
+                value={profissionalId}
+                onChange={(e) => setProfissionalId(e.target.value)}
+              >
+                <option value="">Selecione o profissional...</option>
+                {profissionais?.map(p => <option key={p.id} value={p.nome}>{p.nome}</option>)}
+              </select>
             </div>
-
-            {/* Ajuste 7 e 11: Renderização de extras */}
-            {servicosExtras.map((s, i) => (
-              <div className="item-com-preco extra" key={i}>
-                <p>{s.nome}</p>
-                <div className="preco-tag small">R$ {s.preco.toFixed(2)}</div>
-              </div>
-            ))}
           </div>
 
           <div className="ficha-col financeiro-card">
-            {/* Ajuste 13: Forma de Pagamento (Botões coloridos) */}
+            {/* Ajuste 13: Forma de pagamento botões coloridos */}
             <div className="info-group">
               <label>Forma de Pagamento</label>
-              <div className="pagamento-buttons">
-                {['PIX', 'CARTÃO', 'DINHEIRO'].map(metodo => (
-                  <button 
-                    key={metodo}
-                    className={`btn-metodo ${metodo.toLowerCase()} ${formaPagamento === metodo ? 'active' : ''}`}
-                    onClick={() => setFormaPagamento(metodo)}
-                  >
-                    {metodo}
-                  </button>
-                ))}
+              <div className="btn-group-pagamento">
+                <button className={`btn-pg pix ${formaPagamento === 'PIX' ? 'active' : ''}`} onClick={() => setFormaPagamento('PIX')}>PIX</button>
+                <button className={`btn-pg card ${formaPagamento === 'CARTAO' ? 'active' : ''}`} onClick={() => setFormaPagamento('CARTAO')}>CARTÃO</button>
+                <button className={`btn-pg cash ${formaPagamento === 'DINHEIRO' ? 'active' : ''}`} onClick={() => setFormaPagamento('DINHEIRO')}>DINHEIRO</button>
               </div>
             </div>
 
             <div className="total-comanda-box">
-              <label>TOTAL A RECEBER</label>
-              <span className="valor-total">R$ {agendamento.valorServico?.toFixed(2)}</span>
+              <label>VALOR TOTAL DA COMANDA</label>
+              <span className="valor-total">R$ {agendamento.valorServico?.toFixed(2) || '0,00'}</span>
             </div>
           </div>
         </div>
 
         <div className="ficha-acoes-grid">
-          {/* Ajuste 7: Botão Add Serviço */}
-          <button className="btn-acao-outline" onClick={() => setExibirAddServico(!exibirAddServico)}>+ Serviço</button>
-          
-          {/* Ajuste 11: Botão Add Produto */}
-          <button className="btn-acao-outline" onClick={() => setExibirAddProduto(!exibirAddProduto)}>+ Produto</button>
+          {/* Ajuste 7 e 11: Dropdowns extras seriam acionados aqui */}
+          <button className="btn-acao-outline">+ Serviço</button>
+          <button className="btn-acao-outline">+ Produto</button>
           
           {/* Ajuste 10: Reagendar */}
-          <button className="btn-acao-outline" onClick={() => alert("Abrindo Calendário do Profissional...")}>📅 Reagendar</button>
+          <button className="btn-acao-outline" onClick={() => alert("Abrindo Calendário...")}>📅 Reagendar</button>
           
           {/* Ajuste 9: Cancelar (Fecha sem salvar) */}
           <button className="btn-acao-danger" onClick={aoFechar}>✕ Cancelar</button>
         </div>
 
-        {/* Ajuste 14: Salvar Comanda */}
+        {/* Ajuste 14: Salvar e Enviar */}
         <button className="btn-fechar-comanda-full" onClick={() => aoSalvar({...agendamento, pago, formaPagamento})}>
           💾 SALVAR COMANDA E FINALIZAR
         </button>

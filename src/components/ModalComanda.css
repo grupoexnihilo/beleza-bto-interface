@@ -1,121 +1,125 @@
-/* ... manter overlay anterior ... */
+/* MANTÉM OS ESTILOS ORIGINAIS E ADICIONA AS NOVAS REGRAS */
 
-.btn-close-x {
+.btn-close-topo {
     position: absolute;
-    top: 20px;
-    right: 25px;
+    top: 25px;
+    right: 30px;
     background: transparent;
     border: none;
     color: #444;
     font-size: 2rem;
     cursor: pointer;
     transition: 0.3s;
-    z-index: 10;
 }
-.btn-close-x:hover { color: #fff; }
+.btn-close-topo:hover { color: #fff; transform: rotate(90deg); }
 
-.n-comanda-label {
+.label-topo-tela {
     color: #444;
     font-size: 0.65rem;
     font-weight: 900;
     letter-spacing: 2px;
-    margin-bottom: 5px;
     display: block;
+    margin-bottom: 5px;
 }
 
-/* Ajuste 12: Switch de Pagamento */
-.pagamento-switch-container {
+/* Ajuste 12: Chave de Pagamento Lateral */
+.pagamento-situacao-box {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 8px;
 }
 
-.switch-track {
-    width: 160px;
-    height: 40px;
+.chave-pagamento-track {
+    width: 170px;
+    height: 42px;
     background: #111;
-    border-radius: 20px;
+    border-radius: 25px;
+    border: 1px solid #222;
     position: relative;
     cursor: pointer;
     display: flex;
     align-items: center;
-    padding: 0 15px;
-    border: 1px solid #222;
-    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    padding: 0 10px;
 }
 
-.switch-knob {
+.chave-knob {
     position: absolute;
-    width: 75px;
-    height: 32px;
-    background: #fff;
-    border-radius: 16px;
-    transition: 0.4s;
+    width: 80px;
+    height: 34px;
+    border-radius: 20px;
+    transition: 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
     z-index: 1;
 }
 
-.switch-track.pendente { border-color: #ef4444; }
-.switch-track.pendente .switch-knob { left: 4px; background: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
-.switch-track.pago { border-color: #10b981; }
-.switch-track.pago .switch-knob { left: 81px; background: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+.chave-pagamento-track.pendente { border-color: rgba(239, 68, 68, 0.5); }
+.chave-pagamento-track.pendente .chave-knob { left: 4px; background: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
 
-.label-pendente, .label-pago {
+.chave-pagamento-track.pago { border-color: rgba(16, 185, 129, 0.5); }
+.chave-pagamento-track.pago .chave-knob { left: 84px; background: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+
+.txt-pendente, .txt-pago {
     font-size: 0.65rem;
     font-weight: 900;
-    z-index: 2;
     flex: 1;
     text-align: center;
+    z-index: 2;
     color: #333;
+    transition: 0.3s;
 }
-.pago .label-pago { color: #fff; }
-.pendente .label-pendente { color: #fff; }
+.pendente .txt-pendente { color: #fff; }
+.pago .txt-pago { color: #fff; }
 
-/* Ajuste 8: Quadro de Preço */
-.item-com-preco {
+/* Ajuste 8: Quadro de Preço e Dropdowns */
+.row-item-select {
     display: flex;
-    justify-content: space-between;
+    gap: 15px;
     align-items: center;
-    background: #0f0f0f;
-    padding: 12px 18px;
-    border-radius: 12px;
-    border: 1px solid #1a1a1a;
-    margin-top: 5px;
 }
 
-.preco-tag {
-    background: #1a1a1a;
+.select-elite {
+    flex: 1;
+    background: #0f0f0f;
+    border: 1px solid #1a1a1a;
+    padding: 12px;
+    border-radius: 12px;
+    color: #ddd;
+    font-weight: 600;
+    outline: none;
+}
+
+.quadro-preco {
+    background: #111;
+    border: 1px solid #222;
+    padding: 12px 20px;
+    border-radius: 12px;
     color: #fff;
-    padding: 6px 12px;
-    border-radius: 8px;
     font-weight: 800;
-    font-size: 0.9rem;
-    border: 1px solid #333;
+    font-size: 1.1rem;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
 }
 
 /* Ajuste 13: Botões de Pagamento */
-.pagamento-buttons {
+.btn-group-pagamento {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 10px;
     margin-top: 10px;
 }
 
-.btn-metodo {
-    padding: 10px;
-    border-radius: 8px;
+.btn-pg {
+    padding: 12px;
+    border-radius: 10px;
     border: 1px solid #222;
-    background: #111;
-    color: #666;
-    font-size: 0.7rem;
+    background: #0a0a0a;
+    color: #555;
     font-weight: 800;
+    font-size: 0.7rem;
     cursor: pointer;
     transition: 0.3s;
 }
 
-.btn-metodo.pix.active { border-color: #32bcad; color: #32bcad; background: rgba(50, 188, 173, 0.1); }
-.btn-metodo.cartão.active { border-color: #0ea5e9; color: #0ea5e9; background: rgba(14, 165, 233, 0.1); }
-.btn-metodo.dinheiro.active { border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); }
+.btn-pg.pix.active { border-color: #32bcad; color: #32bcad; background: rgba(50, 188, 173, 0.1); }
+.btn-pg.card.active { border-color: #0ea5e9; color: #0ea5e9; background: rgba(14, 165, 233, 0.1); }
+.btn-pg.cash.active { border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1); }
 
-.p-destaque { color: #0ea5e9 !important; font-weight: 700; }
+.txt-destaque { color: #0ea5e9 !important; font-weight: 800; }
