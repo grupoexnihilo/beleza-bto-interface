@@ -308,3 +308,33 @@
     color: #fff;
     transform: rotate(90deg);
 }
+
+.row-item-select {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.quadro-preco {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    min-width: 90px;
+    justify-content: center;
+}
+
+.quadro-preco small {
+    font-size: 0.7rem;
+    color: #64748b;
+    font-weight: bold;
+}
+
+.quadro-preco span {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1e293b;
+}

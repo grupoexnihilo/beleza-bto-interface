@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './ModalComanda.css';
 
+const [profId, setProfId] = useState('');
+const [servicoId, setServicoId] = useState('');
+
 const ModalComanda = ({ agendamento, aoFechar, aoExcluir, formatarData }) => {
   // Estado para armazenar o número da comanda vindo do banco
   const [numeroComanda, setNumeroComanda] = useState('...');
@@ -69,15 +72,50 @@ const ModalComanda = ({ agendamento, aoFechar, aoExcluir, formatarData }) => {
 
             {/* AJUSTE 6: Nome simplificado para "Serviço" */}
             <div className="info-group">
-              <label>Serviço</label>
-              <p>{agendamento.servico} - <strong>R$ {agendamento.valorServico?.toFixed(2)}</strong></p>
-            </div>
+  <label>Serviço</label>
+  <div className="row-item-select">
+    <select 
+      className="select-elite"
+      value={servicoId}
+      onChange={(e) => setServicoId(e.target.value)}
+      disabled={!profId} // Bloqueia se não escolher o profissional antes
+    >
+      <option value="">{profId ? "Selecione o serviço..." : "Escolha um profissional primeiro"}</option>
+      {listaServicos
+        .filter(s => s.id_do_colaborador === profId) // AQUI ACONTECE O AJUSTE 7
+        .map(s => <option key={s.id_preco} value={s.id_preco}>{s.nome_servico}</option>)
+      }
+    </select>
+
+    {/* --- AQUI ENTRA O AJUSTE 8 --- */}
+    <div className="quadro-preco">
+      <small>R$</small>
+      <span>
+        {listaServicos.find(s => s.id_preco === servicoId)?.valor_servico_sugerido || '0,00'}
+      </span>
+    </div>
+    {/* ---------------------------- */}
+    </div>
+    </div>
+    
 
             {/* AJUSTE 4 e 5: Profissional abaixo do serviço e nome simplificado */}
-            <div className="info-group">
-              <label>Profissional</label>
-              <p>{agendamento.profissional}</p>
-            </div>
+           <div className="info-group">
+  <label>Profissional</label>
+  <select 
+    className="select-elite" 
+    value={profId} 
+    onChange={(e) => {
+      setProfId(e.target.value);
+      setServicoId(''); // Reseta o serviço se mudar o profissional
+    }}
+  >
+    <option value="">Selecione o profissional...</option>
+    {listaProfissionais.map(p => (
+      <option key={p.id_do_colaborador} value={p.id_do_colaborador}>{p.nome}</option>
+    ))}
+  </select>
+</div>
           </div>
 
           <div className="ficha-col financeiro-card">
@@ -92,9 +130,11 @@ const ModalComanda = ({ agendamento, aoFechar, aoExcluir, formatarData }) => {
               <p>{agendamento.formaPagamento || 'A definir'}</p>
             </div>
             <div className="total-comanda-box">
-              <label>VALOR TOTAL DA COMANDA</label>
-              <span className="valor-total">R$ {agendamento.valorServico?.toFixed(2)}</span>
-            </div>
+  <label>VALOR TOTAL DA COMANDA</label>
+  <span className="valor-total">
+    R$ {listaServicos.find(s => s.id_preco === servicoId)?.valor_servico_sugerido || '0,00'}
+  </span>
+</div>
           </div>
         </div>
 
