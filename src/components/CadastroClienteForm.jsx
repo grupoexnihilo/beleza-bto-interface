@@ -101,14 +101,30 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
             <input type="date" value={formData.data_cadastro} onChange={(e) => setFormData({...formData, data_cadastro: e.target.value})} />
           </div>
            <div className="form-group">
-       <label>Unidade</label>
-     <input 
-     type="text" 
-     value={unidadeAtual?.nome || 'Unidade não identificada'} 
-     disabled 
-     className="input-disabled-premium"
+  <label>Unidade de Atendimento</label>
+  {unidades && unidades.length > 1 ? (
+    /* AJUSTE: Se o usuário tem mais de uma unidade, mostra o dropdown */
+    <select 
+      className="select-unidade-premium"
+      value={formData.unidade}
+      onChange={(e) => setFormData({...formData, unidade: e.target.value})}
+      required
+    >
+      <option value="">Selecione a unidade...</option>
+      {unidades.map(u => (
+        <option key={u.id} value={u.id}>{u.nome}</option>
+      ))}
+    </select>
+  ) : (
+    /* Mantém o texto se ele só tiver uma unidade, mas garante que não fique no "Carregando" */
+    <input 
+      type="text" 
+      value={unidadeAtual?.nome !== "Carregando unidade..." ? unidadeAtual.nome : (unidades?.[0]?.nome || "Unidade Única")} 
+      disabled 
+      className="input-disabled-premium"
     />
- </div>
+  )}
+</div>
 </div>
 
         {/* Nome Completo e Data de Nascimento */}

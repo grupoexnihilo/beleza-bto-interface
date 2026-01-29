@@ -9,33 +9,35 @@ const pool = new Pool({
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ message: 'Método não permitido' });
 
+  // Pegamos a unidade diretamente do corpo da requisição enviada pelo Front-end
   const { 
-    id, nome, whatsapp, data_nascimento, unidade, cadastrado_por,
-    cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade, cep, data_cadastro 
+    id, nome, whatsapp, unidade, cadastrado_por 
   } = req.body;
-  
+
+  // VALIDAÇÃO CRÍTICA: Se a unidade não vier ou estiver com o texto de erro, bloqueamos
+  if (!unidade || unidade === "Carregando unidade...") {
+    return res.status(400).json({ 
+      message: 'Erro: A unidade não foi identificada. Verifique o login do usuário.' 
+    });
+  }
+
   let client;
 
   try {
     client = await pool.connect();
-    const insertQuery = `
-      INSERT INTO clientes (
-        id, nome, whatsapp, data_nascimento, unidade, cadastrado_por,
-        cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade, cep, data_cadastro
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+    
+    // O INSERT agora usa a variável 'unidade' que veio do usuário logado
+    const query = `
+      INSERT INTO clientes (id, nome, whatsapp, unidade, cadastrado_por, data_cadastro)
+      VALUES ($1, $2, $3, $4, $5, NOW())
     `;
     
-    const valores = [
-      id, nome, whatsapp, data_nascimento || null, unidade, cadastrado_por,
-      cpf, email, endereco, numero, complemento, bairro, cidade, estado, atividade, cep, data_cadastro
-    ];
+    await client.query(query, [id, nome, whatsapp, unidade, cadastrado_por]);
 
-    await client.query(insertQuery, valores);
-    res.status(201).json({ message: 'Cliente cadastrado com sucesso!' });
+    res.status(201).json({ message: 'Cliente vinculado à unidade ' + unidade + ' com sucesso!' });
   } catch (error) {
-    console.error('[ERROR] API Cadastro:', error);
-    res.status(500).json({ message: 'Erro no servidor.', error: error.message });
+    console.error('[ERRO NO CADASTRO]:', error);
+    res.status(500).json({ error: error.message });
   } finally {
     if (client) client.release();
   }
