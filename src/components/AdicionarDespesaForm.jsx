@@ -21,7 +21,7 @@ function AdicionarDespesaForm({ user, unidadeId, onBack }) {
     if (unidadeId) {
       const fetchData = async () => {
         try {
-          const response = await fetch(`/api/getFormOptions?unidadeId=${unidadeId}&tipo=Despesa`);
+          const response = await fetch(`/api/getFormOptions?unidadeId=${unidadeIdAtiva}&tipo=Despesa`);
           if (!response.ok) throw new Error('Falha ao buscar dados do formulário');
           const data = await response.json();
           setCategorias(data.categorias || []); // Garante array

@@ -18,7 +18,7 @@ function BaseClientes({ unidadeId, onBack, user, unidades }) {
     if (!unidadeId) return;
     setLoading(true);
     try {
-      const response = await fetch(`/api/get-clientes?unidadeId=${unidadeId}`);
+      const response = await fetch(`/api/get-clientes?unidadeId=${unidadeIdAtiva}`);
       if (!response.ok) throw new Error('Falha na resposta da API');
       const data = await response.json();
       setClientes(Array.isArray(data) ? data : []);
@@ -83,7 +83,7 @@ function BaseClientes({ unidadeId, onBack, user, unidades }) {
     return (
       <div className="container-integracao-cadastro">
         <CadastroClienteForm 
-          unidadeId={unidadeId} 
+          unidadeId={unidadeIdAtiva} 
           unidades={unidades || []}
           user={user}
           onBack={() => {

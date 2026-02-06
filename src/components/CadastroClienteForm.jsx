@@ -25,7 +25,8 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
     atividade: ''
   });
 
-  const unidadeAtual = unidades?.find(u => u.id === unidadeId) || { nome: "Carregando unidade..." };
+ // Usamos == (dois iguais) ou String() para ignorar se é texto ou número
+const unidadeAtual = unidades?.find(u => String(u.id) === String(unidadeId));
   useEffect(() => {
        if (unidadeId) {
      setFormData(prev => ({ ...prev, unidade: unidadeId }));
@@ -102,31 +103,28 @@ function CadastroClienteForm({ user, unidadeId, unidades, onBack }) {
           </div>
            <div className="form-group">
   <label>Unidade de Atendimento</label>
-  {unidades && unidades.length > 1 ? (
-    /* AJUSTE: Se o usuário tem mais de uma unidade, mostra o dropdown */
-    <select 
-      className="select-unidade-premium"
-      value={formData.unidade}
-      onChange={(e) => setFormData({...formData, unidade: e.target.value})}
-      required
-    >
-      <option value="">Selecione a unidade...</option>
-      {unidades.map(u => (
-        <option key={u.id} value={u.id}>{u.nome}</option>
-      ))}
-    </select>
-  ) : (
-    /* Mantém o texto se ele só tiver uma unidade, mas garante que não fique no "Carregando" */
-    <input 
-      type="text" 
-      value={unidadeAtual?.nome !== "Carregando unidade..." ? unidadeAtual.nome : (unidades?.[0]?.nome || "Unidade Única")} 
-      disabled 
-      className="input-disabled-premium"
-    />
+  <select 
+    className="select-unidade-premium"
+    // IMPORTANTE: O valor é o que está no formData, que veio do unidadeId global
+    value={formData.unidade} 
+    onChange={(e) => setFormData({...formData, unidade: e.target.value})}
+    // Se o usuário só tem 1 unidade, desabilitamos o dropdown pois não há o que trocar
+    disabled={unidades?.length <= 1}
+  >
+    {/* Se não houver unidadeId ainda, mostra o carregando */}
+    {!unidadeId && <option>Carregando unidade...</option>}
+    
+    {unidades?.map(u => (
+      <option key={u.id} value={u.id}>{u.nome}</option>
+    ))}
+  </select>
+  {unidades?.length <= 1 && (
+    <small style={{color: '#94a3b8', fontSize: '0.7rem'}}>
+      Unidade definida pelo seu login.
+    </small>
   )}
 </div>
 </div>
-
         {/* Nome Completo e Data de Nascimento */}
         <div className="form-row">
           <div className="form-group">

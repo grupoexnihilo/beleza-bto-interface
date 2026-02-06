@@ -44,7 +44,7 @@ function EntradaRapidaForm({ user, unidadeId, onBack }) {
       if (!unidadeId) return;
       setIsLoadingOptions(true);
       try {
-        const response = await fetch(`/api/getFormOptions?unidadeId=${unidadeId}&tipo=Receita`);
+        const response = await fetch(`/api/getFormOptions?unidadeId=${unidadeIdAtiva}&tipo=Receita`);
         if (!response.ok) throw new Error('Falha ao buscar opções');
         const data = await response.json();
         setCategorias(data.categorias || []);

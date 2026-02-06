@@ -288,3 +288,29 @@
 .versiculo-texto { color: #888; font-size: 0.85rem; font-style: italic; max-width: 400px; }
 .versiculo-ref { color: #0ea5e9; font-size: 0.7rem; font-weight: 700; margin-top: 2px; text-transform: uppercase; }
 .data-header { color: #555; font-size: 0.8rem; font-weight: 500; }
+.unit-dropdown-container {
+  margin-top: 2px;
+}
+
+.select-unidade-header {
+  background: transparent;
+  border: none;
+  color: #94a3b8; /* Cor discreta */
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+  transition: all 0.3s ease;
+  border-bottom: 1px dashed transparent;
+}
+
+.select-unidade-header:hover {
+  color: #0ea5e9; /* Cor de destaque (azul) */
+  border-bottom-color: #0ea5e9;
+}
+
+.select-unidade-header option {
+  background-color: #1e293b;
+  color: white;
+}

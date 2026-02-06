@@ -177,8 +177,8 @@ function HistoricoLancamentos({ user, unidadeId }) {
         // Busca Receita (para Cats Receita + Colaboradores)
         // Busca Despesa (para Cats Despesa + Formas Pagamento)
         const [resReceita, resDespesa] = await Promise.all([
-          fetch(`/api/getFormOptions?unidadeId=${unidadeId}&tipo=Receita`),
-          fetch(`/api/getFormOptions?unidadeId=${unidadeId}&tipo=Despesa`)
+          fetch(`/api/getFormOptions?unidadeId=${unidadeIdAtiva}&tipo=Receita`),
+          fetch(`/api/getFormOptions?unidadeId=${unidadeIdAtiva}&tipo=Despesa`)
         ]);
         if (!resReceita.ok || !resDespesa.ok) {
           console.error("Falha ao buscar listas de opções para edição.");

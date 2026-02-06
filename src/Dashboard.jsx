@@ -22,6 +22,7 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
   const [telaAtiva, setTelaAtiva] = useState('resumo');
   const [menuExpandido, setMenuExpandido] = useState(false);
   const [filtroAberto, setFiltroAberto] = useState(false);
+  const [unidadeIdAtiva, setUnidadeIdAtiva] = useState(unidadeId);
   
 
   // --- ESTADOS DE MODAIS E MENUS ---
@@ -76,8 +77,8 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
     setMenuContexto({ visivel: true, x: e.pageX, y: e.pageY, agendamentoId: id });
   };
 
-  const unidadeAtual = unidades.find(u => u.id === unidadeId);
-  const dataAtualFormatada = new Intl.DateTimeFormat('pt-BR', {
+const unidadeAtual = unidades?.find(u => String(u.id) === String(unidadeIdAtiva));
+const dataAtualFormatada = new Intl.DateTimeFormat('pt-BR', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   }).format(new Date());
 
@@ -202,21 +203,21 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
           </div>
         );
 
-      case 'clientes': return <BaseClientes unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />;
+      case 'clientes': return <BaseClientes unidadeId={unidadeIdAtiva} onBack={() => setTelaAtiva('resumo')} />;
       case 'agendamentos': return <Agendamento />;
       case 'caixa': 
-        return <Caixa unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />;
-      case 'cadastros': return <CadastroClienteForm user={user} unidadeId={unidadeId} unidades={unidades} onBack={() => setTelaAtiva('resumo')} />;
+        return <Caixa unidadeId={unidadeIdAtiva} onBack={() => setTelaAtiva('resumo')} />;
+      case 'cadastros': return <CadastroClienteForm user={user} unidadeId={unidadeIdAtiva} unidades={unidades} onBack={() => setTelaAtiva('resumo')} />;
       case 'servicos': return <Servicos />;
       case 'financeiro':
         return (
           <div className="modulo-financeiro">
             <h3 style={{ marginBottom: '25px', color: '#0ea5e9' }}>Financeiro</h3>
             <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '30px' }}>
-              <EntradaRapidaForm user={user} unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />
-              <AdicionarDespesaForm user={user} unidadeId={unidadeId} onBack={() => setTelaAtiva('resumo')} />
+              <EntradaRapidaForm user={user} unidadeId={unidadeIdAtiva} onBack={() => setTelaAtiva('resumo')} />
+              <AdicionarDespesaForm user={user} unidadeId={unidadeIdAtiva} onBack={() => setTelaAtiva('resumo')} />
             </div>
-            <HistoricoLancamentos user={user} unidadeId={unidadeId} />
+            <HistoricoLancamentos user={user} unidadeId={unidadeIdAtiva} />
           </div>
         );
       default: return <div>Módulo em desenvolvimento...</div>;
@@ -238,9 +239,25 @@ function Dashboard({ user, unidadeId, unidades, onLogout }) {
   <div className="nav-user-actions">
     <div className="user-info-group">
       <div className="user-greeting">
-        <span>Olá, <strong>{user?.nome || 'Usuário'}</strong> 👋</span>
-        <small>{unidadeAtual?.nome}</small>
-      </div>
+  <span>Olá, <strong>{user?.nome || 'Usuário'}</strong> 👋</span>
+  
+  {/* AJUSTE AQUI: Dropdown no lugar do <small> */}
+  <div className="unit-dropdown-container">
+    <select 
+      className="select-unidade-header"
+      value={unidadeIdAtiva}
+      onChange={(e) => setUnidadeIdAtiva(e.target.value)}
+    >
+      {unidades && unidades.length > 0 ? (
+        unidades.map(u => (
+          <option key={u.id} value={u.id}>📍 {u.nome}</option>
+        ))
+      ) : (
+        <option>Carregando unidade...</option>
+      )}
+    </select>
+  </div>
+</div>
       <span className="data-header">{dataAtualFormatada.charAt(0).toUpperCase() + dataAtualFormatada.slice(1)}</span>
     </div>
     <button className="btn-sair-pill" onClick={onLogout}>Sair</button>
